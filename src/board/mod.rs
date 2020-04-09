@@ -1,8 +1,9 @@
 pub mod pieces;
+pub mod squares;
 
 pub enum Color {
     Black,
-    White
+    White,
 }
 
 pub struct Board {

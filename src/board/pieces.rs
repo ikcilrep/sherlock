@@ -11,4 +11,5 @@ pub enum Piece {
     BlackQueen,
     WhiteKing,
     BlackKing,
+    EmptySquare,
 }
