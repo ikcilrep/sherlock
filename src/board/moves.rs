@@ -32,7 +32,7 @@ pub type Move = u32;
 #[macro_export]
 macro_rules! append {
     ($num1: expr, $num2: expr, $num2_bit_length: expr) => {
-        (($num1) as u32) << ($num2_bit_length) ^ (($num2) as u32)
+        ((($num1) as u32) << ($num2_bit_length) ^ (($num2) as u32))
     };
 }
 
