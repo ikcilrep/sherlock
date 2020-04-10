@@ -1,12 +1,7 @@
-use crate::board::pieces::Piece;
-use crate::board::squares::Square;
-use crate::board::Board;
-pub enum MoveType {
-    NormalMove,
-    CastlingKingsSide,
-    CastlingQueensSide,
-    EnPassant,
-}
+pub const NORMAL_MOVE: i32 = 0;
+pub const CASTLING_KINGS_SIDE: i32 = 1;
+pub const CASTLING_QUEENS_SIDE: i32 = 2;
+pub const EN_PASSANT: i32 = 3;
 
 /* pub enum CaptureType {
     NoCapture,
@@ -34,15 +29,17 @@ pub enum MoveType {
 // There is a lot of info, efficiency is more important than memory in this case.
 pub type Move = u32;
 
+#[macro_export]
 macro_rules! append {
     ($num1: expr, $num2: expr, $num2_bit_length: expr) => {
         (($num1) as u32) << ($num2_bit_length) ^ (($num2) as u32)
     };
 }
 
+#[macro_export]
 macro_rules! piece_at {
     ($square: expr, $board: expr) => {
-        (($board).pieces[$square] as u32)
+        (($board).pieces[$square as usize] as u32)
     };
 }
 
@@ -54,13 +51,13 @@ macro_rules! new_promotion {
                 append!(
                     append!(append!($from, $to, 6), piece_at!($to, $board), 4),
                     ($promoted_piece) as u32,
-                    4,
+                    4
                 ),
                 piece_at!($from, $board),
-                4,
+                4
             ),
             0,
-            2,
+            2
         );
     };
 }
