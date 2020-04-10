@@ -8,7 +8,7 @@ pub enum Color {
 }
 
 pub struct Board {
-    pieces: [pieces::Piece; 64],
+    pieces: [pieces::ColoredPiece; 64],
     side: Color,
     fifty_moves: u8,
 }

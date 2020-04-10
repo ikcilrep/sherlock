@@ -1,5 +1,4 @@
-pub enum Piece {
-    EmptySquare,
+pub enum ColoredPiece {
     WhitePawn,
     BlackPawn,
     WhiteRook,
@@ -12,4 +11,15 @@ pub enum Piece {
     BlackQueen,
     WhiteKing,
     BlackKing,
+    EmptySquare,
+}
+
+pub enum Piece {
+    Pawn,
+    Rook,
+    Knight,
+    Bishop,
+    Queen,
+    King,
+    EmptySquare,
 }
