@@ -1,3 +1,6 @@
+use crate::board::pieces::Piece;
+use crate::board::squares::Square;
+use crate::board::Board;
 pub enum MoveType {
     NormalMove,
     CastlingKingsSide,
@@ -14,14 +17,12 @@ pub enum MoveType {
     QueenCapture,
 }*/
 
-// All pieces are without color (without last bit).
 /* bits 1-6 - from
   bits 7-12 - to
-  bits 13-15 - captured piece
-  bits 16-18 - promoted piece
-  bits 18-20 - moved piece
-  bit  21 - color of moved piece
-  bits 21-23 - info:
+  bits 13-16 - captured piece
+  bits 17-20 - promoted piece
+  bits 21-24 - moved piece
+  bits 24-26 - info:
   00 - normal move
   01 - castling king's side
   10 - castling queen's side

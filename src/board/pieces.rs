@@ -1,6 +1,5 @@
 pub enum Piece {
-    EmptySquare1,
-    EmptySquare2, // it's for optimization: (captured piece << 1) + color
+    EmptySquare,
     WhitePawn,
     BlackPawn,
     WhiteRook,
