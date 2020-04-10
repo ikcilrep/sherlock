@@ -1,3 +1,8 @@
+#[macro_use]
+pub mod color;
+pub mod rook;
+pub mod sliders;
+
 pub type Piece = i8;
 pub const WHITE_PAWN: Piece = 0;
 pub const BLACK_PAWN: Piece = 1;
@@ -19,14 +24,3 @@ pub const KNIGHT: Piece = 2;
 pub const BISHOP: Piece = 3;
 pub const QUEEN: Piece = 4;
 pub const KING: Piece = 5;
-
-pub type Color = i8;
-pub const WHITE: Color = 0;
-pub const BLACK: Color = 1;
-
-#[macro_export]
-macro_rules! color {
-    ($piece: expr) => {
-        ($piece) & 1
-    };
-}

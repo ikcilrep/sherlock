@@ -1,9 +1,10 @@
+#[macro_use]
 pub mod moves;
 pub mod pieces;
 
 pub struct Board {
     pub pieces: [pieces::Piece; 64],
-    side: pieces::Color,
+    side: pieces::color::Color,
     fifty_moves: u8,
 }
 
@@ -76,7 +77,7 @@ impl Board {
                 pieces::BLACK_KNIGHT,
                 pieces::BLACK_ROOK,
             ],
-            side: pieces::WHITE,
+            side: pieces::color::WHITE,
             fifty_moves: 0,
         }
     }
