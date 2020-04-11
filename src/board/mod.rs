@@ -1,5 +1,6 @@
 #[macro_use]
 pub mod moves;
+#[macro_use]
 pub mod pieces;
 
 pub struct Board {
@@ -80,5 +81,12 @@ impl Board {
             side: pieces::color::WHITE,
             fifty_moves: 0,
         }
+    }
+    pub fn can_be_moved(
+        self: &Board,
+        to: usize,
+        piece_to_move_color: pieces::color::Color,
+    ) -> bool {
+        self.pieces[to] == pieces::EMPTY_SQUARE || color!(self.pieces[to]) != piece_to_move_color
     }
 }
