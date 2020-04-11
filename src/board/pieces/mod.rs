@@ -1,6 +1,7 @@
 #[macro_use]
 pub mod color;
 pub mod bishop;
+pub mod knight;
 pub mod rook;
 pub mod sliders;
 
