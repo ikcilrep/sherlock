@@ -82,7 +82,7 @@ macro_rules! new_castling {
                             KING_TO_POSITIONS[($castling_type) as usize][($king_color) as usize],
                             6
                         ),
-                        12,
+                        EMPTY_SQUARE,
                         4
                     ),
                     $king,

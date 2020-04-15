@@ -7,6 +7,9 @@ pub struct Board {
     pub pieces: [pieces::Piece; 64],
     side: pieces::color::Color,
     fifty_moves: u8,
+    pub has_king_stayed_in_place: [bool; 2],
+    pub has_queens_rook_stayed_in_place: [bool; 2],
+    pub has_kings_rook_stayed_in_place: [bool; 2],
 }
 
 impl Board {
@@ -80,6 +83,9 @@ impl Board {
             ],
             side: pieces::color::WHITE,
             fifty_moves: 0,
+            has_king_stayed_in_place: [true, true],
+            has_queens_rook_stayed_in_place: [true, true],
+            has_kings_rook_stayed_in_place: [true, true],
         }
     }
     pub fn can_be_moved(
