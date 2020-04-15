@@ -1,4 +1,5 @@
 use crate::board::moves::Move;
+use crate::board::moves::NORMAL_MOVE;
 use crate::board::Board;
 
 pub fn generate_pseudo_legal_knight_moves(from: usize, board: &Board, result: &mut Vec<Move>) {

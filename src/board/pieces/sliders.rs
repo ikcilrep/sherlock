@@ -1,5 +1,6 @@
 use crate::board::moves;
 use crate::board::moves::Move;
+use crate::board::moves::NORMAL_MOVE;
 use crate::board::pieces::color::Color;
 use crate::board::pieces::EMPTY_SQUARE;
 use crate::board::Board;

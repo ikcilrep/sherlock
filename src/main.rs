@@ -1,6 +1,6 @@
 mod board;
+use crate::board::moves::KING_TO_POSITIONS;
 use crate::board::Board;
-
 fn main() {
     let mut board = Board::new();
     let mut moves = Vec::new();
@@ -19,4 +19,11 @@ fn main() {
     for m in moves {
         println!("Move: {0:b} {0}", (m >> 14) & 63);
     }
+    let castling = new_castling!(
+        board::moves::CASTLING_QUEENS_SIDE,
+        5,
+        board.pieces[5],
+        board::pieces::color::WHITE
+    );
+    println!("{}", (castling >> 14) & 63)
 }

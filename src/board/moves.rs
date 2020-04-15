@@ -1,8 +1,3 @@
-pub const NORMAL_MOVE: i32 = 0;
-pub const CASTLING_KINGS_SIDE: i32 = 1;
-pub const CASTLING_QUEENS_SIDE: i32 = 2;
-pub const EN_PASSANT: i32 = 3;
-
 /* pub enum CaptureType {
     NoCapture,
     PawnCapture,
@@ -20,14 +15,20 @@ pub const EN_PASSANT: i32 = 3;
   bits 17-20 - promoted piece
   bits 21-24 - moved piece
   bits 24-26 - info:
-  00 - normal move
-  01 - castling king's side
-  10 - castling queen's side
-  11 - en passant
+  00 - castling king's side
+  01 - castling queen's side
+  10 - en passant
+  11 - normal move
 */
 
 // There is a lot of info, efficiency is more important than memory in this case.
 pub type Move = u32;
+pub type MoveType = u32;
+pub const KING_TO_POSITIONS: [[i32; 2]; 2] = [[6, 62], [2, 56]];
+pub const CASTLING_KINGS_SIDE: MoveType = 0;
+pub const CASTLING_QUEENS_SIDE: MoveType = 1;
+pub const EN_PASSANT: MoveType = 2;
+pub const NORMAL_MOVE: MoveType = 3;
 
 #[macro_export]
 macro_rules! append {
@@ -56,7 +57,7 @@ macro_rules! new_promotion {
                 piece_at!($from, $board),
                 4
             ),
-            0,
+            NORMAL_MOVE,
             2
         );
     };
@@ -66,5 +67,32 @@ macro_rules! new_promotion {
 macro_rules! new_move {
     ($from: expr, $to: expr, $board: expr) => {
         new_promotion!($from, $to, piece_at!($from, $board), $board)
+    };
+}
+
+#[macro_export]
+macro_rules! new_castling {
+    ($castling_type: expr, $from: expr, $king: expr, $king_color: expr) => {
+        append!(
+            append!(
+                append!(
+                    append!(
+                        append!(
+                            $from,
+                            KING_TO_POSITIONS[($castling_type) as usize][($king_color) as usize],
+                            6
+                        ),
+                        12,
+                        4
+                    ),
+                    $king,
+                    4
+                ),
+                $king,
+                4
+            ),
+            $castling_type,
+            2
+        )
     };
 }
