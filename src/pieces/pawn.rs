@@ -6,21 +6,15 @@ use crate::pieces::{BISHOP, KNIGHT, QUEEN, ROOK};
 const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
 const PAWN_START_ROWS: [usize; 2] = [1, 6];
 
-fn add_promotions(
-    from: usize,
-    to: usize,
-    pawn_color: Color,
-    board: &Board,
-    result: &mut Vec<Move>,
-) {
+fn add_promotions(from: usize, to: i8, pawn_color: Color, board: &Board, result: &mut Vec<Move>) {
     let colorized_bishop = colorize_piece(BISHOP, pawn_color);
     let colorized_knight = colorize_piece(KNIGHT, pawn_color);
     let colorized_queen = colorize_piece(QUEEN, pawn_color);
     let colorized_rook = colorize_piece(ROOK, pawn_color);
-    result.push(new_promotion(from, to as usize, colorized_bishop, board));
-    result.push(new_promotion(from, to as usize, colorized_knight, board));
-    result.push(new_promotion(from, to as usize, colorized_queen, board));
-    result.push(new_promotion(from, to as usize, colorized_rook, board));
+    result.push(new_promotion(from, to, colorized_bishop, board));
+    result.push(new_promotion(from, to, colorized_knight, board));
+    result.push(new_promotion(from, to, colorized_queen, board));
+    result.push(new_promotion(from, to, colorized_rook, board));
 }
 
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
@@ -29,36 +23,32 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     let from_file = signed_from & 7;
     let mut to = signed_from + PAWN_STEPS[pawn_color as usize][0];
 
-    if to & 7 < from_file
-        && (board.en_passant_square == to || board.can_capture(to as usize, pawn_color))
-    {
+    if to & 7 < from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
         if to < 56 && to > 8 {
-            result.push(new_move(from, to as usize, board));
+            result.push(new_move(from, to, board));
         } else if to < 64 && to > 0 {
-            add_promotions(from, to as usize, pawn_color, board, result);
+            add_promotions(from, to, pawn_color, board, result);
         }
     }
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][1];
     let from_row = from >> 3;
     if to < 56 && to > 8 {
-        result.push(new_move(from, to as usize, board));
+        result.push(new_move(from, to, board));
         if from_row == PAWN_START_ROWS[pawn_color as usize] {
             to += PAWN_STEPS[pawn_color as usize][1];
-            result.push(new_move(from, to as usize, board));
+            result.push(new_move(from, to, board));
         }
     } else if to < 64 && to > 0 {
-        add_promotions(from, to as usize, pawn_color, board, result);
+        add_promotions(from, to, pawn_color, board, result);
     }
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][2];
-    if to & 7 > from_file
-        && (board.en_passant_square == to || board.can_capture(to as usize, pawn_color))
-    {
+    if to & 7 > from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
         if to < 56 && to > 8 {
-            result.push(new_move(from, to as usize, board));
+            result.push(new_move(from, to, board));
         } else if to < 64 && to > 0 {
-            add_promotions(from, to as usize, pawn_color, board, result);
+            add_promotions(from, to, pawn_color, board, result);
         }
     }
 }

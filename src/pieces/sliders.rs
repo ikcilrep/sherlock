@@ -5,14 +5,14 @@ use crate::pieces::EMPTY_SQUARE;
 
 pub fn add_sliding_move(
     from: usize,
-    to: usize,
+    to: i8,
     slider_color: Color,
     result: &mut Vec<Move>,
     board: &Board,
 ) -> bool {
     result.push(new_move(from, to, board));
-    if board.pieces[to] != EMPTY_SQUARE {
-        if get_piece_color(board.pieces[to]) == slider_color {
+    if board.pieces[to as usize] != EMPTY_SQUARE {
+        if get_piece_color(board.pieces[to as usize]) == slider_color {
             result.pop();
         }
         return false;

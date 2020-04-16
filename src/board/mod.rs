@@ -16,11 +16,13 @@ pub struct Board {
 
 impl Board {
     #[inline]
-    pub fn can_be_moved(self: &Board, to: usize, piece_to_move_color: Color) -> bool {
-        self.pieces[to] == EMPTY_SQUARE || get_piece_color(self.pieces[to]) != piece_to_move_color
+    pub fn can_be_moved(self: &Board, to: i8, piece_to_move_color: Color) -> bool {
+        self.pieces[to as usize] == EMPTY_SQUARE
+            || get_piece_color(self.pieces[to as usize]) != piece_to_move_color
     }
     #[inline]
-    pub fn can_capture(self: &Board, to: usize, piece_to_move_color: Color) -> bool {
-        self.pieces[to] != EMPTY_SQUARE && get_piece_color(self.pieces[to]) != piece_to_move_color
+    pub fn can_capture(self: &Board, to: i8, piece_to_move_color: Color) -> bool {
+        self.pieces[to as usize] != EMPTY_SQUARE
+            && get_piece_color(self.pieces[to as usize]) != piece_to_move_color
     }
 }

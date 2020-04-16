@@ -8,42 +8,42 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     let knight_color = get_piece_color(board.pieces[from]);
     let mut to = signed_from + 17;
 
-    if to < 64 && to & 7 > from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to < 64 && to & 7 > from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from + 15;
-    if to < 64 && to & 7 < from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to < 64 && to & 7 < from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from - 17;
-    if to >= 0 && to & 7 > from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to >= 0 && to & 7 > from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from - 15;
-    if to >= 0 && to & 7 < from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to >= 0 && to & 7 < from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from + 10;
-    if to < 64 && to & 7 > from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to < 64 && to & 7 > from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from + 6;
-    if to < 64 && to & 7 < from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to < 64 && to & 7 < from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from - 10;
-    if to >= 0 && to & 7 > from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to >= 0 && to & 7 > from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 
     to = signed_from - 6;
-    if to >= 0 && to & 7 < from_file && board.can_be_moved(to as usize, knight_color) {
-        result.push(new_move(from, to as usize, board));
+    if to >= 0 && to & 7 < from_file && board.can_be_moved(to, knight_color) {
+        result.push(new_move(from, to, board));
     }
 }

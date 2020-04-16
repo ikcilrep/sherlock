@@ -40,16 +40,11 @@ macro_rules! append {
 }
 
 #[inline]
-pub fn new_promotion(
-    from: usize,
-    to: usize,
-    promoted_piece: ColorizedPiece,
-    board: &Board,
-) -> Move {
+pub fn new_promotion(from: usize, to: i8, promoted_piece: ColorizedPiece, board: &Board) -> Move {
     append!(
         append!(
             append!(
-                append!(append!(from, to, 6), board.pieces[to], 4),
+                append!(append!(from, to, 6), board.pieces[to as usize], 4),
                 promoted_piece,
                 4
             ),
@@ -62,7 +57,7 @@ pub fn new_promotion(
 }
 
 #[inline]
-pub fn new_move(from: usize, to: usize, board: &Board) -> Move {
+pub fn new_move(from: usize, to: i8, board: &Board) -> Move {
     new_promotion(from, to, board.pieces[from], board)
 }
 
