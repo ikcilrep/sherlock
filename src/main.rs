@@ -22,8 +22,8 @@ fn main() {
     board.pieces[2] = EMPTY_SQUARE;
     board.pieces[3] = EMPTY_SQUARE;
 
-    rook::generate_pseudo_legal_rook_moves(0, &board, &mut moves);
-    king::generate_pseudo_legal_king_moves(4, &board, &mut moves);
+    rook::generate_pseudo_legal_moves(0, &board, &mut moves);
+    king::generate_pseudo_legal_moves(4, &board, &mut moves);
     for m in moves {
         println!("Move: {:026b} {0}", (m >> 14) & 63);
     }

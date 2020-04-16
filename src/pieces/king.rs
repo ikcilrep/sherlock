@@ -24,7 +24,7 @@ macro_rules! squares_between_king_and_kings_rook_are_not_occupied {
     };
 }
 
-pub fn generate_pseudo_legal_king_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
+pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
     let king = board.pieces[from];
