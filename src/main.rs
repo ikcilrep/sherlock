@@ -27,6 +27,10 @@ fn main() {
     king::generate_pseudo_legal_moves(4, &board, &mut moves);
     pawn::generate_pseudo_legal_moves(8, &board, &mut moves);
     for m in moves {
-        println!("Move: {:026b} {0}", (m >> 14) & 63);
+        println!("From: {0}", moves::get_from(m));
+        println!("To: {0}", moves::get_to(m));
+        println!("Captured: {0}", moves::get_captured_piece(m));
+        println!("Promoted: {0}", moves::get_promoted_piece(m));
+        println!("Moved: {0}", moves::get_moved_piece(m));
     }
 }
