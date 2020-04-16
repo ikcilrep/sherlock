@@ -1,7 +1,7 @@
-use crate::board::moves::{new_move, Move};
-use crate::board::pieces::color::{get_piece_color, Color};
-use crate::board::pieces::EMPTY_SQUARE;
 use crate::board::Board;
+use crate::moves::{new_move, Move};
+use crate::pieces::color::{get_piece_color, Color};
+use crate::pieces::EMPTY_SQUARE;
 
 pub fn add_sliding_move(
     from: usize,

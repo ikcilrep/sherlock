@@ -1,4 +1,4 @@
-use crate::board::pieces::Piece;
+use crate::pieces::Piece;
 
 pub type Color = i8;
 pub const WHITE: Color = 0;

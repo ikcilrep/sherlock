@@ -1,7 +1,7 @@
-use crate::board::moves::Move;
-use crate::board::pieces::color::get_piece_color;
-use crate::board::pieces::sliders::add_sliding_move;
 use crate::board::Board;
+use crate::moves::Move;
+use crate::pieces::color::get_piece_color;
+use crate::pieces::sliders::add_sliding_move;
 
 pub fn generate_pseudo_legal_rook_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
     let rook_color = get_piece_color(board.pieces[from]);

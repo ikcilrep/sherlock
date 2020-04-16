@@ -1,6 +1,6 @@
-use crate::board::moves::{new_move, Move};
-use crate::board::pieces::color::get_piece_color;
 use crate::board::Board;
+use crate::moves::{new_move, Move};
+use crate::pieces::color::get_piece_color;
 
 pub fn generate_pseudo_legal_knight_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
     let signed_from = from as i8;

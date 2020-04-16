@@ -1,6 +1,6 @@
-use crate::board::pieces::color::Color;
-use crate::board::pieces::{Piece, EMPTY_SQUARE};
 use crate::board::Board;
+use crate::pieces::color::Color;
+use crate::pieces::{Piece, EMPTY_SQUARE};
 /* pub enum CaptureType {
     NoCapture,
     PawnCapture,

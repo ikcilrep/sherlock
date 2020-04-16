@@ -1,10 +1,9 @@
-use crate::board::pieces::color::{get_piece_color, Color};
-use crate::board::pieces::EMPTY_SQUARE;
-pub mod moves;
-pub mod pieces;
+use crate::pieces;
+use crate::pieces::color::{get_piece_color, Color};
+use crate::pieces::{Piece, EMPTY_SQUARE};
 
 pub struct Board {
-    pub pieces: [pieces::Piece; 64],
+    pub pieces: [Piece; 64],
     side: Color,
     fifty_moves: u8,
     pub has_king_stayed_in_place: [bool; 2],

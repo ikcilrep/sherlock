@@ -1,9 +1,7 @@
-use crate::board::moves::{
-    new_castling, new_move, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE,
-};
-use crate::board::pieces::color::get_piece_color;
-use crate::board::pieces::EMPTY_SQUARE;
 use crate::board::Board;
+use crate::moves::{new_castling, new_move, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE};
+use crate::pieces::color::get_piece_color;
+use crate::pieces::EMPTY_SQUARE;
 
 const KNIGHTS_KINGS_SIDE_POSITIONS: [usize; 2] = [6, 62];
 const KNIGHTS_QUEENS_SIDE_POSITIONS: [usize; 2] = [1, 57];
