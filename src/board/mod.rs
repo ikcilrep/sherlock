@@ -8,9 +8,9 @@ pub struct Board {
     pub pieces: [Piece; 64],
     side: Color,
     fifty_moves: u8,
-    pub has_king_stayed_in_place: [bool; 2],
-    pub has_queens_rook_stayed_in_place: [bool; 2],
-    pub has_kings_rook_stayed_in_place: [bool; 2],
+    has_king_stayed_in_place: [bool; 2],
+    has_queens_rook_stayed_in_place: [bool; 2],
+    has_kings_rook_stayed_in_place: [bool; 2],
 }
 
 impl Board {
