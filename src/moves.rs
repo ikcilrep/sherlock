@@ -1,6 +1,6 @@
 use crate::board::Board;
 use crate::pieces::color::Color;
-use crate::pieces::{Piece, EMPTY_SQUARE};
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 /* pub enum CaptureType {
     NoCapture,
     PawnCapture,
@@ -40,7 +40,12 @@ macro_rules! append {
 }
 
 #[inline]
-pub fn new_promotion(from: usize, to: usize, promoted_piece: Piece, board: &Board) -> Move {
+pub fn new_promotion(
+    from: usize,
+    to: usize,
+    promoted_piece: ColorizedPiece,
+    board: &Board,
+) -> Move {
     append!(
         append!(
             append!(
@@ -62,7 +67,12 @@ pub fn new_move(from: usize, to: usize, board: &Board) -> Move {
 }
 
 #[inline]
-pub fn new_castling(castling_type: MoveType, from: usize, king: Piece, king_color: Color) -> Move {
+pub fn new_castling(
+    castling_type: MoveType,
+    from: usize,
+    king: ColorizedPiece,
+    king_color: Color,
+) -> Move {
     append!(
         append!(
             append!(
