@@ -1,6 +1,7 @@
 use crate::pieces::color::{get_piece_color, Color};
 use crate::pieces::{Piece, EMPTY_SQUARE};
 
+pub mod castling;
 pub mod constructor;
 
 pub struct Board {
@@ -11,6 +12,7 @@ pub struct Board {
     pub has_queens_rook_stayed_in_place: [bool; 2],
     pub has_kings_rook_stayed_in_place: [bool; 2],
 }
+
 impl Board {
     #[inline]
     pub fn can_be_moved(self: &Board, to: usize, piece_to_move_color: Color) -> bool {
