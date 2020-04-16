@@ -1,37 +1,9 @@
 use crate::board::Board;
+use crate::moves::{Move, MoveType, NORMAL_MOVE};
 use crate::pieces::color::Color;
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
-/* pub enum CaptureType {
-    NoCapture,
-    PawnCapture,
-    RookCapture,
-    KnightCapture,
-    BishopCapture,
-    QueenCapture,
-}*/
 
-// Excluding 0 padding.
-// First is most significant.
-/* bits 1-6 - from
-  bits 7-12 - to
-  bits 13-16 - captured piece
-  bits 17-20 - promoted piece
-  bits 21-24 - moved piece
-  bits 24-26 - info:
-  00 - castling king's side
-  01 - castling queen's side
-  10 - en passant
-  11 - normal move
-*/
-
-// There is a lot of info, efficiency is more important than memory in this case.
-pub type Move = u32;
-pub type MoveType = u32;
 pub const KING_TO_POSITIONS: [[i32; 2]; 2] = [[6, 62], [2, 56]];
-pub const CASTLING_KINGS_SIDE: MoveType = 0;
-pub const CASTLING_QUEENS_SIDE: MoveType = 1;
-pub const EN_PASSANT: MoveType = 2;
-pub const NORMAL_MOVE: MoveType = 3;
 
 macro_rules! append {
     ($num1: expr, $num2: expr, $num2_bit_length: expr) => {

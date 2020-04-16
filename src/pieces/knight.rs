@@ -1,5 +1,6 @@
 use crate::board::Board;
-use crate::moves::{new_move, Move};
+use crate::moves::constructors::new_move;
+use crate::moves::Move;
 use crate::pieces::color::get_piece_color;
 
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {

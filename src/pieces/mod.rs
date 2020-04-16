@@ -1,4 +1,3 @@
-use crate::pieces::color::Color;
 pub mod bishop;
 pub mod color;
 pub mod king;

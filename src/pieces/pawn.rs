@@ -1,5 +1,6 @@
 use crate::board::Board;
-use crate::moves::{new_move, new_promotion, Move};
+use crate::moves::constructors::{new_move, new_promotion};
+use crate::moves::Move;
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
 use crate::pieces::{BISHOP, KNIGHT, QUEEN, ROOK};
 
