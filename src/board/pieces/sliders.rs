@@ -1,7 +1,5 @@
-use crate::board::moves;
-use crate::board::moves::Move;
-use crate::board::moves::NORMAL_MOVE;
-use crate::board::pieces::color::Color;
+use crate::board::moves::{new_move, Move};
+use crate::board::pieces::color::{get_piece_color, Color};
 use crate::board::pieces::EMPTY_SQUARE;
 use crate::board::Board;
 
@@ -12,9 +10,9 @@ pub fn add_sliding_move(
     result: &mut Vec<Move>,
     board: &Board,
 ) -> bool {
-    result.push(new_move!(from, to, board));
+    result.push(new_move(from, to, board));
     if board.pieces[to] != EMPTY_SQUARE {
-        if color!(board.pieces[to]) == slider_color {
+        if get_piece_color(board.pieces[to]) == slider_color {
             result.pop();
         }
         return false;

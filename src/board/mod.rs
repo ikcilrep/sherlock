@@ -1,11 +1,11 @@
-#[macro_use]
+use crate::board::pieces::color::{get_piece_color, Color};
+use crate::board::pieces::EMPTY_SQUARE;
 pub mod moves;
-#[macro_use]
 pub mod pieces;
 
 pub struct Board {
     pub pieces: [pieces::Piece; 64],
-    side: pieces::color::Color,
+    side: Color,
     fifty_moves: u8,
     pub has_king_stayed_in_place: [bool; 2],
     pub has_queens_rook_stayed_in_place: [bool; 2],
@@ -88,11 +88,9 @@ impl Board {
             has_kings_rook_stayed_in_place: [true, true],
         }
     }
-    pub fn can_be_moved(
-        self: &Board,
-        to: usize,
-        piece_to_move_color: pieces::color::Color,
-    ) -> bool {
-        self.pieces[to] == pieces::EMPTY_SQUARE || color!(self.pieces[to]) != piece_to_move_color
+
+    #[inline]
+    pub fn can_be_moved(self: &Board, to: usize, piece_to_move_color: Color) -> bool {
+        self.pieces[to] == EMPTY_SQUARE || get_piece_color(self.pieces[to]) != piece_to_move_color
     }
 }

@@ -1,3 +1,6 @@
+use crate::board::pieces::color::Color;
+use crate::board::pieces::{Piece, EMPTY_SQUARE};
+use crate::board::Board;
 /* pub enum CaptureType {
     NoCapture,
     PawnCapture,
@@ -30,69 +33,55 @@ pub const CASTLING_QUEENS_SIDE: MoveType = 1;
 pub const EN_PASSANT: MoveType = 2;
 pub const NORMAL_MOVE: MoveType = 3;
 
-#[macro_export]
 macro_rules! append {
     ($num1: expr, $num2: expr, $num2_bit_length: expr) => {
         ((($num1) as u32) << ($num2_bit_length) ^ (($num2) as u32))
     };
 }
 
-#[macro_export]
-macro_rules! piece_at {
-    ($square: expr, $board: expr) => {
-        (($board).pieces[$square as usize] as u32)
-    };
-}
-
-#[macro_export]
-macro_rules! new_promotion {
-    ($from: expr, $to: expr, $promoted_piece: expr, $board: expr) => {
+#[inline]
+pub fn new_promotion(from: usize, to: usize, promoted_piece: Piece, board: &Board) -> Move {
+    append!(
         append!(
             append!(
-                append!(
-                    append!(append!($from, $to, 6), piece_at!($to, $board), 4),
-                    ($promoted_piece) as u32,
-                    4
-                ),
-                piece_at!($from, $board),
+                append!(append!(from, to, 6), board.pieces[to], 4),
+                promoted_piece,
                 4
             ),
-            NORMAL_MOVE,
-            2
-        );
-    };
+            board.pieces[from],
+            4
+        ),
+        NORMAL_MOVE,
+        2
+    )
 }
 
-#[macro_export]
-macro_rules! new_move {
-    ($from: expr, $to: expr, $board: expr) => {
-        new_promotion!($from, $to, piece_at!($from, $board), $board)
-    };
+#[inline]
+pub fn new_move(from: usize, to: usize, board: &Board) -> Move {
+    new_promotion(from, to, board.pieces[from], board)
 }
 
-#[macro_export]
-macro_rules! new_castling {
-    ($castling_type: expr, $from: expr, $king: expr, $king_color: expr) => {
+#[inline]
+pub fn new_castling(castling_type: MoveType, from: usize, king: Piece, king_color: Color) -> Move {
+    append!(
         append!(
             append!(
                 append!(
                     append!(
-                        append!(
-                            $from,
-                            KING_TO_POSITIONS[($castling_type) as usize][($king_color) as usize],
-                            6
-                        ),
-                        EMPTY_SQUARE,
-                        4
+                        from,
+                        KING_TO_POSITIONS[(castling_type) as usize][(king_color) as usize],
+                        6
                     ),
-                    $king,
+                    EMPTY_SQUARE,
                     4
                 ),
-                $king,
+                king,
                 4
             ),
-            $castling_type,
-            2
-        )
-    };
+            king,
+            4
+        ),
+        castling_type,
+        2
+    )
 }

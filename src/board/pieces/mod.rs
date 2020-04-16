@@ -1,6 +1,5 @@
-#[macro_use]
-pub mod color;
 pub mod bishop;
+pub mod color;
 pub mod king;
 pub mod knight;
 pub mod queen;
