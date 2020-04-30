@@ -1,6 +1,6 @@
 use crate::moves::{
-    get_captured_piece, get_from, get_move_type, get_moved_piece, get_promoted_piece, get_to, Move,
-    CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT,
+    get_captured_piece, get_captured_piece_position, get_from, get_move_type, get_moved_piece,
+    get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT,
 };
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, PAWN, ROOK};
@@ -84,6 +84,7 @@ impl Board {
     pub fn make_move(self: &mut Board, half_move: Move) {
         let from = get_from(half_move);
         let to = get_to(half_move);
+        self.pieces[get_captured_piece_position(half_move)] = EMPTY_SQUARE;
         self.pieces[to] = get_promoted_piece(half_move);
         self.pieces[from] = EMPTY_SQUARE;
         let moved_piece = get_moved_piece(half_move);
@@ -105,9 +106,6 @@ impl Board {
                     self.pieces[QUEENS_ROOKS_POSITIONS[color]];
                 self.pieces[QUEENS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
             }
-            EN_PASSANT => {
-                self.pieces[(to as i8 + INVERSED_PAWN_STEPS[color]) as usize] = EMPTY_SQUARE;
-            }
             _ => {}
         }
     }
@@ -117,16 +115,10 @@ impl Board {
         let moved_piece = get_moved_piece(half_move);
         let color = get_piece_color(moved_piece) as usize;
         let to = get_to(half_move);
-        let move_type = get_move_type(half_move);
-        if move_type == EN_PASSANT {
-            self.pieces[(to as i8 + INVERSED_PAWN_STEPS[color]) as usize] =
-                get_captured_piece(half_move);
-            self.pieces[to] = EMPTY_SQUARE;
-        } else {
-            self.pieces[to] = get_captured_piece(half_move);
-        }
 
-        self.pieces[get_from(half_move)] = get_moved_piece(half_move);
+        self.pieces[get_from(half_move)] = self.pieces[to];
+        self.pieces[to] = EMPTY_SQUARE;
+        self.pieces[get_captured_piece_position(half_move)] = get_captured_piece(half_move);
 
         self.revert_has_stayed(color);
         self.fifty_moves = self.last_fifty_moves;

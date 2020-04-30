@@ -1,5 +1,5 @@
 use crate::board::Board;
-use crate::moves::constructors::{new_move, new_promotion};
+use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::Move;
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
 use crate::pieces::{BISHOP, KNIGHT, QUEEN, ROOK};
@@ -47,7 +47,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     to = signed_from + PAWN_STEPS[pawn_color as usize][2];
     if to & 7 > from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
         if to < 56 && to > 8 {
-            result.push(new_move(from, to, board));
+            result.push(new_en_passant(from, to, board));
         } else if to < 64 && to > 0 {
             add_promotions(from, to, pawn_color, board, result);
         }
