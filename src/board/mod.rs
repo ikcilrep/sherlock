@@ -12,10 +12,14 @@ pub struct Board {
     pub pieces: [ColorizedPiece; 64],
     side: Color,
     fifty_moves: u8,
-    last_fifty_moves: u8,
     has_king_stayed_in_place: [bool; 2],
     has_queens_rook_stayed_in_place: [bool; 2],
     has_kings_rook_stayed_in_place: [bool; 2],
+    last_fifty_moves: u8,
+    last_has_king_stayed_in_place: [bool; 2],
+    last_has_queens_rook_stayed_in_place: [bool; 2],
+    last_has_kings_rook_stayed_in_place: [bool; 2],
+
     pub en_passant_square: i8,
 }
 
@@ -55,6 +59,19 @@ impl Board {
     }
 
     #[inline]
+    fn update_has_stayed(self: &mut Board, color: usize, from: usize) {
+        self.last_has_king_stayed_in_place[color] = self.has_king_stayed_in_place[color];
+        self.last_has_kings_rook_stayed_in_place[color] =
+            self.has_kings_rook_stayed_in_place[color];
+        self.last_has_queens_rook_stayed_in_place[color] =
+            self.has_queens_rook_stayed_in_place[color];
+
+        self.has_king_stayed_in_place[color] &= KING_POSITIONS[color] != from;
+        self.has_kings_rook_stayed_in_place[color] &= KINGS_ROOKS_POSITIONS[color] != from;
+        self.has_queens_rook_stayed_in_place[color] &= QUEENS_ROOKS_POSITIONS[color] != from;
+    }
+
+    #[inline]
     pub fn make_move(self: &mut Board, half_move: Move) {
         let from = get_from(half_move);
         let to = get_to(half_move);
@@ -63,9 +80,10 @@ impl Board {
         let moved_piece = get_moved_piece(half_move);
         let captured_piece = get_captured_piece(half_move);
         let color = get_piece_color(moved_piece) as usize;
-        self.has_king_stayed_in_place[color] &= KING_POSITIONS[color] != from;
-        self.has_kings_rook_stayed_in_place[color] &= KINGS_ROOKS_POSITIONS[color] != from;
-        self.has_queens_rook_stayed_in_place[color] &= QUEENS_ROOKS_POSITIONS[color] != from;
+
+        self.update_has_stayed(color, from);
+        self.update_fifty_moves(moved_piece, captured_piece);
+        self.side = !self.side;
 
         match get_move_type(half_move) {
             CASTLING_KINGS_SIDE => {
@@ -83,7 +101,11 @@ impl Board {
             }
             _ => {}
         }
-        self.side = !self.side;
-        self.update_fifty_moves(moved_piece, captured_piece);
+    }
+
+    #[inline]
+    pub fn undo_move(self: &mut Board, half_move: Move) {
+        self.pieces[get_to(half_move)] = get_captured_piece(half_move);
+        self.pieces[get_from(half_move)] = get_moved_piece(half_move);
     }
 }
