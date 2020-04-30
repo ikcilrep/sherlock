@@ -2,8 +2,8 @@ use crate::moves::{
     get_captured_piece, get_from, get_move_type, get_moved_piece, get_promoted_piece, get_to, Move,
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT,
 };
-use crate::pieces::color::{get_piece_color, uncolorize_piece, Color};
-use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, PAWN};
+use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, PAWN, ROOK};
 
 pub mod castling;
 pub mod constructor;
@@ -72,6 +72,15 @@ impl Board {
     }
 
     #[inline]
+    fn revert_has_stayed(self: &mut Board, color: usize) {
+        self.has_king_stayed_in_place[color] = self.last_has_king_stayed_in_place[color];
+        self.has_kings_rook_stayed_in_place[color] =
+            self.last_has_kings_rook_stayed_in_place[color];
+        self.has_queens_rook_stayed_in_place[color] =
+            self.last_has_queens_rook_stayed_in_place[color];
+    }
+
+    #[inline]
     pub fn make_move(self: &mut Board, half_move: Move) {
         let from = get_from(half_move);
         let to = get_to(half_move);
@@ -105,7 +114,36 @@ impl Board {
 
     #[inline]
     pub fn undo_move(self: &mut Board, half_move: Move) {
-        self.pieces[get_to(half_move)] = get_captured_piece(half_move);
+        let moved_piece = get_moved_piece(half_move);
+        let color = get_piece_color(moved_piece) as usize;
+        let to = get_to(half_move);
+        let move_type = get_move_type(half_move);
+        if move_type == EN_PASSANT {
+            self.pieces[(to as i8 + INVERSED_PAWN_STEPS[color]) as usize] =
+                get_captured_piece(half_move);
+            self.pieces[to] = EMPTY_SQUARE;
+        } else {
+            self.pieces[to] = get_captured_piece(half_move);
+        }
+
         self.pieces[get_from(half_move)] = get_moved_piece(half_move);
+
+        self.revert_has_stayed(color);
+        self.fifty_moves = self.last_fifty_moves;
+        self.side = !self.side;
+
+        match get_move_type(half_move) {
+            CASTLING_KINGS_SIDE => {
+                self.pieces[KINGS_ROOKS_POSITIONS[color]] =
+                    self.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]];
+                self.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] = EMPTY_SQUARE;
+            }
+            CASTLING_QUEENS_SIDE => {
+                self.pieces[QUEENS_ROOKS_POSITIONS[color]] =
+                    self.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]];
+                self.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] = EMPTY_SQUARE;
+            }
+            _ => {}
+        }
     }
 }
