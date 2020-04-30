@@ -77,6 +77,9 @@ impl Board {
             has_king_stayed_in_place: [true, true],
             has_queens_rook_stayed_in_place: [true, true],
             has_kings_rook_stayed_in_place: [true, true],
+            last_has_king_stayed_in_place: [true, true],
+            last_has_queens_rook_stayed_in_place: [true, true],
+            last_has_kings_rook_stayed_in_place: [true, true],
         }
     }
 }
