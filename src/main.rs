@@ -2,7 +2,7 @@ mod board;
 mod moves;
 mod pieces;
 use crate::board::Board;
-use crate::pieces::{king, pawn, rook};
+use crate::pieces::generate_all_pseudo_legal_moves;
 use crate::pieces::{BLACK_KNIGHT, EMPTY_SQUARE};
 
 fn main() {
@@ -23,9 +23,7 @@ fn main() {
     board.pieces[3] = EMPTY_SQUARE;
 
     board.pieces[17] = BLACK_KNIGHT;
-    rook::generate_pseudo_legal_moves(0, &board, &mut moves);
-    king::generate_pseudo_legal_moves(4, &board, &mut moves);
-    pawn::generate_pseudo_legal_moves(8, &board, &mut moves);
+    generate_all_pseudo_legal_moves(&board, &mut moves);
     for m in moves {
         println!("From: {0}", moves::get_from(m));
         println!("To: {0}", moves::get_to(m));

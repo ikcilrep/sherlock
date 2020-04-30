@@ -1,3 +1,7 @@
+use crate::board::Board;
+use crate::moves::Move;
+use crate::pieces::color::uncolorize_piece;
+
 pub mod bishop;
 pub mod color;
 pub mod king;
@@ -9,6 +13,7 @@ pub mod sliders;
 
 pub type ColorizedPiece = u8;
 pub type Piece = u8;
+pub type Generator = fn(usize, &Board, &mut Vec<Move>);
 pub const WHITE_PAWN: ColorizedPiece = 0;
 pub const BLACK_PAWN: ColorizedPiece = 1;
 pub const WHITE_ROOK: ColorizedPiece = 2;
@@ -29,3 +34,20 @@ pub const KNIGHT: Piece = 2;
 pub const BISHOP: Piece = 3;
 pub const QUEEN: Piece = 4;
 pub const KING: Piece = 5;
+
+pub const PSEUDO_LEGAL_MOVE_GENERATORS: [Generator; 7] = [
+    pawn::generate_pseudo_legal_moves,
+    rook::generate_pseudo_legal_moves,
+    knight::generate_pseudo_legal_moves,
+    bishop::generate_pseudo_legal_moves,
+    queen::generate_pseudo_legal_moves,
+    king::generate_pseudo_legal_moves,
+    |_, _, _| {},
+];
+
+#[inline]
+pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
+    for (from, piece) in board.pieces.iter().enumerate() {
+        PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, board, result);
+    }
+}
