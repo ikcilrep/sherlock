@@ -72,6 +72,7 @@ impl Board {
             ],
             side: pieces::color::WHITE,
             fifty_moves: 0,
+            last_fifty_moves: 0,
             en_passant_square: -1,
             has_king_stayed_in_place: [true, true],
             has_queens_rook_stayed_in_place: [true, true],
