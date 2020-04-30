@@ -13,3 +13,8 @@ pub fn get_piece_color(piece: ColorizedPiece) -> Color {
 pub fn colorize_piece(piece: Piece, color: Color) -> ColorizedPiece {
     piece << 1 ^ color
 }
+
+#[inline]
+pub fn uncolorize_piece(piece: ColorizedPiece) -> Piece {
+    piece >> 1
+}
