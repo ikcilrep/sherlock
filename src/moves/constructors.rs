@@ -6,6 +6,7 @@ use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 pub const KING_TO_POSITIONS: [[i32; 2]; 2] = [[6, 62], [2, 56]];
 const INVERSED_PAWN_STEPS: [i8; 2] = [-8, 8];
 
+#[macro_export]
 macro_rules! append {
     ($num1: expr, $num2: expr, $num2_bit_length: expr) => {
         ((($num1) as u32) << ($num2_bit_length) ^ (($num2) as u32))

@@ -1,9 +1,11 @@
 mod board;
 mod moves;
 mod pieces;
+extern crate rand;
 use crate::board::Board;
 use crate::pieces::generate_all_pseudo_legal_moves;
-use crate::pieces::{BLACK_KNIGHT, EMPTY_SQUARE};
+use crate::pieces::{knight, BLACK_KNIGHT, EMPTY_SQUARE};
+use rand::thread_rng;
 
 fn main() {
     let mut board = Board::new();
@@ -24,6 +26,13 @@ fn main() {
 
     board.pieces[17] = BLACK_KNIGHT;
     generate_all_pseudo_legal_moves(&board, &mut moves);
+    let mut rng = thread_rng();
+    println!(
+        "{}",
+        moves::get_to(knight::generate_random_pseudo_legal_move(
+            1, &board, &mut rng
+        ))
+    );
     for m in moves {
         println!("From: {0}", moves::get_from(m));
         println!("To: {0}", moves::get_to(m));

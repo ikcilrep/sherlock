@@ -1,4 +1,4 @@
-use crate::pieces::ColorizedPiece;
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 
 // Excluding 0 padding.
 // First is most significant.
@@ -16,6 +16,7 @@ use crate::pieces::ColorizedPiece;
 */
 
 // There is a lot of info, efficiency is more important than memory in this case.
+#[macro_use]
 pub mod constructors;
 pub type Move = u32;
 pub type MoveType = u8;
@@ -24,6 +25,15 @@ pub const CASTLING_QUEENS_SIDE: MoveType = 1;
 pub const EN_PASSANT: MoveType = 2;
 pub const NORMAL_MOVE: MoveType = 3;
 
+pub const NULL_MOVE: Move = append!(
+    append!(
+        append!(append!(0, EMPTY_SQUARE, 4), EMPTY_SQUARE, 4),
+        EMPTY_SQUARE,
+        4
+    ),
+    NORMAL_MOVE,
+    8
+);
 #[inline]
 pub fn get_from(half_move: Move) -> usize {
     (half_move >> 26) as usize
