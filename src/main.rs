@@ -3,8 +3,9 @@ mod moves;
 mod pieces;
 extern crate rand;
 use crate::board::Board;
+use crate::pieces::color::get_piece_color;
 use crate::pieces::generate_all_pseudo_legal_moves;
-use crate::pieces::{knight, BLACK_KNIGHT, EMPTY_SQUARE};
+use crate::pieces::{king, knight, BLACK_KNIGHT, EMPTY_SQUARE};
 use rand::thread_rng;
 
 fn main() {
@@ -23,7 +24,6 @@ fn main() {
     board.pieces[1] = EMPTY_SQUARE;
     board.pieces[2] = EMPTY_SQUARE;
     board.pieces[3] = EMPTY_SQUARE;
-
     board.pieces[17] = BLACK_KNIGHT;
     generate_all_pseudo_legal_moves(&board, &mut moves);
     let mut rng = thread_rng();
@@ -33,11 +33,16 @@ fn main() {
             1, &board, &mut rng
         ))
     );
-    for m in moves {
-        println!("From: {0}", moves::get_from(m));
-        println!("To: {0}", moves::get_to(m));
-        println!("Captured: {0}", moves::get_captured_piece(m));
-        println!("Promoted: {0}", moves::get_promoted_piece(m));
-        println!("Moved: {0}", moves::get_moved_piece(m));
-    }
+    println!(
+        "{}",
+        moves::get_to(king::generate_random_pseudo_legal_move(4, &board, &mut rng))
+    );
+
+    // for m in moves {
+    //     println!("From: {0}", moves::get_from(m));
+    //     println!("To: {0}", moves::get_to(m));
+    //     println!("Captured: {0}", moves::get_captured_piece(m));
+    //     println!("Promoted: {0}", moves::get_promoted_piece(m));
+    //     println!("Moved: {0}", moves::get_moved_piece(m));
+    // }
 }
