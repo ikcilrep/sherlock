@@ -47,16 +47,16 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     let mut to = signed_from + PAWN_STEPS[pawn_color as usize][0];
 
     if to & 7 < from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
-        if to < 56 && to > 8 {
+        if to < 56 && to > 7 {
             result.push(new_move(from, to, board));
-        } else if to < 64 && to > 0 {
+        } else if to < 64 && to >= 0 {
             add_promotions(from, to, pawn_color, board, result);
         }
     }
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][1];
     let from_row = from >> 3;
-    if to < 56 && to > 8 && board.pieces[to as usize] == EMPTY_SQUARE {
+    if to < 56 && to > 7 && board.pieces[to as usize] == EMPTY_SQUARE {
         result.push(new_move(from, to, board));
 
         to += PAWN_STEPS[pawn_color as usize][1];
@@ -65,15 +65,15 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         {
             result.push(new_move(from, to, board));
         }
-    } else if to < 64 && to > 0 && board.pieces[to as usize] == EMPTY_SQUARE {
+    } else if to < 64 && to >= 0 && board.pieces[to as usize] == EMPTY_SQUARE {
         add_promotions(from, to, pawn_color, board, result);
     }
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][2];
     if to & 7 > from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
-        if to < 56 && to > 8 {
+        if to < 56 && to > 7 {
             result.push(new_en_passant(from, to, board));
-        } else if to < 64 && to > 0 {
+        } else if to < 64 && to >= 0 {
             add_promotions(from, to, pawn_color, board, result);
         }
     }
