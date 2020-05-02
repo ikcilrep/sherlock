@@ -4,7 +4,7 @@ use crate::board::Board;
 use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::Move;
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
-use crate::pieces::{BISHOP, KNIGHT, QUEEN, ROOK};
+use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, QUEEN, ROOK};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
@@ -56,10 +56,13 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][1];
     let from_row = from >> 3;
-    if to < 56 && to > 8 {
+    if to < 56 && to > 8 && board.pieces[to as usize] == EMPTY_SQUARE {
         result.push(new_move(from, to, board));
-        if from_row == PAWN_START_ROWS[pawn_color as usize] {
-            to += PAWN_STEPS[pawn_color as usize][1];
+
+        to += PAWN_STEPS[pawn_color as usize][1];
+        if from_row == PAWN_START_ROWS[pawn_color as usize]
+            && board.pieces[to as usize] == EMPTY_SQUARE
+        {
             result.push(new_move(from, to, board));
         }
     } else if to < 64 && to > 0 {
