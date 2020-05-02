@@ -65,7 +65,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         {
             result.push(new_move(from, to, board));
         }
-    } else if to < 64 && to > 0 {
+    } else if to < 64 && to > 0 && board.pieces[to as usize] == EMPTY_SQUARE {
         add_promotions(from, to, pawn_color, board, result);
     }
 
