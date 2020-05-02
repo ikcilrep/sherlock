@@ -1,8 +1,12 @@
+extern crate rand;
+
 use crate::board::Board;
 use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::Move;
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
 use crate::pieces::{BISHOP, KNIGHT, QUEEN, ROOK};
+use rand::rngs::ThreadRng;
+use rand::Rng;
 
 const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
 const PAWN_START_ROWS: [usize; 2] = [1, 6];
@@ -16,6 +20,24 @@ fn add_promotions(from: usize, to: i8, pawn_color: Color, board: &Board, result:
     result.push(new_promotion(from, to, colorized_knight, board));
     result.push(new_promotion(from, to, colorized_queen, board));
     result.push(new_promotion(from, to, colorized_rook, board));
+}
+
+fn random_promotion(
+    from: usize,
+    to: i8,
+    pawn_color: Color,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Move {
+    if rng.gen_bool(0.5) {
+        new_promotion(from, to, colorize_piece(QUEEN, pawn_color), board)
+    } else if rng.gen_bool(0.25) {
+        new_promotion(from, to, colorize_piece(ROOK, pawn_color), board)
+    } else if rng.gen_bool(0.125) {
+        new_promotion(from, to, colorize_piece(BISHOP, pawn_color), board)
+    } else {
+        new_promotion(from, to, colorize_piece(KNIGHT, pawn_color), board)
+    }
 }
 
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
