@@ -95,7 +95,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
 }
 
 pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
-    let move_pseudo_legality_validators: [fn(i8, i8, &Board, Color) -> bool; 8] = [
+    let move_pseudo_legality_validators = [
         is_move_northeast_pseudo_legal,
         is_move_northwest_pseudo_legal,
         is_move_southeast_pseudo_legal,
@@ -109,7 +109,7 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     let from_file = signed_from & 7;
     let knight_color = get_piece_color(board.pieces[from]);
 
-    let moves_to: [i8; 8] = [
+    let moves_to = [
         signed_from + 17,
         signed_from + 15,
         signed_from - 17,
