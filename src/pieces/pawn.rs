@@ -139,7 +139,7 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
 
     let move_getters = [get_capture, get_move_north, get_capture];
 
-    let start = rng.sample(Uniform::new_inclusive(0, 2));
+    let start = rng.gen_range(0, 3);
     let mut i = start;
     while {
         if move_pseudo_legality_validators[i](from_file, moves_to[i], board, pawn_color) {
