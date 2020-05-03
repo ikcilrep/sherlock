@@ -3,9 +3,8 @@ mod moves;
 mod pieces;
 extern crate rand;
 use crate::board::Board;
-use crate::pieces::color::get_piece_color;
 use crate::pieces::generate_all_pseudo_legal_moves;
-use crate::pieces::{king, knight, pawn, BLACK_KNIGHT, EMPTY_SQUARE};
+use crate::pieces::{king, knight, pawn, rook, BLACK_KNIGHT, EMPTY_SQUARE};
 use rand::thread_rng;
 
 fn main() {
@@ -21,6 +20,7 @@ fn main() {
     // board::pieces::bishop::generate_pseudo_legal_bishop_moves(2, &board, &mut moves);
     // board::pieces::knight::generate_pseudo_legal_knight_moves(1, &board, &mut moves);
     // board::pieces::queen::generate_pseudo_legal_queen_moves(3, &board, &mut moves);
+    board.pieces[8] = EMPTY_SQUARE;
     board.pieces[1] = EMPTY_SQUARE;
     board.pieces[2] = EMPTY_SQUARE;
     board.pieces[3] = EMPTY_SQUARE;
@@ -41,6 +41,11 @@ fn main() {
     println!(
         "{}",
         moves::get_to(pawn::generate_random_pseudo_legal_move(8, &board, &mut rng))
+    );
+
+    println!(
+        "{}",
+        moves::get_to(rook::generate_random_pseudo_legal_move(0, &board, &mut rng))
     );
 
     // for m in moves {
