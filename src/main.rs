@@ -5,7 +5,7 @@ extern crate rand;
 use crate::board::Board;
 use crate::pieces::color::get_piece_color;
 use crate::pieces::generate_all_pseudo_legal_moves;
-use crate::pieces::{king, knight, BLACK_KNIGHT, EMPTY_SQUARE};
+use crate::pieces::{king, knight, pawn, BLACK_KNIGHT, EMPTY_SQUARE};
 use rand::thread_rng;
 
 fn main() {
@@ -36,6 +36,11 @@ fn main() {
     println!(
         "{}",
         moves::get_to(king::generate_random_pseudo_legal_move(4, &board, &mut rng))
+    );
+
+    println!(
+        "{}",
+        moves::get_to(pawn::generate_random_pseudo_legal_move(8, &board, &mut rng))
     );
 
     // for m in moves {
