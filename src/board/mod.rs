@@ -1,9 +1,9 @@
 use crate::moves::{
     get_captured_piece, get_captured_piece_position, get_from, get_move_type, get_moved_piece,
-    get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT,
+    get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE,
 };
-use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
-use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, PAWN, ROOK};
+use crate::pieces::color::{get_piece_color, uncolorize_piece, Color};
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, KING, PAWN};
 
 pub mod castling;
 pub mod constructor;
@@ -15,6 +15,7 @@ pub struct Board {
     has_king_stayed_in_place: [bool; 2],
     has_queens_rook_stayed_in_place: [bool; 2],
     has_kings_rook_stayed_in_place: [bool; 2],
+    king_positions: [u8; 2],
     last_fifty_moves: u8,
     last_has_king_stayed_in_place: [bool; 2],
     last_has_queens_rook_stayed_in_place: [bool; 2],
@@ -87,7 +88,7 @@ impl Board {
         self: &mut Board,
         from: usize,
         to: usize,
-        moved_piece: u8,
+        moved_piece: ColorizedPiece,
         color: Color,
     ) {
         self.last_en_passant_square = self.en_passant_square;
@@ -99,6 +100,19 @@ impl Board {
         } else {
             -1
         };
+    }
+
+    // Probably, to be optimized.
+    #[inline]
+    fn update_king_position(
+        self: &mut Board,
+        moved_piece: ColorizedPiece,
+        to: usize,
+        color: Color,
+    ) {
+        if uncolorize_piece(moved_piece) == KING {
+            self.king_positions[color as usize] = to as u8;
+        }
     }
 
     #[inline]
