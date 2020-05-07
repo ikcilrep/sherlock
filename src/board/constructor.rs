@@ -81,7 +81,8 @@ impl Board {
             last_has_queens_rook_stayed_in_place: [true, true],
             last_has_kings_rook_stayed_in_place: [true, true],
             last_en_passant_square: -1,
-            king_positions: [4, 4],
+            last_king_positions: [4, 60],
+            king_positions: [4, 60],
         }
     }
 }
