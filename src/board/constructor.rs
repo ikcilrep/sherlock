@@ -1,3 +1,4 @@
+use crate::board::board_state::BoardState;
 use crate::board::Board;
 use crate::pieces;
 
@@ -70,19 +71,8 @@ impl Board {
                 pieces::BLACK_KNIGHT,
                 pieces::BLACK_ROOK,
             ],
-            side: pieces::color::WHITE,
-            fifty_moves: 0,
-            last_fifty_moves: 0,
-            en_passant_square: -1,
-            has_king_stayed_in_place: [true, true],
-            has_queens_rook_stayed_in_place: [true, true],
-            has_kings_rook_stayed_in_place: [true, true],
-            last_has_king_stayed_in_place: [true, true],
-            last_has_queens_rook_stayed_in_place: [true, true],
-            last_has_kings_rook_stayed_in_place: [true, true],
-            last_en_passant_square: -1,
-            last_king_positions: [4, 60],
-            king_positions: [4, 60],
+            state: BoardState::new(),
+            last_state: BoardState::new(),
         }
     }
 }

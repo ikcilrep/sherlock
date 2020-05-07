@@ -5,7 +5,6 @@ use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::{Move, NULL_MOVE};
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
 use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, QUEEN, ROOK};
-use rand::distributions::Uniform;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
@@ -47,7 +46,9 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     let from_file = signed_from & 7;
     let mut to = signed_from + PAWN_STEPS[pawn_color as usize][0];
 
-    if to & 7 < from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
+    if to & 7 < from_file
+        && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
+    {
         if to < 56 && to > 7 {
             result.push(new_move(from, to, board));
         } else if to < 64 && to >= 0 {
@@ -71,7 +72,9 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     }
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][2];
-    if to & 7 > from_file && (board.en_passant_square == to || board.can_capture(to, pawn_color)) {
+    if to & 7 > from_file
+        && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
+    {
         if to < 56 && to > 7 {
             result.push(new_en_passant(from, to, board));
         } else if to < 64 && to >= 0 {
@@ -85,7 +88,7 @@ fn is_move_northwest_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_col
     to < 64
         && to >= 0
         && to & 7 < from_file
-        && (board.en_passant_square == to || board.can_capture(to, pawn_color))
+        && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
 }
 
 #[inline]
@@ -98,7 +101,7 @@ fn is_move_northeast_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_col
     to < 64
         && to >= 0
         && to & 7 > from_file
-        && (board.en_passant_square == to || board.can_capture(to, pawn_color))
+        && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
 }
 
 #[inline]

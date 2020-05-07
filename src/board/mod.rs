@@ -1,38 +1,23 @@
+use crate::board::board_state::{
+    BoardState, KINGS_ROOKS_AFTER_CASTLING_POSITIONS, KINGS_ROOKS_POSITIONS,
+    QUEENS_ROOKS_AFTER_CASTLING_POSITIONS, QUEENS_ROOKS_POSITIONS,
+};
 use crate::moves::{
     get_captured_piece, get_captured_piece_position, get_from, get_move_type, get_moved_piece,
     get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE,
 };
-use crate::pieces::color::{get_piece_color, uncolorize_piece, Color};
-use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, KING, PAWN};
+use crate::pieces::color::{get_piece_color, Color};
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 
+pub mod board_state;
 pub mod castling;
 pub mod constructor;
 
 pub struct Board {
     pub pieces: [ColorizedPiece; 64],
-    side: Color,
-    fifty_moves: u8,
-    has_king_stayed_in_place: [bool; 2],
-    has_queens_rook_stayed_in_place: [bool; 2],
-    has_kings_rook_stayed_in_place: [bool; 2],
-    king_positions: [u8; 2],
-    last_king_positions: [u8; 2],
-    last_fifty_moves: u8,
-    last_has_king_stayed_in_place: [bool; 2],
-    last_has_queens_rook_stayed_in_place: [bool; 2],
-    last_has_kings_rook_stayed_in_place: [bool; 2],
-    last_en_passant_square: i8,
-
-    pub en_passant_square: i8,
+    pub state: BoardState,
+    last_state: BoardState,
 }
-
-const KING_POSITIONS: [usize; 2] = [4, 60];
-const KINGS_ROOKS_POSITIONS: [usize; 2] = [7, 63];
-const QUEENS_ROOKS_POSITIONS: [usize; 2] = [0, 56];
-
-const KINGS_ROOKS_AFTER_CASTLING_POSITIONS: [usize; 2] = [5, 61];
-const QUEENS_ROOKS_AFTER_CASTLING_POSITIONS: [usize; 2] = [3, 59];
-const INVERSED_PAWN_STEPS: [i8; 2] = [-8, 8];
 
 impl Board {
     #[inline]
@@ -48,74 +33,6 @@ impl Board {
     }
 
     #[inline]
-    fn update_fifty_moves(
-        self: &mut Board,
-        moved_piece: ColorizedPiece,
-        captured_piece: ColorizedPiece,
-    ) {
-        self.last_fifty_moves = self.fifty_moves;
-        if uncolorize_piece(moved_piece) != PAWN && captured_piece == EMPTY_SQUARE {
-            self.fifty_moves += 1;
-        } else {
-            self.fifty_moves = 0;
-        }
-    }
-
-    #[inline]
-    fn update_has_stayed(self: &mut Board, color: usize, from: usize) {
-        self.last_has_king_stayed_in_place[color] = self.has_king_stayed_in_place[color];
-        self.last_has_kings_rook_stayed_in_place[color] =
-            self.has_kings_rook_stayed_in_place[color];
-        self.last_has_queens_rook_stayed_in_place[color] =
-            self.has_queens_rook_stayed_in_place[color];
-
-        self.has_king_stayed_in_place[color] &= KING_POSITIONS[color] != from;
-        self.has_kings_rook_stayed_in_place[color] &= KINGS_ROOKS_POSITIONS[color] != from;
-        self.has_queens_rook_stayed_in_place[color] &= QUEENS_ROOKS_POSITIONS[color] != from;
-    }
-
-    #[inline]
-    fn revert_has_stayed(self: &mut Board, color: usize) {
-        self.has_king_stayed_in_place[color] = self.last_has_king_stayed_in_place[color];
-        self.has_kings_rook_stayed_in_place[color] =
-            self.last_has_kings_rook_stayed_in_place[color];
-        self.has_queens_rook_stayed_in_place[color] =
-            self.last_has_queens_rook_stayed_in_place[color];
-    }
-
-    // Probably, to be optimized.
-    #[inline]
-    fn update_en_passant_square(
-        self: &mut Board,
-        from: usize,
-        to: usize,
-        moved_piece: ColorizedPiece,
-        color: usize,
-    ) {
-        self.last_en_passant_square = self.en_passant_square;
-        self.en_passant_square = if to as i8 - from as i8 == (INVERSED_PAWN_STEPS[!color] << 1)
-            && uncolorize_piece(moved_piece) == PAWN
-        {
-            to as i8 + INVERSED_PAWN_STEPS[color]
-        } else {
-            -1
-        };
-    }
-
-    // Probably, to be optimized.
-    #[inline]
-    fn update_king_position(
-        self: &mut Board,
-        moved_piece: ColorizedPiece,
-        to: usize,
-        color: usize,
-    ) {
-        if uncolorize_piece(moved_piece) == KING {
-            self.king_positions[color as usize] = to as u8;
-        }
-    }
-
-    #[inline]
     pub fn make_move(self: &mut Board, half_move: Move) {
         let from = get_from(half_move);
         let to = get_to(half_move);
@@ -125,12 +42,14 @@ impl Board {
         let moved_piece = get_moved_piece(half_move);
         let captured_piece = get_captured_piece(half_move);
         let color = get_piece_color(moved_piece) as usize;
-
-        self.update_has_stayed(color, from);
-        self.update_fifty_moves(moved_piece, captured_piece);
-        self.update_en_passant_square(from, to, moved_piece, color);
-        self.update_king_position(moved_piece, to, color);
-        self.side = !self.side;
+        self.state.update(
+            &mut self.last_state,
+            moved_piece,
+            captured_piece,
+            from,
+            to,
+            color,
+        );
 
         match get_move_type(half_move) {
             CASTLING_KINGS_SIDE => {
@@ -157,11 +76,7 @@ impl Board {
         self.pieces[to] = EMPTY_SQUARE;
         self.pieces[get_captured_piece_position(half_move)] = get_captured_piece(half_move);
 
-        self.revert_has_stayed(color);
-        self.fifty_moves = self.last_fifty_moves;
-        self.en_passant_square = self.last_en_passant_square;
-        self.king_positions[color] = self.last_king_positions[color];
-        self.side = !self.side;
+        self.state.revert(&self.last_state);
 
         match get_move_type(half_move) {
             CASTLING_KINGS_SIDE => {
