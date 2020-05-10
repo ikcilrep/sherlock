@@ -149,15 +149,13 @@ impl Board {
             square - 6,
         ];
         let colorized_knight = colorize_piece(KNIGHT, !attacked_color);
-        let square_file = square & 7;
-
-        move_pseudo_legality_validators
-            .iter()
-            .zip(moves_to.iter())
-            .any(|(is_move_pseudo_legal, attacker_square)| {
-                is_move_pseudo_legal(square_file, *attacker_square, self, !attacked_color)
-                    && self.pieces[*attacker_square as usize] == colorized_knight
-            })
+        self.is_square_attacked_by_piece(
+            square,
+            colorized_knight,
+            moves_to,
+            move_pseudo_legality_validators,
+            attacked_color,
+        )
     }
 
     fn is_square_attacked_by_king(self: &Board, square: i8, attacked_color: Color) -> bool {
@@ -184,6 +182,23 @@ impl Board {
         ];
 
         let colorized_king = colorize_piece(KING, !attacked_color);
+        self.is_square_attacked_by_piece(
+            square,
+            colorized_king,
+            moves_to,
+            move_pseudo_legality_validators,
+            attacked_color,
+        )
+    }
+
+    fn is_square_attacked_by_piece(
+        self: &Board,
+        square: i8,
+        piece: ColorizedPiece,
+        moves_to: [i8; 8],
+        move_pseudo_legality_validators: [fn(i8, i8, &Board, Color) -> bool; 8],
+        attacked_color: Color,
+    ) -> bool {
         let square_file = square & 7;
 
         move_pseudo_legality_validators
@@ -191,7 +206,7 @@ impl Board {
             .zip(moves_to.iter())
             .any(|(is_move_pseudo_legal, attacker_square)| {
                 is_move_pseudo_legal(square_file, *attacker_square, self, !attacked_color)
-                    && self.pieces[*attacker_square as usize] == colorized_king
+                    && self.pieces[*attacker_square as usize] == piece
             })
     }
 
