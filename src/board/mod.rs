@@ -9,6 +9,7 @@ use crate::moves::{
 use crate::pieces::color::{get_piece_color, Color};
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 
+pub mod attackers;
 pub mod board_state;
 pub mod castling;
 pub mod constructor;
