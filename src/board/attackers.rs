@@ -1,9 +1,6 @@
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
-use crate::pieces::knight::{
-    is_move_northeast_pseudo_legal, is_move_northwest_pseudo_legal, is_move_southeast_pseudo_legal,
-    is_move_southwest_pseudo_legal,
-};
+use crate::pieces::knight;
 use crate::pieces::{ColorizedPiece, BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
 
 const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
@@ -132,14 +129,14 @@ impl Board {
 
     fn is_square_attacked_by_knight(self: &Board, square: i8, attacked_color: Color) -> bool {
         let move_pseudo_legality_validators = [
-            is_move_northeast_pseudo_legal,
-            is_move_northwest_pseudo_legal,
-            is_move_southeast_pseudo_legal,
-            is_move_southwest_pseudo_legal,
-            is_move_northeast_pseudo_legal,
-            is_move_northwest_pseudo_legal,
-            is_move_southeast_pseudo_legal,
-            is_move_southwest_pseudo_legal,
+            knight::is_move_northeast_pseudo_legal,
+            knight::is_move_northwest_pseudo_legal,
+            knight::is_move_southeast_pseudo_legal,
+            knight::is_move_southwest_pseudo_legal,
+            knight::is_move_northeast_pseudo_legal,
+            knight::is_move_northwest_pseudo_legal,
+            knight::is_move_southeast_pseudo_legal,
+            knight::is_move_southwest_pseudo_legal,
         ];
         let moves_to = [
             square + 17,
