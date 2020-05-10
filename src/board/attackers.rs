@@ -1,7 +1,7 @@
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, get_piece_color, Color};
-use crate::pieces::knight;
-use crate::pieces::{ColorizedPiece, BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
+use crate::pieces::{king, knight};
+use crate::pieces::{ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
 
 const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
 
@@ -160,9 +160,45 @@ impl Board {
             })
     }
 
+    fn is_square_attacked_by_king(self: &Board, square: i8, attacked_color: Color) -> bool {
+        let move_pseudo_legality_validators = [
+            king::is_move_northwest_pseudo_legal,
+            king::is_move_north_pseudo_legal,
+            king::is_move_northeast_pseudo_legal,
+            king::is_move_east_pseudo_legal,
+            king::is_move_southeast_pseudo_legal,
+            king::is_move_south_pseudo_legal,
+            king::is_move_southwest_pseudo_legal,
+            king::is_move_west_pseudo_legal,
+        ];
+
+        let moves_to = [
+            square + 7,
+            square + 8,
+            square + 9,
+            square + 1,
+            square - 7,
+            square - 8,
+            square - 9,
+            square - 1,
+        ];
+
+        let colorized_king = colorize_piece(KING, !attacked_color);
+        let square_file = square & 7;
+
+        move_pseudo_legality_validators
+            .iter()
+            .zip(moves_to.iter())
+            .any(|(is_move_pseudo_legal, attacker_square)| {
+                is_move_pseudo_legal(square_file, *attacker_square, self, !attacked_color)
+                    && self.pieces[*attacker_square as usize] == colorized_king
+            })
+    }
+
     // Probably, to be optimized.
     pub fn is_square_attacked(self: &Board, square: i8, attacked_color: Color) -> bool {
-        self.is_square_attacked_by_knight(square, attacked_color)
+        self.is_square_attacked_by_king(square, attacked_color)
+            || self.is_square_attacked_by_knight(square, attacked_color)
             || self.is_square_attacked_on_straight_line(square, attacked_color)
             || self.is_square_attacked_on_diagonal(square, attacked_color)
     }

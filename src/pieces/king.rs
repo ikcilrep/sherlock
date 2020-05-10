@@ -9,42 +9,62 @@ use rand::rngs::ThreadRng;
 use rand::Rng;
 
 #[inline]
-fn is_move_northwest_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_northwest_pseudo_legal(
+    from_file: i8,
+    to: i8,
+    board: &Board,
+    king_color: Color,
+) -> bool {
     to < 64 && to & 7 < from_file && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_north_pseudo_legal(_: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_north_pseudo_legal(_: i8, to: i8, board: &Board, king_color: Color) -> bool {
     to < 64 && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_northeast_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_northeast_pseudo_legal(
+    from_file: i8,
+    to: i8,
+    board: &Board,
+    king_color: Color,
+) -> bool {
     to < 64 && to & 7 > from_file && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_east_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_east_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
     to & 7 > from_file && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_southeast_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_southeast_pseudo_legal(
+    from_file: i8,
+    to: i8,
+    board: &Board,
+    king_color: Color,
+) -> bool {
     to >= 0 && to & 7 > from_file && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_south_pseudo_legal(_: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_south_pseudo_legal(_: i8, to: i8, board: &Board, king_color: Color) -> bool {
     to >= 0 && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_southwest_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_southwest_pseudo_legal(
+    from_file: i8,
+    to: i8,
+    board: &Board,
+    king_color: Color,
+) -> bool {
     to >= 0 && to & 7 < from_file && board.can_be_moved(to, king_color)
 }
 
 #[inline]
-fn is_move_west_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
+pub fn is_move_west_pseudo_legal(from_file: i8, to: i8, board: &Board, king_color: Color) -> bool {
     to & 7 < from_file && board.can_be_moved(to, king_color)
 }
 
