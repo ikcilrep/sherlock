@@ -9,7 +9,7 @@ use rand::rngs::ThreadRng;
 use rand::Rng;
 
 #[inline]
-fn is_move_northeast_pseudo_legal(
+pub fn is_move_northeast_pseudo_legal(
     from_file: i8,
     to: i8,
     board: &Board,
@@ -19,7 +19,7 @@ fn is_move_northeast_pseudo_legal(
 }
 
 #[inline]
-fn is_move_northwest_pseudo_legal(
+pub fn is_move_northwest_pseudo_legal(
     from_file: i8,
     to: i8,
     board: &Board,
@@ -29,7 +29,7 @@ fn is_move_northwest_pseudo_legal(
 }
 
 #[inline]
-fn is_move_southeast_pseudo_legal(
+pub fn is_move_southeast_pseudo_legal(
     from_file: i8,
     to: i8,
     board: &Board,
@@ -39,7 +39,7 @@ fn is_move_southeast_pseudo_legal(
 }
 
 #[inline]
-fn is_move_southwest_pseudo_legal(
+pub fn is_move_southwest_pseudo_legal(
     from_file: i8,
     to: i8,
     board: &Board,
@@ -57,7 +57,6 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     if is_move_northeast_pseudo_legal(from_file, to, board, knight_color) {
         result.push(new_move(from, to, board));
     }
-
     to = signed_from + 15;
     if is_move_northwest_pseudo_legal(from_file, to, board, knight_color) {
         result.push(new_move(from, to, board));
