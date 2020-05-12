@@ -15,7 +15,7 @@ pub struct BoardState {
     pub has_king_stayed_in_place: [bool; 2],
     pub has_queens_rook_stayed_in_place: [bool; 2],
     pub has_kings_rook_stayed_in_place: [bool; 2],
-    pub king_positions: [u8; 2],
+    pub king_positions: [i8; 2],
     pub en_passant_square: i8,
 }
 
@@ -99,7 +99,7 @@ impl BoardState {
     ) {
         if uncolorize_piece(moved_piece) == KING {
             last_state.king_positions[color as usize] = self.king_positions[color as usize];
-            self.king_positions[color as usize] = to as u8;
+            self.king_positions[color as usize] = to as i8;
         }
     }
 
