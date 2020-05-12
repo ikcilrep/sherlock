@@ -1,6 +1,7 @@
 use crate::board::Board;
 use crate::moves::Move;
 use crate::pieces::color::{get_piece_color, uncolorize_piece};
+use std::collections::LinkedList;
 
 pub mod bishop;
 pub mod color;
@@ -45,7 +46,6 @@ pub const PSEUDO_LEGAL_MOVE_GENERATORS: [Generator; 7] = [
     |_, _, _| {},
 ];
 
-#[inline]
 pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
     board
         .pieces
@@ -55,4 +55,15 @@ pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
         .for_each(|(from, piece)| {
             PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, board, result)
         });
+}
+
+// Temporary, naive version.
+pub fn generate_all_legal_moves(board: &Board) -> LinkedList<Move> {
+    let mut result = Vec::new();
+    generate_all_pseudo_legal_moves(board, &mut result);
+    result
+        .iter()
+        .cloned()
+        .filter(|half_move| board.is_move_legal(*half_move))
+        .collect::<LinkedList<Move>>()
 }
