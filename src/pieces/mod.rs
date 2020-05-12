@@ -1,6 +1,6 @@
 use crate::board::Board;
 use crate::moves::Move;
-use crate::pieces::color::uncolorize_piece;
+use crate::pieces::color::{get_piece_color, uncolorize_piece};
 
 pub mod bishop;
 pub mod color;
@@ -47,7 +47,12 @@ pub const PSEUDO_LEGAL_MOVE_GENERATORS: [Generator; 7] = [
 
 #[inline]
 pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
-    for (from, piece) in board.pieces.iter().enumerate() {
-        PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, board, result);
-    }
+    board
+        .pieces
+        .iter()
+        .filter(|piece| get_piece_color(**piece) == board.state.side)
+        .enumerate()
+        .for_each(|(from, piece)| {
+            PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, board, result)
+        });
 }
