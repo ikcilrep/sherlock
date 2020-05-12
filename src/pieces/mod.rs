@@ -58,7 +58,7 @@ pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
 }
 
 // Temporary, naive version.
-pub fn generate_all_legal_moves(board: &Board) -> LinkedList<Move> {
+pub fn generate_all_legal_moves(board: &mut Board) -> LinkedList<Move> {
     let mut result = Vec::new();
     generate_all_pseudo_legal_moves(board, &mut result);
     result
