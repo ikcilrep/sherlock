@@ -1,11 +1,13 @@
 use crate::board::Board;
+use crate::moves::Move;
+use crate::pieces::color::Color;
 
 impl Board {
     pub fn is_move_legal(self: &Board, half_move: Move) -> bool {
         self.make_move(half_move);
         if self.is_king_checked(!self.state.side) {
             self.undo_move(half_move);
-            false
+            return false;
         }
         true
     }

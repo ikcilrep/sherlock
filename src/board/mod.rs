@@ -12,8 +12,8 @@ use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 pub mod attackers;
 pub mod board_state;
 pub mod castling;
-pub mod checks;
 pub mod constructor;
+pub mod legality;
 
 pub struct Board {
     pub pieces: [ColorizedPiece; 64],
