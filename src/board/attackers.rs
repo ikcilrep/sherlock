@@ -128,43 +128,22 @@ impl Board {
     }
 
     fn is_square_attacked_by_knight(self: &Board, square: i8, attacked_color: Color) -> bool {
-        let move_pseudo_legality_validators = [
-            knight::is_move_northeast_pseudo_legal,
-            knight::is_move_northwest_pseudo_legal,
-            knight::is_move_southeast_pseudo_legal,
-            knight::is_move_southwest_pseudo_legal,
-            knight::is_move_northeast_pseudo_legal,
-            knight::is_move_northwest_pseudo_legal,
-            knight::is_move_southeast_pseudo_legal,
-            knight::is_move_southwest_pseudo_legal,
-        ];
-        let moves_to = [
-            square + 17,
-            square + 15,
-            square - 17,
-            square - 15,
-            square + 10,
-            square + 6,
-            square - 10,
-            square - 6,
-        ];
         let colorized_knight = colorize_piece(KNIGHT, !attacked_color);
         self.is_square_attacked_by_piece(
             square,
             colorized_knight,
-            moves_to,
-            move_pseudo_legality_validators,
+            knight::get_moves_to(square as usize),
+            knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
             attacked_color,
         )
     }
 
     fn is_square_attacked_by_king(self: &Board, square: i8, attacked_color: Color) -> bool {
-        let moves_to = king::get_moves_to(square as usize);
         let colorized_king = colorize_piece(KING, !attacked_color);
         self.is_square_attacked_by_piece(
             square,
             colorized_king,
-            moves_to,
+            king::get_moves_to(square as usize),
             king::MOVE_PSEUDO_LEGALITY_VALIDATORS,
             attacked_color,
         )
