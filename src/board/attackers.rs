@@ -159,34 +159,13 @@ impl Board {
     }
 
     fn is_square_attacked_by_king(self: &Board, square: i8, attacked_color: Color) -> bool {
-        let move_pseudo_legality_validators = [
-            king::is_move_northwest_pseudo_legal,
-            king::is_move_north_pseudo_legal,
-            king::is_move_northeast_pseudo_legal,
-            king::is_move_east_pseudo_legal,
-            king::is_move_southeast_pseudo_legal,
-            king::is_move_south_pseudo_legal,
-            king::is_move_southwest_pseudo_legal,
-            king::is_move_west_pseudo_legal,
-        ];
-
-        let moves_to = [
-            square + 7,
-            square + 8,
-            square + 9,
-            square + 1,
-            square - 7,
-            square - 8,
-            square - 9,
-            square - 1,
-        ];
-
+        let moves_to = king::get_moves_to(square as usize);
         let colorized_king = colorize_piece(KING, !attacked_color);
         self.is_square_attacked_by_piece(
             square,
             colorized_king,
             moves_to,
-            move_pseudo_legality_validators,
+            king::MOVE_PSEUDO_LEGALITY_VALIDATORS,
             attacked_color,
         )
     }
