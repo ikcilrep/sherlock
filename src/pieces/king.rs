@@ -12,7 +12,7 @@ pub const MOVE_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 8
     |from_file, to, board, king_color| {
         to < 64 && to & 7 < from_file && board.can_be_moved(to, king_color)
     },
-    |from_file, to, board, king_color| to < 64 && board.can_be_moved(to, king_color),
+    |_, to, board, king_color| to < 64 && board.can_be_moved(to, king_color),
     |from_file, to, board, king_color| {
         to < 64 && to & 7 > from_file && board.can_be_moved(to, king_color)
     },
@@ -52,7 +52,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         .filter(|(index, to)| {
             MOVE_PSEUDO_LEGALITY_VALIDATORS[*index](from_file, **to, board, king_color)
         })
-        .for_each(|(index, to)| result.push(new_move(from, *to, board)));
+        .for_each(|(_, to)| result.push(new_move(from, *to, board)));
 
     if board.is_castling_queens_side_pseudo_legal(king_color) {
         result.push(new_castling(CASTLING_QUEENS_SIDE, from, king, king_color))

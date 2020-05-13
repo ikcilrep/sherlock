@@ -65,9 +65,6 @@ impl BoardState {
         self.has_queens_rook_stayed_in_place[color] &= QUEENS_ROOKS_POSITIONS[color] != from;
     }
 
-    #[inline]
-    fn revert_has_stayed(self: &mut BoardState, color: usize) {}
-
     // Probably, to be optimized.
     #[inline]
     fn update_en_passant_square(

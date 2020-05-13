@@ -92,7 +92,7 @@ fn is_move_northwest_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_col
 }
 
 #[inline]
-fn is_move_north_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_color: Color) -> bool {
+fn is_move_north_pseudo_legal(_: i8, to: i8, board: &Board, _: Color) -> bool {
     to < 64 && to >= 0 && board.pieces[to as usize] == EMPTY_SQUARE
 }
 

@@ -21,7 +21,7 @@ impl Board {
     ) -> bool {
         let colorized_queen = colorize_piece(QUEEN, !attacked_color);
         let mut attacker_square = square + increment;
-        let mut square_file = square & 7;
+        let square_file = square & 7;
         while predicate(attacker_square, square_file)
             && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
         {
