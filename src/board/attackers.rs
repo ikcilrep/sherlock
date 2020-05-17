@@ -2,7 +2,6 @@ use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::{king, knight};
 use crate::pieces::{ColorizedPiece, BISHOP, KING, KNIGHT, PAWN, ROOK};
-
 const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
 
 impl Board {

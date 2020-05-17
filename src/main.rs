@@ -3,6 +3,7 @@ mod moves;
 mod pieces;
 extern crate rand;
 use crate::board::Board;
+use crate::moves::algebraic_notation::to_algebraic_notation;
 use crate::pieces::generate_all_pseudo_legal_moves;
 use crate::pieces::{bishop, king, knight, pawn, queen, rook, BLACK_KNIGHT, EMPTY_SQUARE};
 use rand::thread_rng;
@@ -26,49 +27,9 @@ fn main() {
     board.pieces[3] = EMPTY_SQUARE;
     board.pieces[11] = EMPTY_SQUARE;
     board.pieces[12] = EMPTY_SQUARE;
-    board.pieces[17] = BLACK_KNIGHT;
+    //board.pieces[17] = BLACK_KNIGHT;
     generate_all_pseudo_legal_moves(&board, &mut moves);
-    let mut rng = thread_rng();
-    println!(
-        "{}",
-        moves::get_to(knight::generate_random_pseudo_legal_move(
-            1, &board, &mut rng
-        ))
-    );
-    println!(
-        "{}",
-        moves::get_to(king::generate_random_pseudo_legal_move(4, &board, &mut rng))
-    );
-
-    println!(
-        "{}",
-        moves::get_to(pawn::generate_random_pseudo_legal_move(8, &board, &mut rng))
-    );
-
-    println!(
-        "{}",
-        moves::get_to(rook::generate_random_pseudo_legal_move(0, &board, &mut rng))
-    );
-
-    println!(
-        "{}",
-        moves::get_to(bishop::generate_random_pseudo_legal_move(
-            5, &board, &mut rng
-        ))
-    );
-
-    println!(
-        "{}",
-        moves::get_to(queen::generate_random_pseudo_legal_move(
-            3, &board, &mut rng
-        ))
-    );
-
-    // for m in moves {
-    //     println!("From: {0}", moves::get_from(m));
-    //     println!("To: {0}", moves::get_to(m));
-    //     println!("Captured: {0}", moves::get_captured_piece(m));
-    //     println!("Promoted: {0}", moves::get_promoted_piece(m));
-    //     println!("Moved: {0}", moves::get_moved_piece(m));
-    // }
+    for m in moves {
+        println!("{}", to_algebraic_notation(m, &board));
+    }
 }

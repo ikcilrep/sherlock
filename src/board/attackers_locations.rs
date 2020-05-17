@@ -60,35 +60,54 @@ impl Board {
         attacked_color: Color,
     ) -> Vec<i8> {
         let mut result = Vec::new();
-
-        result.push(self.get_slider_attacking_square_location(
+        let location1 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
             8,
             |attacker_square, _| attacker_square < 64,
-        ));
-        result.push(self.get_slider_attacking_square_location(
+        );
+
+        if location1 != -1 {
+            result.push(location1);
+        }
+
+        let location2 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
             -8,
             |attacker_square, _| attacker_square > 0,
-        ));
-        result.push(self.get_slider_attacking_square_location(
+        );
+
+        if location2 != -1 {
+            result.push(location2)
+        }
+
+        let location3 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
             1,
             |attacker_square, _| attacker_square & 7 != 0,
-        ));
-        result.push(self.get_slider_attacking_square_location(
+        );
+
+        if location3 != -1 {
+            result.push(location3);
+        }
+
+        let location4 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
             -1,
             |attacker_square, _| attacker_square & 7 != 7,
-        ));
+        );
+
+        if location4 != -1 {
+            result.push(location4);
+        }
+
         result
     }
 
@@ -99,8 +118,8 @@ impl Board {
         attacked_color: Color,
     ) -> Vec<i8> {
         let mut result = Vec::new();
-        self.is_square_attacked_by_pawn(square, attacked_color);
-        result.push(self.get_slider_attacking_square_location(
+
+        let location1 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
@@ -108,15 +127,25 @@ impl Board {
             |attacker_square, square_file| {
                 attacker_square < 64 && attacker_square & 7 > square_file
             },
-        ));
-        result.push(self.get_slider_attacking_square_location(
+        );
+
+        if location1 != -1 {
+            result.push(location1);
+        }
+
+        let location2 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
             -9,
             |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 < square_file,
-        ));
-        result.push(self.get_slider_attacking_square_location(
+        );
+
+        if location2 != -1 {
+            result.push(location2);
+        }
+
+        let location3 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
@@ -124,14 +153,24 @@ impl Board {
             |attacker_square, square_file| {
                 attacker_square < 64 && attacker_square & 7 < square_file
             },
-        ));
-        result.push(self.get_slider_attacking_square_location(
+        );
+
+        if location3 != -1 {
+            result.push(location3);
+        }
+
+        let location4 = self.get_slider_attacking_square_location(
             square,
             piece,
             attacked_color,
             -7,
             |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 > square_file,
-        ));
+        );
+
+        if location4 != -1 {
+            result.push(location4);
+        }
+
         result
     }
 

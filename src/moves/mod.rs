@@ -18,6 +18,7 @@ use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 // There is a lot of info, efficiency is more important than memory in this case.
 #[macro_use]
 pub mod constructors;
+pub mod algebraic_notation;
 pub type Move = u32;
 pub type MoveType = u8;
 pub const CASTLING_KINGS_SIDE: MoveType = 0;
