@@ -1,16 +1,11 @@
 use crate::board::Board;
-use crate::pieces::color::{colorize_piece, get_piece_color, Color};
+use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::{king, knight};
-use crate::pieces::{ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
+use crate::pieces::{ColorizedPiece, BISHOP, KING, KNIGHT, PAWN, ROOK};
 
 const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
 
 impl Board {
-    #[inline]
-    fn is_square_not_occupied_by_color(self: &Board, square: usize, color: Color) -> bool {
-        self.pieces[square] == EMPTY_SQUARE || get_piece_color(self.pieces[square]) != color
-    }
-
     fn is_square_attacked_by_slider(
         self: &Board,
         square: i8,
@@ -19,20 +14,13 @@ impl Board {
         increment: i8,
         predicate: fn(i8, i8) -> bool,
     ) -> bool {
-        let colorized_queen = colorize_piece(QUEEN, !attacked_color);
-        let mut attacker_square = square + increment;
-        let square_file = square & 7;
-        while predicate(attacker_square, square_file)
-            && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
-        {
-            if self.pieces[attacker_square as usize] == possible_attacker
-                || self.pieces[attacker_square as usize] == colorized_queen
-            {
-                return true;
-            }
-            attacker_square += increment;
-        }
-        false
+        self.get_slider_or_queen_attacking_square_location(
+            square,
+            possible_attacker,
+            attacked_color,
+            increment,
+            predicate,
+        ) > -1
     }
 
     fn is_square_attacked_on_straight_line(
@@ -73,7 +61,7 @@ impl Board {
         square >= 0 && square < 64
     }
 
-    fn is_square_attacked_by_pawn(self: &Board, square: i8, attacked_color: Color) -> bool {
+    pub fn is_square_attacked_by_pawn(self: &Board, square: i8, attacked_color: Color) -> bool {
         let colorized_pawn = colorize_piece(PAWN, !attacked_color);
         let square_file = square & 7;
         let attacker_square1 = square + INVERSED_PAWN_CAPTURES[attacked_color as usize][0];
