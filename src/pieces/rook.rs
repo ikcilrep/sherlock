@@ -7,6 +7,23 @@ use crate::pieces::sliders::add_sliding_move;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
+fn get_nearest_moves_to(from: usize) -> [i8; 4] {
+    let signed_from = from as i8;
+    [
+        signed_from + 1,
+        signed_from - 1,
+        signed_from + 8,
+        signed_from - 8,
+    ]
+}
+
+const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, &Board, Color) -> bool; 4] = [
+    |to, board, rook_color| to & 7 != 0 && board.can_be_moved(to, rook_color),
+    |to, board, rook_color| to & 7 != 7 && board.can_be_moved(to, rook_color),
+    |to, board, rook_color| to < 64 && board.can_be_moved(to, rook_color),
+    |to, board, rook_color| to >= 0 && board.can_be_moved(to, rook_color),
+];
+
 #[inline]
 fn generate_pseudo_legal_moves_on_east(
     from: usize,
@@ -91,4 +108,12 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
         i != start
     } {}
     NULL_MOVE
+}
+
+#[inline]
+pub fn can_be_moved(from: usize, board: &Board) -> bool {
+    get_nearest_moves_to(from)
+        .iter()
+        .enumerate()
+        .any(|(i, to)| NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](*to, board, board.state.side))
 }
