@@ -4,6 +4,7 @@ use crate::board::Board;
 use crate::moves::constructors::{new_castling, new_move};
 use crate::moves::{Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, NULL_MOVE};
 use crate::pieces::color::{get_piece_color, Color};
+use crate::pieces::EMPTY_SQUARE;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
@@ -88,4 +89,15 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
         i != start
     } {}
     NULL_MOVE
+}
+
+pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
+    let king = board.pieces[from];
+    board.pieces[from] = EMPTY_SQUARE;
+    let result = get_moves_to(from).iter().any(|to| {
+        board.can_be_moved(*to, board.state.side)
+            && !board.is_square_attacked(*to, board.state.side)
+    });
+    board.pieces[from] = king;
+    result
 }
