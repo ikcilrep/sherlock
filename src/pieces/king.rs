@@ -94,8 +94,9 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
 pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
     let king = board.pieces[from];
     board.pieces[from] = EMPTY_SQUARE;
-    let result = get_moves_to(from).iter().any(|to| {
-        board.can_be_moved(*to, board.state.side)
+    let from_file = from as i8 & 7;
+    let result = get_moves_to(from).iter().enumerate().any(|(i, to)| {
+        MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side)
             && !board.is_square_attacked(*to, board.state.side)
     });
     board.pieces[from] = king;
