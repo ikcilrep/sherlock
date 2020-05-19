@@ -71,15 +71,21 @@ pub fn to_algebraic_notation(half_move: Move, board: &Board) -> String {
             let mut result = String::new();
             let moved_piece = get_moved_piece(half_move);
             let uncolorized_moved_piece = uncolorize_piece(moved_piece);
+            let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE;
             if uncolorized_moved_piece != PAWN {
                 result.push(piece_to_char(uncolorized_moved_piece));
                 remove_ambiguities(half_move, &mut result, board);
+            } else if is_capture {
+                let from_file = (get_from(half_move) & 7) as u8;
+                result.push(file_to_char(from_file));
             }
             // Rank or file will be here.
-            if get_captured_piece(half_move) != EMPTY_SQUARE {
+            if is_capture {
                 result.push('x');
             }
-            result.push_str(location_to_string(get_to(half_move) as u8).as_str());
+
+            let to = get_to(half_move) as u8;
+            result.push_str(location_to_string(to).as_str());
 
             result
         }
