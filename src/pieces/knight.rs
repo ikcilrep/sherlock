@@ -104,3 +104,12 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     } {}
     NULL_MOVE
 }
+
+#[inline]
+pub fn can_be_moved(from: usize, board: &Board) -> bool {
+    let from_file = from as i8 & 7;
+    get_moves_to(from)
+        .iter()
+        .enumerate()
+        .any(|(i, to)| MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side))
+}
