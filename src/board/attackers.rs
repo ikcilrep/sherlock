@@ -22,7 +22,7 @@ impl Board {
         ) > -1
     }
 
-    fn is_square_attacked_on_straight_line(
+    fn is_square_attacked_on_straight_line_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -60,6 +60,7 @@ impl Board {
         square >= 0 && square < 64
     }
 
+    #[inline]
     pub fn is_square_attacked_by_pawn(self: &Board, square: i8, attacked_color: Color) -> bool {
         let colorized_pawn = colorize_piece(PAWN, !attacked_color);
         let square_file = square & 7;
@@ -73,45 +74,41 @@ impl Board {
                 && self.pieces[attacker_square2 as usize] == colorized_pawn)
     }
 
-    fn is_square_attacked_on_diagonal(self: &Board, square: i8, attacked_color: Color) -> bool {
+    fn is_square_attacked_on_diagonal_by_slider(
+        self: &Board,
+        square: i8,
+        attacked_color: Color,
+    ) -> bool {
         let colorized_bishop = colorize_piece(BISHOP, !attacked_color);
-        self.is_square_attacked_by_pawn(square, attacked_color)
-            || self.is_square_attacked_by_slider(
-                square,
-                colorized_bishop,
-                attacked_color,
-                9,
-                |attacker_square, square_file| {
-                    attacker_square < 64 && attacker_square & 7 > square_file
-                },
-            )
-            || self.is_square_attacked_by_slider(
-                square,
-                colorized_bishop,
-                attacked_color,
-                -9,
-                |attacker_square, square_file| {
-                    attacker_square > 0 && attacker_square & 7 < square_file
-                },
-            )
-            || self.is_square_attacked_by_slider(
-                square,
-                colorized_bishop,
-                attacked_color,
-                7,
-                |attacker_square, square_file| {
-                    attacker_square < 64 && attacker_square & 7 < square_file
-                },
-            )
-            || self.is_square_attacked_by_slider(
-                square,
-                colorized_bishop,
-                attacked_color,
-                -7,
-                |attacker_square, square_file| {
-                    attacker_square > 0 && attacker_square & 7 > square_file
-                },
-            )
+        self.is_square_attacked_by_slider(
+            square,
+            colorized_bishop,
+            attacked_color,
+            9,
+            |attacker_square, square_file| {
+                attacker_square < 64 && attacker_square & 7 > square_file
+            },
+        ) || self.is_square_attacked_by_slider(
+            square,
+            colorized_bishop,
+            attacked_color,
+            -9,
+            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 < square_file,
+        ) || self.is_square_attacked_by_slider(
+            square,
+            colorized_bishop,
+            attacked_color,
+            7,
+            |attacker_square, square_file| {
+                attacker_square < 64 && attacker_square & 7 < square_file
+            },
+        ) || self.is_square_attacked_by_slider(
+            square,
+            colorized_bishop,
+            attacked_color,
+            -7,
+            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 > square_file,
+        )
     }
 
     fn is_square_attacked_by_knight(self: &Board, square: i8, attacked_color: Color) -> bool {
@@ -159,7 +156,8 @@ impl Board {
     pub fn is_square_attacked(self: &Board, square: i8, attacked_color: Color) -> bool {
         self.is_square_attacked_by_king(square, attacked_color)
             || self.is_square_attacked_by_knight(square, attacked_color)
-            || self.is_square_attacked_on_straight_line(square, attacked_color)
-            || self.is_square_attacked_on_diagonal(square, attacked_color)
+            || self.is_square_attacked_by_pawn(square, attacked_color)
+            || self.is_square_attacked_on_straight_line_by_slider(square, attacked_color)
+            || self.is_square_attacked_on_diagonal_by_slider(square, attacked_color)
     }
 }
