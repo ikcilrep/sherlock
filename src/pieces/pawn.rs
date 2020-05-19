@@ -11,6 +11,31 @@ use rand::Rng;
 const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
 const PAWN_START_ROWS: [usize; 2] = [1, 6];
 
+const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 3] = [
+    |from_file, to, board, pawn_color| {
+        to < 64
+            && to >= 0
+            && to & 7 < from_file
+            && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
+    },
+    |_, to, board, _| to < 64 && to >= 0 && board.pieces[to as usize] == EMPTY_SQUARE,
+    |from_file, to, board, pawn_color| {
+        to < 64
+            && to >= 0
+            && to & 7 > from_file
+            && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
+    },
+];
+
+fn get_nearest_moves_to(from: usize, pawn_color: Color) -> [i8; 3] {
+    let signed_from = from as i8;
+    [
+        signed_from + PAWN_STEPS[pawn_color as usize][0],
+        signed_from + PAWN_STEPS[pawn_color as usize][1],
+        signed_from + PAWN_STEPS[pawn_color as usize][2],
+    ]
+}
+
 fn add_promotions(from: usize, to: i8, pawn_color: Color, board: &Board, result: &mut Vec<Move>) {
     let colorized_bishop = colorize_piece(BISHOP, pawn_color);
     let colorized_knight = colorize_piece(KNIGHT, pawn_color);
@@ -157,4 +182,15 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
         i != start
     } {}
     NULL_MOVE
+}
+
+#[inline]
+pub fn can_be_moved(from: usize, board: &Board) -> bool {
+    let from_file = from as i8 & 7;
+    get_nearest_moves_to(from, board.state.side)
+        .iter()
+        .enumerate()
+        .any(|(i, to)| {
+            NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side)
+        })
 }
