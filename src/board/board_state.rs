@@ -1,4 +1,3 @@
-use crate::board::Board;
 use crate::pieces::color::{uncolorize_piece, Color, WHITE};
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, KING, PAWN};
 

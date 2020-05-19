@@ -5,8 +5,7 @@ extern crate rand;
 use crate::board::Board;
 use crate::moves::algebraic_notation::to_algebraic_notation;
 use crate::pieces::generate_all_pseudo_legal_moves;
-use crate::pieces::{bishop, king, knight, pawn, queen, rook, BLACK_KNIGHT, EMPTY_SQUARE};
-use rand::thread_rng;
+use crate::pieces::{BLACK_KNIGHT, EMPTY_SQUARE};
 
 fn main() {
     let mut board = Board::new();
@@ -27,7 +26,7 @@ fn main() {
     board.pieces[3] = EMPTY_SQUARE;
     board.pieces[11] = EMPTY_SQUARE;
     board.pieces[12] = EMPTY_SQUARE;
-    //board.pieces[17] = BLACK_KNIGHT;
+    board.pieces[17] = BLACK_KNIGHT;
     generate_all_pseudo_legal_moves(&board, &mut moves);
     for m in moves {
         println!("{}", to_algebraic_notation(m, &board));

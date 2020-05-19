@@ -4,7 +4,6 @@ use crate::board::Board;
 use crate::moves::constructors::{new_castling, new_move};
 use crate::moves::{Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, NULL_MOVE};
 use crate::pieces::color::{get_piece_color, Color};
-use rand::distributions::Uniform;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 

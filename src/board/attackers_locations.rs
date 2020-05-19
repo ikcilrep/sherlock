@@ -1,4 +1,3 @@
-use crate::board::attackers;
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
 use crate::pieces::{knight, ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, QUEEN, ROOK};
