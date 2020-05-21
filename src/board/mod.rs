@@ -7,7 +7,7 @@ use crate::moves::{
     get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE,
 };
 use crate::pieces::color::{get_piece_color, Color};
-use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
+use crate::pieces::{bishop, king, knight, pawn, queen, rook, ColorizedPiece, EMPTY_SQUARE};
 
 pub mod attackers;
 pub mod attackers_locations;

@@ -46,16 +46,6 @@ pub const PSEUDO_LEGAL_MOVE_GENERATORS: [Generator; 7] = [
     |_, _, _| {},
 ];
 
-pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 6] = [
-    pawn::can_be_moved,
-    rook::can_be_moved,
-    knight::can_be_moved,
-    bishop::can_be_moved,
-    queen::can_be_moved,
-    king::can_be_moved,
-    |_, _| false,
-];
-
 pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
     board
         .pieces
@@ -76,13 +66,4 @@ pub fn generate_all_legal_moves(board: &mut Board) -> LinkedList<Move> {
         .cloned()
         .filter(|half_move| board.is_move_legal(*half_move))
         .collect::<LinkedList<Move>>()
-}
-
-pub fn can_any_piece_be_moved(board: &mut Board) -> bool {
-    board
-        .pieces
-        .iter()
-        .filter(|piece| get_piece_color(**piece) == board.state.side)
-        .enumerate()
-        .any(|(from, piece)| MOVE_AVAILABILITY_VALIDATORS[*piece as usize](from, board))
 }

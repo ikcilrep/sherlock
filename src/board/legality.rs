@@ -1,14 +1,24 @@
 use crate::board::Board;
 use crate::moves::Move;
 use crate::moves::{get_from, get_to};
-use crate::pieces::color::Color;
-use crate::pieces::EMPTY_SQUARE;
+use crate::pieces::color::{get_piece_color, Color};
+use crate::pieces::{bishop, king, knight, pawn, queen, rook, EMPTY_SQUARE};
 
 enum GameState {
     Draw,
     Win(Color),
     StillInProgress,
 }
+
+pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 6] = [
+    pawn::can_be_moved,
+    rook::can_be_moved,
+    knight::can_be_moved,
+    bishop::can_be_moved,
+    queen::can_be_moved,
+    king::can_be_moved,
+    |_, _| false,
+];
 
 impl Board {
     fn is_piece_pinned(self: &mut Board, from: i8, to: i8, protected_piece_location: i8) -> bool {
@@ -86,8 +96,24 @@ impl Board {
         self.is_square_attacked(self.state.king_positions[color as usize], color)
     }
 
-    fn get_game_result(self: &Board) -> GameState {
-        return if self.state.fifty_moves == 100 {
+    fn can_any_piece_be_moved(self: &mut Board) -> bool {
+        self.pieces
+            .iter()
+            .filter(|piece| get_piece_color(**piece) == self.state.side)
+            .enumerate()
+            .any(|(from, piece)| MOVE_AVAILABILITY_VALIDATORS[*piece as usize](from, self))
+    }
+
+    fn get_game_result(self: &mut Board) -> GameState {
+        // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.
+        // Threefold repetition draw will be implemented in future.
+        return if !self.can_any_piece_be_moved() {
+            if self.is_king_checked(self.state.side) {
+                GameState::Win(!self.state.side)
+            } else {
+                GameState::Draw
+            }
+        } else if self.state.fifty_moves == 100 {
             GameState::Draw
         } else {
             GameState::StillInProgress
