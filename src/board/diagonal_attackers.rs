@@ -3,7 +3,7 @@ use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::BISHOP;
 
 impl Board {
-    fn is_square_attacked_on_northeast_diagonal_by_slider(
+    pub fn is_square_attacked_from_northeast_diagonal_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -20,7 +20,7 @@ impl Board {
         )
     }
 
-    fn is_square_attacked_on_southwest_diagonal_by_slider(
+    pub fn is_square_attacked_from_southwest_diagonal_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -35,7 +35,7 @@ impl Board {
         )
     }
 
-    fn is_square_attacked_on_northwest_diagonal_by_slider(
+    pub fn is_square_attacked_from_northwest_diagonal_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -52,7 +52,7 @@ impl Board {
         )
     }
 
-    fn is_square_attacked_on_southeast_diagonal_by_slider(
+    pub fn is_square_attacked_from_southeast_diagonal_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -72,9 +72,9 @@ impl Board {
         square: i8,
         attacked_color: Color,
     ) -> bool {
-        self.is_square_attacked_on_northeast_diagonal_by_slider(square, attacked_color)
-            || self.is_square_attacked_on_southwest_diagonal_by_slider(square, attacked_color)
-            || self.is_square_attacked_on_northwest_diagonal_by_slider(square, attacked_color)
-            || self.is_square_attacked_on_southeast_diagonal_by_slider(square, attacked_color)
+        self.is_square_attacked_from_northeast_diagonal_by_slider(square, attacked_color)
+            || self.is_square_attacked_from_southwest_diagonal_by_slider(square, attacked_color)
+            || self.is_square_attacked_from_northwest_diagonal_by_slider(square, attacked_color)
+            || self.is_square_attacked_from_southeast_diagonal_by_slider(square, attacked_color)
     }
 }

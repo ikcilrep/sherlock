@@ -4,7 +4,7 @@ use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::ROOK;
 
 impl Board {
-    pub fn is_square_attacked_on_north_straight_line_by_slider(
+    pub fn is_square_attacked_from_north_straight_line_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -19,7 +19,7 @@ impl Board {
         )
     }
 
-    pub fn is_square_attacked_on_south_straight_line_by_slider(
+    pub fn is_square_attacked_from_south_straight_line_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -34,7 +34,7 @@ impl Board {
         )
     }
 
-    pub fn is_square_attacked_on_east_straight_line_by_slider(
+    pub fn is_square_attacked_from_east_straight_line_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -49,7 +49,7 @@ impl Board {
         )
     }
 
-    pub fn is_square_attacked_on_west_straight_line_by_slider(
+    pub fn is_square_attacked_from_west_straight_line_by_slider(
         self: &Board,
         square: i8,
         attacked_color: Color,
@@ -69,9 +69,9 @@ impl Board {
         square: i8,
         attacked_color: Color,
     ) -> bool {
-        self.is_square_attacked_on_north_straight_line_by_slider(square, attacked_color)
-            || self.is_square_attacked_on_south_straight_line_by_slider(square, attacked_color)
-            || self.is_square_attacked_on_east_straight_line_by_slider(square, attacked_color)
-            || self.is_square_attacked_on_west_straight_line_by_slider(square, attacked_color)
+        self.is_square_attacked_from_north_straight_line_by_slider(square, attacked_color)
+            || self.is_square_attacked_from_south_straight_line_by_slider(square, attacked_color)
+            || self.is_square_attacked_from_east_straight_line_by_slider(square, attacked_color)
+            || self.is_square_attacked_from_west_straight_line_by_slider(square, attacked_color)
     }
 }
