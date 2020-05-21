@@ -14,7 +14,9 @@ pub mod attackers_locations;
 pub mod board_state;
 pub mod castling;
 pub mod constructor;
+pub mod diagonal_attackers;
 pub mod legality;
+pub mod straight_line_attackers;
 
 pub struct Board {
     pub pieces: [ColorizedPiece; 64],

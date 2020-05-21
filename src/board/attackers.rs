@@ -1,11 +1,13 @@
+use crate::board::diagonal_attackers;
+use crate::board::straight_line_attackers;
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::{king, knight};
-use crate::pieces::{ColorizedPiece, BISHOP, KING, KNIGHT, PAWN, ROOK};
+use crate::pieces::{ColorizedPiece, KING, KNIGHT, PAWN};
 const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
 
 impl Board {
-    fn is_square_attacked_by_slider(
+    pub fn is_square_attacked_by_slider(
         self: &Board,
         square: i8,
         possible_attacker: ColorizedPiece,
@@ -20,39 +22,6 @@ impl Board {
             increment,
             predicate,
         ) > -1
-    }
-
-    fn is_square_attacked_on_straight_line_by_slider(
-        self: &Board,
-        square: i8,
-        attacked_color: Color,
-    ) -> bool {
-        let colorized_rook = colorize_piece(ROOK, !attacked_color);
-        self.is_square_attacked_by_slider(
-            square,
-            colorized_rook,
-            attacked_color,
-            8,
-            |attacker_square, _| attacker_square < 64,
-        ) || self.is_square_attacked_by_slider(
-            square,
-            colorized_rook,
-            attacked_color,
-            -8,
-            |attacker_square, _| attacker_square > 0,
-        ) || self.is_square_attacked_by_slider(
-            square,
-            colorized_rook,
-            attacked_color,
-            1,
-            |attacker_square, _| attacker_square & 7 != 0,
-        ) || self.is_square_attacked_by_slider(
-            square,
-            colorized_rook,
-            attacked_color,
-            -1,
-            |attacker_square, _| attacker_square & 7 != 7,
-        )
     }
 
     #[inline]
@@ -72,43 +41,6 @@ impl Board {
             || (self.is_square_on_board(attacker_square2)
                 && attacker_square2 & 7 < square_file
                 && self.pieces[attacker_square2 as usize] == colorized_pawn)
-    }
-
-    fn is_square_attacked_on_diagonal_by_slider(
-        self: &Board,
-        square: i8,
-        attacked_color: Color,
-    ) -> bool {
-        let colorized_bishop = colorize_piece(BISHOP, !attacked_color);
-        self.is_square_attacked_by_slider(
-            square,
-            colorized_bishop,
-            attacked_color,
-            9,
-            |attacker_square, square_file| {
-                attacker_square < 64 && attacker_square & 7 > square_file
-            },
-        ) || self.is_square_attacked_by_slider(
-            square,
-            colorized_bishop,
-            attacked_color,
-            -9,
-            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 < square_file,
-        ) || self.is_square_attacked_by_slider(
-            square,
-            colorized_bishop,
-            attacked_color,
-            7,
-            |attacker_square, square_file| {
-                attacker_square < 64 && attacker_square & 7 < square_file
-            },
-        ) || self.is_square_attacked_by_slider(
-            square,
-            colorized_bishop,
-            attacked_color,
-            -7,
-            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 > square_file,
-        )
     }
 
     fn is_square_attacked_by_knight(self: &Board, square: i8, attacked_color: Color) -> bool {
