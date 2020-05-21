@@ -23,6 +23,6 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
 }
 
 #[inline]
-pub fn can_be_moved(from: usize, board: &Board) -> bool {
+pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
     rook::can_be_moved(from, board) || bishop::can_be_moved(from, board)
 }
