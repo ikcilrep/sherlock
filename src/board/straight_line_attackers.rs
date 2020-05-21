@@ -1,4 +1,3 @@
-use crate::board::attackers;
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::ROOK;

@@ -1,5 +1,3 @@
-use crate::board::diagonal_attackers;
-use crate::board::straight_line_attackers;
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::{king, knight};
