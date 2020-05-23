@@ -3,8 +3,8 @@ extern crate rand;
 use crate::board::Board;
 use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::{Move, NULL_MOVE};
-use crate::pieces::color::{colorize_piece, get_piece_color, Color};
-use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, QUEEN, ROOK};
+use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
+use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
@@ -193,4 +193,11 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
         .any(|(i, to)| {
             NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side)
         })
+}
+
+pub fn can_be_moved_to_without_capture(to: i8, board: &mut Board) -> bool {
+    let color = board.state.side as usize;
+    let from = to - PAWN_STEPS[color][1];
+    uncolorize_piece(board.pieces[from as usize]) == PAWN
+        && !board.is_piece_pinned(from, to, board.state.king_positions[color])
 }
