@@ -21,7 +21,12 @@ pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 6] = [
 ];
 
 impl Board {
-    fn is_piece_pinned(self: &mut Board, from: i8, to: i8, protected_piece_location: i8) -> bool {
+    pub fn is_piece_pinned(
+        self: &mut Board,
+        from: i8,
+        to: i8,
+        protected_piece_location: i8,
+    ) -> bool {
         let protected_piece_file = protected_piece_location & 7;
         let protected_piece_rank = protected_piece_location >> 3;
         let from_file = from & 7;
@@ -103,6 +108,37 @@ impl Board {
             .enumerate()
             .any(|(from, piece)| MOVE_AVAILABILITY_VALIDATORS[*piece as usize](from, self))
     }
+
+    /*fn can_get_out_of_check(
+        self: &mut Board,
+        king_attackers_locations: &Vec<i8>,
+        color: Color,
+    ) -> bool {
+        let king_location = self.state.king_positions[color as usize];
+        return match king_attackers_locations.len() {
+            1 => {
+                if king::can_be_moved(king_location as usize, self) {
+                    return true;
+                }
+                let attacker_location = king_attackers_locations[0];
+                let attacker_location_rank = attacker_location >> 3;
+                let king_location_rank = king_location >> 3;
+
+                if attacker_location_rank == king_location_rank {
+                    if attacker_location > king_location {
+                        for square in king_location..attacker_location {
+                            if pawn::can_be_moved_to_without_capture(square, self)
+                                || self.is_square_defended_by_knight(square)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            _ => king::can_be_moved(king_location as usize, self),
+        };
+    }*/
 
     fn get_game_result(self: &mut Board) -> GameState {
         // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.
