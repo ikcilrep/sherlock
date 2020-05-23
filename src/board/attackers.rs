@@ -2,7 +2,7 @@ use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::{king, knight};
 use crate::pieces::{ColorizedPiece, KING, KNIGHT, PAWN};
-const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
+pub const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
 
 impl Board {
     pub fn is_square_attacked_by_slider(
