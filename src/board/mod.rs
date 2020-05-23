@@ -7,16 +7,18 @@ use crate::moves::{
     get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE,
 };
 use crate::pieces::color::{get_piece_color, Color};
-use crate::pieces::{bishop, king, knight, pawn, queen, rook, ColorizedPiece, EMPTY_SQUARE};
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 
 pub mod attackers;
 pub mod attackers_locations;
 pub mod board_state;
 pub mod castling;
 pub mod constructor;
+pub mod defenders;
 pub mod diagonal_attackers;
 pub mod legality;
 pub mod straight_line_attackers;
+pub mod straight_line_defenders;
 
 pub struct Board {
     pub pieces: [ColorizedPiece; 64],

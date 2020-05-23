@@ -6,7 +6,7 @@ use crate::pieces::{ColorizedPiece, KNIGHT};
 
 impl Board {
     pub fn is_square_defended_by_slider(
-        self: &Board,
+        self: &mut Board,
         square: i8,
         possible_attacker: ColorizedPiece,
         defended_piece_location: i8,
@@ -26,7 +26,7 @@ impl Board {
     }
 
     fn is_square_defended_by_knight(
-        self: &Board,
+        self: &mut Board,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,

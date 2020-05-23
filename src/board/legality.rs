@@ -10,7 +10,7 @@ enum GameState {
     StillInProgress,
 }
 
-pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 6] = [
+pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 7] = [
     pawn::can_be_moved,
     rook::can_be_moved,
     knight::can_be_moved,
@@ -102,11 +102,17 @@ impl Board {
     }
 
     fn can_any_piece_be_moved(self: &mut Board) -> bool {
-        self.pieces
-            .iter()
-            .filter(|piece| get_piece_color(**piece) == self.state.side)
-            .enumerate()
-            .any(|(from, piece)| MOVE_AVAILABILITY_VALIDATORS[*piece as usize](from, self))
+        let pieces = self.pieces;
+        let mut from = 0;
+        for piece in pieces.iter() {
+            if get_piece_color(*piece) == self.state.side
+                && MOVE_AVAILABILITY_VALIDATORS[*piece as usize](from, self)
+            {
+                return true;
+            }
+            from += 1;
+        }
+        false
     }
 
     /*fn can_get_out_of_check(
