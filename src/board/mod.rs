@@ -16,6 +16,7 @@ pub mod castling;
 pub mod constructor;
 pub mod defenders;
 pub mod diagonal_attackers;
+pub mod diagonal_defenders;
 pub mod legality;
 pub mod straight_line_attackers;
 pub mod straight_line_defenders;
