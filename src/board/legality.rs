@@ -115,6 +115,25 @@ impl Board {
         false
     }
 
+    /*fn is_square_defended_not_from_rank_by_not_pawn(
+        self: &mut Board,
+        square: i8,
+        defended_piece_location: i8,
+        defended_color: Color,
+    ) -> bool {
+        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+            || self.is_square_defended_from_diagonal_by_slider(
+                square,
+                defended_piece_location,
+                defended_color,
+            )
+            || self.is_square_defended_from_straight_line_on_file_by_slider(
+                square,
+                defended_piece_location,
+                defended_color,
+            )
+    }*/
+
     /*fn can_get_out_of_check(
         self: &mut Board,
         king_attackers_locations: &Vec<i8>,
@@ -132,15 +151,17 @@ impl Board {
 
                 if attacker_location_rank == king_location_rank {
                     if attacker_location > king_location {
-                        for square in king_location..attacker_location {
-                            if pawn::can_be_moved_to_without_capture(square, self)
-                                || self.is_square_defended_by_knight(square)
-                            {
-                                return true;
-                            }
-                        }
+                        return (king_location..attacker_location).any(|square| {
+                            pawn::can_be_moved_on_empty_square_without_capture(square, self)
+                                || self.is_square_defended_not_from_rank_by_not_pawn(
+                                    square,
+                                    king_location,
+                                    color,
+                                )
+                        });
                     }
                 }
+                false
             }
             _ => king::can_be_moved(king_location as usize, self),
         };

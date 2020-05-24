@@ -18,7 +18,7 @@ const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bo
             && to & 7 < from_file
             && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     },
-    |_, to, board, _| to < 64 && to >= 0 && board.pieces[to as usize] == EMPTY_SQUARE,
+    |_, to, board, _| board.pieces[to as usize] == EMPTY_SQUARE,
     |from_file, to, board, pawn_color| {
         to < 64
             && to >= 0
@@ -195,9 +195,9 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
         })
 }
 
-pub fn can_be_moved_to_without_capture(to: i8, board: &mut Board) -> bool {
+pub fn can_be_moved_on_empty_square_without_capture(empty_square: i8, board: &mut Board) -> bool {
     let color = board.state.side as usize;
-    let from = to - PAWN_STEPS[color][1];
+    let from = empty_square - PAWN_STEPS[color][1];
     uncolorize_piece(board.pieces[from as usize]) == PAWN
-        && !board.is_piece_pinned(from, to, board.state.king_positions[color])
+        && !board.is_piece_pinned(from, empty_square, board.state.king_positions[color])
 }
