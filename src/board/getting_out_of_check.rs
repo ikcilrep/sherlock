@@ -3,6 +3,25 @@ use crate::pieces::color::Color;
 use crate::pieces::{king, pawn};
 
 impl Board {
+    fn is_square_defended_not_from_rank_by_not_pawn(
+        self: &mut Board,
+        square: i8,
+        defended_piece_location: i8,
+        defended_color: Color,
+    ) -> bool {
+        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+            || self.is_square_defended_from_diagonal_by_slider(
+                square,
+                defended_piece_location,
+                defended_color,
+            )
+            || self.is_square_defended_from_straight_line_on_file_by_slider(
+                square,
+                defended_piece_location,
+                defended_color,
+            )
+    }
+
     fn can_get_out_of_check_on_rank(
         self: &mut Board,
         attacker_location: i8,

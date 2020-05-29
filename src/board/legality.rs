@@ -115,25 +115,6 @@ impl Board {
         false
     }
 
-    fn is_square_defended_not_from_rank_by_not_pawn(
-        self: &mut Board,
-        square: i8,
-        defended_piece_location: i8,
-        defended_color: Color,
-    ) -> bool {
-        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
-            || self.is_square_defended_from_diagonal_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-            || self.is_square_defended_from_straight_line_on_file_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-    }
-
     fn get_game_result(self: &mut Board) -> GameState {
         // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.
         // Threefold repetition draw will be implemented in future.
