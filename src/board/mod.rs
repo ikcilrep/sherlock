@@ -17,6 +17,7 @@ pub mod constructor;
 pub mod defenders;
 pub mod diagonal_attackers;
 pub mod diagonal_defenders;
+pub mod getting_out_of_check;
 pub mod legality;
 pub mod straight_line_attackers;
 pub mod straight_line_defenders;
