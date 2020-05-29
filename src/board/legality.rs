@@ -115,7 +115,7 @@ impl Board {
         false
     }
 
-    /*fn is_square_defended_not_from_rank_by_not_pawn(
+    fn is_square_defended_not_from_rank_by_not_pawn(
         self: &mut Board,
         square: i8,
         defended_piece_location: i8,
@@ -132,9 +132,9 @@ impl Board {
                 defended_piece_location,
                 defended_color,
             )
-    }*/
+    }
 
-    /*fn can_get_out_of_check(
+    fn can_get_out_of_check(
         self: &mut Board,
         king_attackers_locations: &Vec<i8>,
         color: Color,
@@ -158,14 +158,21 @@ impl Board {
                                     king_location,
                                     color,
                                 )
-                        });
+                        }) || pawn::can_capture_on_enemy_occupied_square(
+                            attacker_location,
+                            self,
+                        ) || self.is_square_defended_not_from_rank_by_not_pawn(
+                            attacker_location,
+                            king_location,
+                            color,
+                        );
                     }
-                }
+                } // file, diagonals, else in future
                 false
             }
             _ => king::can_be_moved(king_location as usize, self),
         };
-    }*/
+    }
 
     fn get_game_result(self: &mut Board) -> GameState {
         // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.

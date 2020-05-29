@@ -25,7 +25,7 @@ impl Board {
             && !self.is_piece_pinned(defender_location, square, defended_piece_location)
     }
 
-    fn is_square_defended_by_knight(
+    pub fn is_square_defended_by_knight(
         self: &mut Board,
         square: i8,
         defended_piece_location: i8,
