@@ -27,7 +27,7 @@ impl Board {
         )
     }
 
-    pub fn is_square_defended_from_straight_line_on_rank_straight_line_by_slider(
+    pub fn is_square_defended_from_straight_line_on_rank_by_slider(
         self: &mut Board,
         square: i8,
         defended_piece_location: i8,
