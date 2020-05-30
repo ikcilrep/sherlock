@@ -78,10 +78,10 @@ impl Board {
                 color,
             )
             || (attacker_location > king_location
-                && (king_location..attacker_location).any(|square| {
+                && (king_location..attacker_location).step_by(8).any(|square| {
                     self.is_square_defended_not_from_file_by_not_pawn(square, king_location, color)
                 })
-                || (attacker_location..king_location).any(|square| {
+                || (attacker_location..king_location).step_by(8).any(|square| {
                     self.is_square_defended_not_from_file_by_not_pawn(square, king_location, color)
                 }))
     }
@@ -109,7 +109,8 @@ impl Board {
                     self.can_get_out_of_check_on_file(attacker_location, king_location, color)
                 } else {
                     false
-                }; // diagonals in future
+                };
+                // diagonals and knight in future
             }
             _ => king::can_be_moved(king_location as usize, self),
         };
