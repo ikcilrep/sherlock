@@ -40,6 +40,26 @@ impl Board {
                 defended_color,
             )
     }
+
+    fn is_square_defended_not_from_northwest_southeast_diagonal_by_not_pawn(
+        self: &mut Board,
+        square: i8,
+        defended_piece_location: i8,
+        defended_color: Color,
+    ) -> bool {
+        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+            || self.is_square_defended_from_northeast_southwest_diagonal_by_slider(
+                square,
+                defended_piece_location,
+                defended_color,
+            )
+            || self.is_square_defended_from_straight_line_by_slider(
+                square,
+                defended_piece_location,
+                defended_color,
+            )
+    }
+
     fn can_get_out_of_check_on_rank(
         self: &mut Board,
         attacker_location: i8,
@@ -62,6 +82,7 @@ impl Board {
             || (attacker_location..king_location)
                 .any(|square| is_defended(square, king_location, color, self))
     }
+
     fn can_get_out_of_check_on_file(
         self: &mut Board,
         attacker_location: i8,
@@ -79,6 +100,32 @@ impl Board {
                 || (attacker_location..king_location).step_by(8).any(|square| {
                     self.is_square_defended_not_from_file_by_not_pawn(square, king_location, color)
                 }))
+    }
+
+    fn can_get_out_of_check_on_northwest_southeast_diagonal(
+        self: &mut Board,
+        attacker_location: i8,
+        king_location: i8,
+        color: Color,
+    ) -> bool {
+        fn is_defended(square: i8, king_location: i8, color: Color, board: &mut Board) -> bool {
+            pawn::can_be_moved_on_empty_square_without_capture(square, board)
+                || board.is_square_defended_not_from_northwest_southeast_diagonal_by_not_pawn(
+                    square,
+                    king_location,
+                    color,
+                )
+        }
+
+        pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
+            || is_defended(attacker_location, king_location, color, self)
+            || (attacker_location > king_location
+                && ((king_location + 7)..attacker_location)
+                    .step_by(7)
+                    .any(|square| is_defended(square, king_location, color, self))
+                || (attacker_location..king_location)
+                    .step_by(7)
+                    .any(|square| is_defended(square, king_location, color, self)))
     }
 
     pub fn can_get_out_of_check(
@@ -102,6 +149,12 @@ impl Board {
                     self.can_get_out_of_check_on_rank(attacker_location, king_location, color)
                 } else if attacker_location_file == king_location_file {
                     self.can_get_out_of_check_on_file(attacker_location, king_location, color)
+                } else if (attacker_location - king_location) % 7 == 0 {
+                    self.can_get_out_of_check_on_northwest_southeast_diagonal(
+                        attacker_location,
+                        king_location,
+                        color,
+                    )
                 } else {
                     false
                 };
