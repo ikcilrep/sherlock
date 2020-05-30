@@ -40,7 +40,6 @@ impl Board {
                 defended_color,
             )
     }
-
     fn can_get_out_of_check_on_rank(
         self: &mut Board,
         attacker_location: i8,
@@ -51,7 +50,6 @@ impl Board {
             pawn::can_be_moved_on_empty_square_without_capture(square, board)
                 || board.is_square_defended_not_from_rank_by_not_pawn(square, king_location, color)
         }
-
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
             || self.is_square_defended_not_from_rank_by_not_pawn(
                 attacker_location,
@@ -59,28 +57,25 @@ impl Board {
                 color,
             )
             || (attacker_location > king_location
-                && (king_location..attacker_location)
+                && ((king_location + 1)..attacker_location)
                     .any(|square| is_defended(square, king_location, color, self)))
             || (attacker_location..king_location)
                 .any(|square| is_defended(square, king_location, color, self))
     }
-
     fn can_get_out_of_check_on_file(
         self: &mut Board,
         attacker_location: i8,
         king_location: i8,
         color: Color,
     ) -> bool {
+        let is_defended = Board::is_square_defended_not_from_file_by_not_pawn;
+
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
-            || self.is_square_defended_not_from_file_by_not_pawn(
-                attacker_location,
-                king_location,
-                color,
-            )
+            || is_defended(self, attacker_location, king_location, color)
             || (attacker_location > king_location
-                && (king_location..attacker_location).step_by(8).any(|square| {
-                    self.is_square_defended_not_from_file_by_not_pawn(square, king_location, color)
-                })
+                && ((king_location + 8)..attacker_location)
+                    .step_by(8)
+                    .any(|square| is_defended(self, square, king_location, color))
                 || (attacker_location..king_location).step_by(8).any(|square| {
                     self.is_square_defended_not_from_file_by_not_pawn(square, king_location, color)
                 }))
