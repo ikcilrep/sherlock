@@ -118,13 +118,16 @@ impl Board {
     fn get_game_result(self: &mut Board) -> GameState {
         // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.
         // Threefold repetition draw will be implemented in future.
-        return if !self.can_any_piece_be_moved() {
-            if self.is_king_checked(self.state.side) {
-                GameState::Win(!self.state.side)
-            } else {
-                GameState::Draw
-            }
-        } else if self.state.fifty_moves == 100 {
+        return if self.state.fifty_moves == 100 {
+            GameState::Draw
+        } else if self.is_king_checked(self.state.side)
+            && !self.can_get_out_of_check(
+                &self.get_attackers_of_king_square_locations(self.state.side),
+                self.state.side,
+            )
+        {
+            GameState::Win(!self.state.side)
+        } else if !self.can_any_piece_be_moved() {
             GameState::Draw
         } else {
             GameState::StillInProgress

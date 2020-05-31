@@ -10,11 +10,8 @@ impl Board {
         self.pieces[square] == EMPTY_SQUARE || get_piece_color(self.pieces[square]) != color
     }
 
-    fn get_attackers_of_king_square_locations(
-        self: &Board,
-        square: i8,
-        attacked_color: Color,
-    ) -> Vec<i8> {
+    pub fn get_attackers_of_king_square_locations(self: &Board, attacked_color: Color) -> Vec<i8> {
+        let square = self.state.king_positions[attacked_color as usize];
         let mut result = Vec::new();
         self.get_pieces_attacking_square_locations(
             colorize_piece(KNIGHT, !attacked_color),
