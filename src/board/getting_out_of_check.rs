@@ -3,79 +3,37 @@ use crate::pieces::color::Color;
 use crate::pieces::{king, pawn};
 
 impl Board {
-    fn is_square_defended_not_from_rank_by_not_pawn(
-        self: &mut Board,
-        square: i8,
-        defended_piece_location: i8,
-        defended_color: Color,
-    ) -> bool {
-        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
-            || self.is_square_defended_from_diagonal_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-            || self.is_square_defended_from_straight_line_on_file_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-    }
-
-    fn is_square_defended_not_from_file_by_not_pawn(
-        self: &mut Board,
-        square: i8,
-        defended_piece_location: i8,
-        defended_color: Color,
-    ) -> bool {
-        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
-            || self.is_square_defended_from_diagonal_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-            || self.is_square_defended_from_straight_line_on_rank_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-    }
-
-    fn is_square_defended_not_from_northwest_southeast_diagonal_by_not_pawn(
-        self: &mut Board,
-        square: i8,
-        defended_piece_location: i8,
-        defended_color: Color,
-    ) -> bool {
-        self.is_square_defended_by_knight(square, defended_piece_location, defended_color)
-            || self.is_square_defended_from_northeast_southwest_diagonal_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-            || self.is_square_defended_from_straight_line_by_slider(
-                square,
-                defended_piece_location,
-                defended_color,
-            )
-    }
-
     fn can_get_out_of_check_on_rank(
         self: &mut Board,
         attacker_location: i8,
         king_location: i8,
         color: Color,
     ) -> bool {
+        fn is_square_defended_by_not_pawn(
+            square: i8,
+            defended_piece_location: i8,
+            defended_color: Color,
+            board: &mut Board,
+        ) -> bool {
+            board.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+                || board.is_square_defended_from_diagonal_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
+                )
+                || board.is_square_defended_from_straight_line_on_file_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
+                )
+        }
+
         fn is_defended(square: i8, king_location: i8, color: Color, board: &mut Board) -> bool {
             pawn::can_be_moved_on_empty_square_without_capture(square, board)
-                || board.is_square_defended_not_from_rank_by_not_pawn(square, king_location, color)
+                || is_square_defended_by_not_pawn(square, king_location, color, board)
         }
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
-            || self.is_square_defended_not_from_rank_by_not_pawn(
-                attacker_location,
-                king_location,
-                color,
-            )
+            || is_square_defended_by_not_pawn(attacker_location, king_location, color, self)
             || (attacker_location > king_location
                 && ((king_location + 1)..attacker_location)
                     .any(|square| is_defended(square, king_location, color, self)))
@@ -89,17 +47,34 @@ impl Board {
         king_location: i8,
         color: Color,
     ) -> bool {
-        let is_defended = Board::is_square_defended_not_from_file_by_not_pawn;
+        fn is_defended(
+            square: i8,
+            defended_piece_location: i8,
+            defended_color: Color,
+            board: &mut Board,
+        ) -> bool {
+            board.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+                || board.is_square_defended_from_diagonal_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
+                )
+                || board.is_square_defended_from_straight_line_on_rank_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
+                )
+        }
 
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
-            || is_defended(self, attacker_location, king_location, color)
+            || is_defended(attacker_location, king_location, color, self)
             || (attacker_location > king_location
                 && ((king_location + 8)..attacker_location)
                     .step_by(8)
-                    .any(|square| is_defended(self, square, king_location, color))
-                || (attacker_location..king_location).step_by(8).any(|square| {
-                    self.is_square_defended_not_from_file_by_not_pawn(square, king_location, color)
-                }))
+                    .any(|square| is_defended(square, king_location, color, self))
+                || (attacker_location..king_location)
+                    .step_by(8)
+                    .any(|square| is_defended(square, king_location, color, self)))
     }
 
     fn can_get_out_of_check_on_northwest_southeast_diagonal(
@@ -108,17 +83,32 @@ impl Board {
         king_location: i8,
         color: Color,
     ) -> bool {
-        fn is_defended(square: i8, king_location: i8, color: Color, board: &mut Board) -> bool {
-            pawn::can_be_moved_on_empty_square_without_capture(square, board)
-                || board.is_square_defended_not_from_northwest_southeast_diagonal_by_not_pawn(
+        fn is_square_defended_by_not_pawn(
+            square: i8,
+            defended_piece_location: i8,
+            defended_color: Color,
+            board: &mut Board,
+        ) -> bool {
+            board.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+                || board.is_square_defended_from_northeast_southwest_diagonal_by_slider(
                     square,
-                    king_location,
-                    color,
+                    defended_piece_location,
+                    defended_color,
+                )
+                || board.is_square_defended_from_straight_line_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
                 )
         }
 
+        fn is_defended(square: i8, king_location: i8, color: Color, board: &mut Board) -> bool {
+            pawn::can_be_moved_on_empty_square_without_capture(square, board)
+                || is_square_defended_by_not_pawn(square, king_location, color, board)
+        }
+
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
-            || is_defended(attacker_location, king_location, color, self)
+            || is_square_defended_by_not_pawn(attacker_location, king_location, color, self)
             || (attacker_location > king_location
                 && ((king_location + 7)..attacker_location)
                     .step_by(7)
