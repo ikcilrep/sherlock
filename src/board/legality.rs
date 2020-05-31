@@ -118,8 +118,7 @@ impl Board {
     fn is_material_sufficient_to_checkmate(self: &mut Board) -> bool {
         #[inline]
         fn get_square_color(location: usize) -> Color {
-            (!(((location >> 3) & 1) ^ (location & 1)) & !(location & 1)) as Color
-            //        ((location >> 3) & 1 == location & 1 && location & 1 == 0) as u8
+            ((location >> 3) & 1 == location & 1 && location & 1 == 0) as u8
         }
 
         match self.pieces_count {
