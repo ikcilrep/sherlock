@@ -156,7 +156,6 @@ impl Board {
     }
 
     fn get_game_result(self: &mut Board) -> GameState {
-        // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.
         // Threefold repetition draw will be implemented in future.
         return if self.state.fifty_moves == 100 {
             GameState::Draw
