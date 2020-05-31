@@ -2,10 +2,46 @@ use crate::board::Board;
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
 use crate::pieces::{knight, ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, QUEEN, ROOK};
 
+type AttackingSliderFinder = fn(&Board, i8, ColorizedPiece, Color, i8, fn(i8, i8) -> bool) -> i8;
+
 impl Board {
     #[inline]
     fn is_square_not_occupied_by_color(self: &Board, square: usize, color: Color) -> bool {
         self.pieces[square] == EMPTY_SQUARE || get_piece_color(self.pieces[square]) != color
+    }
+
+    fn get_attackers_of_king_square_locations(
+        self: &Board,
+        square: i8,
+        attacked_color: Color,
+    ) -> Vec<i8> {
+        let mut result = Vec::new();
+        self.get_pieces_attacking_square_locations(
+            colorize_piece(KNIGHT, !attacked_color),
+            square,
+            knight::get_moves_to(square as usize),
+            knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
+            attacked_color,
+            &mut result,
+        );
+
+        self.get_piece_attacking_square_on_straight_lines_locations(
+            colorize_piece(ROOK, !attacked_color),
+            square,
+            attacked_color,
+            Board::get_slider_or_queen_attacking_square_location,
+            &mut result,
+        );
+
+        self.get_piece_attacking_square_on_diagonals_locations(
+            colorize_piece(BISHOP, !attacked_color),
+            square,
+            attacked_color,
+            Board::get_slider_or_queen_attacking_square_location,
+            &mut result,
+        );
+
+        result
     }
 
     fn get_slider_attacking_square_location(
@@ -57,9 +93,11 @@ impl Board {
         piece: ColorizedPiece,
         square: i8,
         attacked_color: Color,
+        get_slider_attacking_square_location: AttackingSliderFinder,
         result: &mut Vec<i8>,
     ) {
-        let location1 = self.get_slider_attacking_square_location(
+        let location1 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -71,7 +109,8 @@ impl Board {
             result.push(location1);
         }
 
-        let location2 = self.get_slider_attacking_square_location(
+        let location2 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -83,7 +122,8 @@ impl Board {
             result.push(location2)
         }
 
-        let location3 = self.get_slider_attacking_square_location(
+        let location3 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -95,7 +135,8 @@ impl Board {
             result.push(location3);
         }
 
-        let location4 = self.get_slider_attacking_square_location(
+        let location4 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -113,9 +154,11 @@ impl Board {
         piece: ColorizedPiece,
         square: i8,
         attacked_color: Color,
+        get_slider_attacking_square_location: AttackingSliderFinder,
         result: &mut Vec<i8>,
     ) {
-        let location1 = self.get_slider_attacking_square_location(
+        let location1 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -129,7 +172,8 @@ impl Board {
             result.push(location1);
         }
 
-        let location2 = self.get_slider_attacking_square_location(
+        let location2 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -141,7 +185,8 @@ impl Board {
             result.push(location2);
         }
 
-        let location3 = self.get_slider_attacking_square_location(
+        let location3 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -155,7 +200,8 @@ impl Board {
             result.push(location3);
         }
 
-        let location4 = self.get_slider_attacking_square_location(
+        let location4 = get_slider_attacking_square_location(
+            self,
             square,
             piece,
             attacked_color,
@@ -223,6 +269,7 @@ impl Board {
                     piece,
                     square,
                     attacked_color,
+                    Board::get_slider_attacking_square_location,
                     &mut result,
                 );
             }
@@ -231,6 +278,7 @@ impl Board {
                     piece,
                     square,
                     attacked_color,
+                    Board::get_slider_attacking_square_location,
                     &mut result,
                 );
             }
@@ -240,6 +288,7 @@ impl Board {
                     piece,
                     square,
                     attacked_color,
+                    Board::get_slider_attacking_square_location,
                     &mut result,
                 );
 
@@ -247,6 +296,7 @@ impl Board {
                     piece,
                     square,
                     attacked_color,
+                    Board::get_slider_attacking_square_location,
                     &mut result,
                 );
             }
