@@ -107,6 +107,7 @@ impl Board {
                 || is_square_defended_by_not_pawn(square, king_location, color, board)
         }
 
+        // Maybe some more case specific function in future.
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
             || is_square_defended_by_not_pawn(attacker_location, king_location, color, self)
             || (attacker_location > king_location
@@ -115,6 +116,47 @@ impl Board {
                     .any(|square| is_defended(square, king_location, color, self))
                 || (attacker_location..king_location)
                     .step_by(7)
+                    .any(|square| is_defended(square, king_location, color, self)))
+    }
+
+    fn can_get_out_of_check_on_northeast_southwest_diagonal(
+        self: &mut Board,
+        attacker_location: i8,
+        king_location: i8,
+        color: Color,
+    ) -> bool {
+        fn is_square_defended_by_not_pawn(
+            square: i8,
+            defended_piece_location: i8,
+            defended_color: Color,
+            board: &mut Board,
+        ) -> bool {
+            board.is_square_defended_by_knight(square, defended_piece_location, defended_color)
+                || board.is_square_defended_from_northwest_southeast_diagonal_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
+                )
+                || board.is_square_defended_from_straight_line_by_slider(
+                    square,
+                    defended_piece_location,
+                    defended_color,
+                )
+        }
+
+        fn is_defended(square: i8, king_location: i8, color: Color, board: &mut Board) -> bool {
+            pawn::can_be_moved_on_empty_square_without_capture(square, board)
+                || is_square_defended_by_not_pawn(square, king_location, color, board)
+        }
+        // Maybe some more case specific function in future.
+        pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
+            || is_square_defended_by_not_pawn(attacker_location, king_location, color, self)
+            || (attacker_location > king_location
+                && ((king_location + 9)..attacker_location)
+                    .step_by(9)
+                    .any(|square| is_defended(square, king_location, color, self))
+                || (attacker_location..king_location)
+                    .step_by(9)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
 
