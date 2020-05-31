@@ -1,8 +1,8 @@
 use crate::board::Board;
 use crate::moves::Move;
 use crate::moves::{get_from, get_to};
-use crate::pieces::color::{get_piece_color, Color};
-use crate::pieces::{bishop, king, knight, pawn, queen, rook, EMPTY_SQUARE};
+use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, UNDEFINED_COLOR, WHITE};
+use crate::pieces::{bishop, king, knight, pawn, queen, rook, BISHOP, EMPTY_SQUARE, KING, KNIGHT};
 
 enum GameState {
     Draw,
@@ -115,6 +115,47 @@ impl Board {
         false
     }
 
+    fn is_material_sufficient_to_checkmate(self: &mut Board) -> bool {
+        #[inline]
+        fn get_square_color(location: usize) -> Color {
+            (!(((location >> 3) & 1) ^ (location & 1)) & !(location & 1)) as Color
+            //        ((location >> 3) & 1 == location & 1 && location & 1 == 0) as u8
+        }
+
+        match self.pieces_count {
+            2 => false,
+            3 => self.pieces.iter().any(|piece| {
+                let uncolorized_piece = uncolorize_piece(*piece);
+                uncolorized_piece != KING
+                    && uncolorized_piece != BISHOP
+                    && uncolorized_piece != KNIGHT
+            }),
+
+            4 => {
+                let mut last_bishop_color = UNDEFINED_COLOR;
+                let mut last_square_color = UNDEFINED_COLOR;
+                for (location, piece) in self.pieces.iter().enumerate() {
+                    let uncolorized_piece = uncolorize_piece(*piece);
+                    if uncolorized_piece == BISHOP {
+                        let square_color = get_square_color(location);
+                        let bishop_color = get_piece_color(*piece);
+                        if last_bishop_color != UNDEFINED_COLOR {
+                            return last_bishop_color == bishop_color
+                                || last_square_color != square_color;
+                        }
+
+                        last_bishop_color = bishop_color;
+                        last_square_color = square_color;
+                    } else if uncolorized_piece != KING {
+                        return true;
+                    }
+                }
+                true
+            }
+            _ => true,
+        }
+    }
+
     fn get_game_result(self: &mut Board) -> GameState {
         // Temporary solution !self.can_any_piece_be_moved will be replaced with more customized function if king is checked.
         // Threefold repetition draw will be implemented in future.
@@ -127,7 +168,7 @@ impl Board {
             )
         {
             GameState::Win(!self.state.side)
-        } else if !self.can_any_piece_be_moved() {
+        } else if !self.is_material_sufficient_to_checkmate() || !self.can_any_piece_be_moved() {
             GameState::Draw
         } else {
             GameState::StillInProgress
