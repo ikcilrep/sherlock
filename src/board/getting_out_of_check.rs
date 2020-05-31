@@ -177,12 +177,20 @@ impl Board {
                 let attacker_location_file = attacker_location & 7;
                 let king_location_file = king_location & 7;
 
+                let difference = attacker_location - king_location;
+
                 return if attacker_location_rank == king_location_rank {
                     self.can_get_out_of_check_on_rank(attacker_location, king_location, color)
                 } else if attacker_location_file == king_location_file {
                     self.can_get_out_of_check_on_file(attacker_location, king_location, color)
-                } else if (attacker_location - king_location) % 7 == 0 {
+                } else if difference % 7 == 0 {
                     self.can_get_out_of_check_on_northwest_southeast_diagonal(
+                        attacker_location,
+                        king_location,
+                        color,
+                    )
+                } else if difference % 9 == 0 {
+                    self.can_get_out_of_check_on_northeast_southwest_diagonal(
                         attacker_location,
                         king_location,
                         color,
