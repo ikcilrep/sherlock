@@ -183,14 +183,14 @@ impl Board {
                     self.can_get_out_of_check_on_rank(attacker_location, king_location, color)
                 } else if attacker_location_file == king_location_file {
                     self.can_get_out_of_check_on_file(attacker_location, king_location, color)
-                } else if difference % 7 == 0 {
-                    self.can_get_out_of_check_on_northwest_southeast_diagonal(
+                } else if difference % 9 == 0 {
+                    self.can_get_out_of_check_on_northeast_southwest_diagonal(
                         attacker_location,
                         king_location,
                         color,
                     )
-                } else if difference % 9 == 0 {
-                    self.can_get_out_of_check_on_northeast_southwest_diagonal(
+                } else if difference % 7 == 0 {
+                    self.can_get_out_of_check_on_northwest_southeast_diagonal(
                         attacker_location,
                         king_location,
                         color,

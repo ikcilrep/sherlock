@@ -46,13 +46,13 @@ impl Board {
                         from,
                         self.state.side,
                     ))
-                || (difference % 7 == 0
-                    && self.is_square_attacked_from_northwest_diagonal_by_slider(
+                || (difference % 9 == 0
+                    && self.is_square_attacked_from_northeast_diagonal_by_slider(
                         from,
                         self.state.side,
                     ))
-                || (difference % 9 == 0
-                    && self.is_square_attacked_from_northeast_diagonal_by_slider(
+                || (difference % 7 == 0
+                    && self.is_square_attacked_from_northwest_diagonal_by_slider(
                         from,
                         self.state.side,
                     ))))
@@ -69,13 +69,13 @@ impl Board {
                             from,
                             self.state.side,
                         )))
-                || (difference % 7 == 0
-                    && self.is_square_attacked_from_southeast_diagonal_by_slider(
+                || (difference % 9 == 0
+                    && self.is_square_attacked_from_southwest_diagonal_by_slider(
                         from,
                         self.state.side,
                     ))
-                || (difference % 9 == 0
-                    && self.is_square_attacked_from_southwest_diagonal_by_slider(
+                || (difference % 7 == 0
+                    && self.is_square_attacked_from_southeast_diagonal_by_slider(
                         from,
                         self.state.side,
                     )))
