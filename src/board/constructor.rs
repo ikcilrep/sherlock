@@ -73,6 +73,7 @@ impl Board {
             ],
             state: BoardState::new(),
             last_state: BoardState::new(),
+            pieces_count: 32,
         }
     }
 }

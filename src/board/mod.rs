@@ -24,6 +24,7 @@ pub mod straight_line_defenders;
 
 pub struct Board {
     pub pieces: [ColorizedPiece; 64],
+    pieces_count: u8,
     pub state: BoardState,
     last_state: BoardState,
 }
@@ -50,6 +51,7 @@ impl Board {
         self.pieces[from] = EMPTY_SQUARE;
         let moved_piece = get_moved_piece(half_move);
         let captured_piece = get_captured_piece(half_move);
+        self.pieces_count += (captured_piece != EMPTY_SQUARE) as u8;
         let color = get_piece_color(moved_piece) as usize;
         self.state.update(
             &mut self.last_state,
@@ -83,8 +85,11 @@ impl Board {
 
         self.pieces[get_from(half_move)] = self.pieces[to];
         self.pieces[to] = EMPTY_SQUARE;
-        self.pieces[get_captured_piece_position(half_move)] = get_captured_piece(half_move);
 
+        let captured_piece = get_captured_piece(half_move);
+        self.pieces[get_captured_piece_position(half_move)] = captured_piece;
+
+        self.pieces_count -= (captured_piece != EMPTY_SQUARE) as u8;
         self.state.revert(&self.last_state);
 
         match get_move_type(half_move) {
