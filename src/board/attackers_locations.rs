@@ -57,8 +57,8 @@ impl Board {
         piece: ColorizedPiece,
         square: i8,
         attacked_color: Color,
-    ) -> Vec<i8> {
-        let mut result = Vec::new();
+        result: &mut Vec<i8>,
+    ) {
         let location1 = self.get_slider_attacking_square_location(
             square,
             piece,
@@ -106,8 +106,6 @@ impl Board {
         if location4 != -1 {
             result.push(location4);
         }
-
-        result
     }
 
     pub fn get_piece_attacking_square_on_diagonals_locations(
@@ -115,9 +113,8 @@ impl Board {
         piece: ColorizedPiece,
         square: i8,
         attacked_color: Color,
-    ) -> Vec<i8> {
-        let mut result = Vec::new();
-
+        result: &mut Vec<i8>,
+    ) {
         let location1 = self.get_slider_attacking_square_location(
             square,
             piece,
@@ -169,8 +166,6 @@ impl Board {
         if location4 != -1 {
             result.push(location4);
         }
-
-        result
     }
 
     fn get_pieces_attacking_square_locations(
@@ -180,7 +175,8 @@ impl Board {
         moves_to: [i8; 8],
         move_pseudo_legality_validators: [fn(i8, i8, &Board, Color) -> bool; 8],
         attacked_color: Color,
-    ) -> Vec<i8> {
+        result: &mut Vec<i8>,
+    ) {
         let square_file = square & 7;
 
         move_pseudo_legality_validators
@@ -190,8 +186,7 @@ impl Board {
                 is_move_pseudo_legal(square_file, **attacker_square, self, !attacked_color)
                     && self.pieces[**attacker_square as usize] == piece
             })
-            .map(|(_, attacker_square)| *attacker_square)
-            .collect()
+            .for_each(|(_, attacker_square)| result.push(*attacker_square))
     }
 
     pub fn get_pieces_of_type_attacking_square_locations(
@@ -200,47 +195,64 @@ impl Board {
         piece: ColorizedPiece,
         attacked_color: Color,
     ) -> Vec<i8> {
+        let mut result = Vec::new();
         match uncolorize_piece(piece) {
-            KNIGHT => self.get_pieces_attacking_square_locations(
-                piece,
-                square,
-                knight::get_moves_to(square as usize),
-                knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-                attacked_color,
-            ),
-            KING => self.get_pieces_attacking_square_locations(
-                piece,
-                square,
-                knight::get_moves_to(square as usize),
-                knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-                attacked_color,
-            ),
+            KNIGHT => {
+                self.get_pieces_attacking_square_locations(
+                    piece,
+                    square,
+                    knight::get_moves_to(square as usize),
+                    knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
+                    attacked_color,
+                    &mut result,
+                );
+            }
+            KING => {
+                self.get_pieces_attacking_square_locations(
+                    piece,
+                    square,
+                    knight::get_moves_to(square as usize),
+                    knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
+                    attacked_color,
+                    &mut result,
+                );
+            }
 
-            ROOK => self.get_piece_attacking_square_on_straight_lines_locations(
-                piece,
-                square,
-                attacked_color,
-            ),
-            BISHOP => self.get_piece_attacking_square_on_diagonals_locations(
-                piece,
-                square,
-                attacked_color,
-            ),
+            ROOK => {
+                self.get_piece_attacking_square_on_straight_lines_locations(
+                    piece,
+                    square,
+                    attacked_color,
+                    &mut result,
+                );
+            }
+            BISHOP => {
+                self.get_piece_attacking_square_on_diagonals_locations(
+                    piece,
+                    square,
+                    attacked_color,
+                    &mut result,
+                );
+            }
 
             QUEEN => {
-                let mut result = self.get_piece_attacking_square_on_straight_lines_locations(
+                self.get_piece_attacking_square_on_straight_lines_locations(
                     piece,
                     square,
                     attacked_color,
+                    &mut result,
                 );
-                result.append(&mut self.get_piece_attacking_square_on_diagonals_locations(
+
+                self.get_piece_attacking_square_on_diagonals_locations(
                     piece,
                     square,
                     attacked_color,
-                ));
-                result
+                    &mut result,
+                );
             }
             _ => panic!("Invalid piece type."),
-        }
+        };
+
+        result
     }
 }
