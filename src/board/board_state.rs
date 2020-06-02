@@ -1,5 +1,4 @@
-use crate::pieces;
-use crate::pieces::color::{uncolorize_piece, Color, WHITE};
+use crate::pieces::color::{uncolorize_piece, Color};
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, KING, PAWN};
 
 pub const KING_POSITIONS: [usize; 2] = [4, 60];
@@ -9,6 +8,7 @@ pub const KINGS_ROOKS_AFTER_CASTLING_POSITIONS: [usize; 2] = [5, 61];
 pub const QUEENS_ROOKS_AFTER_CASTLING_POSITIONS: [usize; 2] = [3, 59];
 
 pub const INVERSED_PAWN_STEPS: [i8; 2] = [-8, 8];
+
 pub struct BoardState {
     pub pieces_count: u8,
     pub pieces: [ColorizedPiece; 64],
@@ -22,86 +22,6 @@ pub struct BoardState {
 }
 
 impl BoardState {
-    pub fn new() -> BoardState {
-        BoardState {
-            pieces_count: 32,
-            pieces: [
-                pieces::WHITE_ROOK,
-                pieces::WHITE_KNIGHT,
-                pieces::WHITE_BISHOP,
-                pieces::WHITE_QUEEN,
-                pieces::WHITE_KING,
-                pieces::WHITE_BISHOP,
-                pieces::WHITE_KNIGHT,
-                pieces::WHITE_ROOK,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::WHITE_PAWN,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::EMPTY_SQUARE,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_PAWN,
-                pieces::BLACK_ROOK,
-                pieces::BLACK_KNIGHT,
-                pieces::BLACK_BISHOP,
-                pieces::BLACK_QUEEN,
-                pieces::BLACK_KING,
-                pieces::BLACK_BISHOP,
-                pieces::BLACK_KNIGHT,
-                pieces::BLACK_ROOK,
-            ],
-
-            side: WHITE,
-            fifty_moves: 0,
-            en_passant_square: -1,
-            has_king_stayed_in_place: [true, true],
-            has_queens_rook_stayed_in_place: [true, true],
-            has_kings_rook_stayed_in_place: [true, true],
-            king_positions: [4, 60],
-        }
-    }
-
     #[inline]
     fn update_fifty_moves(
         self: &mut BoardState,

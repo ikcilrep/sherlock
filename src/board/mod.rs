@@ -12,6 +12,7 @@ use crate::pieces::EMPTY_SQUARE;
 pub mod attackers;
 pub mod attackers_locations;
 pub mod board_state;
+pub mod board_state_constructor;
 pub mod castling;
 pub mod constructor;
 pub mod defenders;
