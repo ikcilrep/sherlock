@@ -105,11 +105,9 @@ impl BoardState {
     #[inline]
     fn update_fifty_moves(
         self: &mut BoardState,
-        last_state: &mut BoardState,
         moved_piece: ColorizedPiece,
         captured_piece: ColorizedPiece,
     ) {
-        last_state.fifty_moves = self.fifty_moves;
         if uncolorize_piece(moved_piece) != PAWN && captured_piece == EMPTY_SQUARE {
             self.fifty_moves += 1;
         } else {
@@ -118,18 +116,7 @@ impl BoardState {
     }
 
     #[inline]
-    fn update_has_stayed(
-        self: &mut BoardState,
-        last_state: &mut BoardState,
-        from: usize,
-        color: usize,
-    ) {
-        last_state.has_king_stayed_in_place[color] = self.has_king_stayed_in_place[color];
-        last_state.has_kings_rook_stayed_in_place[color] =
-            self.has_kings_rook_stayed_in_place[color];
-        last_state.has_queens_rook_stayed_in_place[color] =
-            self.has_queens_rook_stayed_in_place[color];
-
+    fn update_has_stayed(self: &mut BoardState, from: usize, color: usize) {
         self.has_king_stayed_in_place[color] &= KING_POSITIONS[color] != from;
         self.has_kings_rook_stayed_in_place[color] &= KINGS_ROOKS_POSITIONS[color] != from;
         self.has_queens_rook_stayed_in_place[color] &= QUEENS_ROOKS_POSITIONS[color] != from;
@@ -139,13 +126,11 @@ impl BoardState {
     #[inline]
     fn update_en_passant_square(
         self: &mut BoardState,
-        last_state: &mut BoardState,
         from: usize,
         to: usize,
         moved_piece: ColorizedPiece,
         color: usize,
     ) {
-        last_state.en_passant_square = self.en_passant_square;
         self.en_passant_square = if to as i8 - from as i8 == (INVERSED_PAWN_STEPS[!color] << 1)
             && uncolorize_piece(moved_piece) == PAWN
         {
@@ -159,38 +144,34 @@ impl BoardState {
     #[inline]
     fn update_king_position(
         self: &mut BoardState,
-        last_state: &mut BoardState,
         moved_piece: ColorizedPiece,
         to: usize,
         color: usize,
     ) {
         if uncolorize_piece(moved_piece) == KING {
-            last_state.king_positions[color as usize] = self.king_positions[color as usize];
             self.king_positions[color as usize] = to as i8;
         }
     }
 
     #[inline]
-    fn update_side(self: &mut BoardState, last_state: &mut BoardState) {
-        last_state.side = self.side;
+    fn update_side(self: &mut BoardState) {
         self.side = !self.side;
     }
 
     #[inline]
     pub fn update(
         self: &mut BoardState,
-        last_state: &mut BoardState,
         moved_piece: ColorizedPiece,
         captured_piece: ColorizedPiece,
         from: usize,
         to: usize,
         color: usize,
     ) {
-        self.update_has_stayed(last_state, from, color);
-        self.update_fifty_moves(last_state, moved_piece, captured_piece);
-        self.update_en_passant_square(last_state, from, to, moved_piece, color);
-        self.update_king_position(last_state, moved_piece, to, color);
-        self.update_side(last_state);
+        self.update_has_stayed(from, color);
+        self.update_fifty_moves(moved_piece, captured_piece);
+        self.update_en_passant_square(from, to, moved_piece, color);
+        self.update_king_position(moved_piece, to, color);
+        self.update_side();
     }
 
     #[inline]
