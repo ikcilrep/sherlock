@@ -18,7 +18,7 @@ const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bo
             && to & 7 < from_file
             && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     },
-    |_, to, board, _| board.pieces[to as usize] == EMPTY_SQUARE,
+    |_, to, board, _| board.state.pieces[to as usize] == EMPTY_SQUARE,
     |from_file, to, board, pawn_color| {
         to < 64
             && to >= 0
@@ -66,7 +66,7 @@ fn random_promotion(
 }
 
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
-    let pawn_color = get_piece_color(board.pieces[from]);
+    let pawn_color = get_piece_color(board.state.pieces[from]);
     let signed_from = from as i8;
     let from_file = signed_from & 7;
     let mut to = signed_from + PAWN_STEPS[pawn_color as usize][0];
@@ -83,16 +83,16 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
 
     to = signed_from + PAWN_STEPS[pawn_color as usize][1];
     let from_row = from >> 3;
-    if to < 56 && to > 7 && board.pieces[to as usize] == EMPTY_SQUARE {
+    if to < 56 && to > 7 && board.state.pieces[to as usize] == EMPTY_SQUARE {
         result.push(new_move(from, to, board));
 
         to += PAWN_STEPS[pawn_color as usize][1];
         if from_row == PAWN_START_ROWS[pawn_color as usize]
-            && board.pieces[to as usize] == EMPTY_SQUARE
+            && board.state.pieces[to as usize] == EMPTY_SQUARE
         {
             result.push(new_move(from, to, board));
         }
-    } else if to < 64 && to >= 0 && board.pieces[to as usize] == EMPTY_SQUARE {
+    } else if to < 64 && to >= 0 && board.state.pieces[to as usize] == EMPTY_SQUARE {
         add_promotions(from, to, pawn_color, board, result);
     }
 
@@ -118,7 +118,7 @@ fn is_move_northwest_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_col
 
 #[inline]
 fn is_move_north_pseudo_legal(_: i8, to: i8, board: &Board, _: Color) -> bool {
-    to < 64 && to >= 0 && board.pieces[to as usize] == EMPTY_SQUARE
+    to < 64 && to >= 0 && board.state.pieces[to as usize] == EMPTY_SQUARE
 }
 
 #[inline]
@@ -135,7 +135,7 @@ fn get_move_north(from: usize, to: i8, board: &Board, pawn_color: Color) -> Move
     let new_to = to + PAWN_STEPS[pawn_color as usize][1];
 
     return if from_row == PAWN_START_ROWS[pawn_color as usize]
-        && board.pieces[new_to as usize] == EMPTY_SQUARE
+        && board.state.pieces[new_to as usize] == EMPTY_SQUARE
     {
         new_move(from, new_to, board)
     } else {
@@ -149,7 +149,7 @@ fn get_capture(from: usize, to: i8, board: &Board, _: Color) -> Move {
 }
 
 pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
-    let pawn_color = get_piece_color(board.pieces[from]);
+    let pawn_color = get_piece_color(board.state.pieces[from]);
     let signed_from = from as i8;
     let from_file = signed_from & 7;
 
@@ -198,7 +198,7 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
 pub fn can_be_moved_on_empty_square_without_capture(empty_square: i8, board: &mut Board) -> bool {
     let color = board.state.side as usize;
     let from = empty_square - PAWN_STEPS[color][1];
-    uncolorize_piece(board.pieces[from as usize]) == PAWN
+    uncolorize_piece(board.state.pieces[from as usize]) == PAWN
         && !board.is_piece_pinned(from, empty_square, board.state.king_positions[color])
 }
 
@@ -207,5 +207,5 @@ pub fn can_capture_on_enemy_occupied_square(enemy_occupied_square: i8, board: &m
     let from1 = (enemy_occupied_square - PAWN_STEPS[color][0]) as usize;
     let from2 = (enemy_occupied_square - PAWN_STEPS[color][2]) as usize;
     let colorized_pawn = colorize_piece(PAWN, board.state.side);
-    board.pieces[from1] == colorized_pawn || board.pieces[from2] == colorized_pawn
+    board.state.pieces[from1] == colorized_pawn || board.state.pieces[from2] == colorized_pawn
 }

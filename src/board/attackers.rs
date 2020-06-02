@@ -35,10 +35,10 @@ impl Board {
         let attacker_square2 = square + INVERSED_PAWN_CAPTURES[attacked_color as usize][1];
         (self.is_square_on_board(attacker_square1)
             && attacker_square1 & 7 > square_file
-            && self.pieces[attacker_square1 as usize] == colorized_pawn)
+            && self.state.pieces[attacker_square1 as usize] == colorized_pawn)
             || (self.is_square_on_board(attacker_square2)
                 && attacker_square2 & 7 < square_file
-                && self.pieces[attacker_square2 as usize] == colorized_pawn)
+                && self.state.pieces[attacker_square2 as usize] == colorized_pawn)
     }
 
     fn is_square_attacked_by_knight(self: &Board, square: i8, attacked_color: Color) -> bool {
@@ -78,7 +78,7 @@ impl Board {
             .zip(moves_to.iter())
             .any(|(is_move_pseudo_legal, attacker_square)| {
                 is_move_pseudo_legal(square_file, *attacker_square, self, !attacked_color)
-                    && self.pieces[*attacker_square as usize] == piece
+                    && self.state.pieces[*attacker_square as usize] == piece
             })
     }
 

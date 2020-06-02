@@ -86,7 +86,7 @@ fn generate_pseudo_legal_moves_on_southeast(
 }
 
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
-    let bishop_color = get_piece_color(board.pieces[from]);
+    let bishop_color = get_piece_color(board.state.pieces[from]);
     let signed_from = from as i8;
     let from_file = signed_from & 7;
     generate_pseudo_legal_moves_on_northeast(from, from_file, board, bishop_color, result);
@@ -104,7 +104,7 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     ];
 
     let start = rng.gen_range(0, 4);
-    let rook_color = get_piece_color(board.pieces[from]);
+    let rook_color = get_piece_color(board.state.pieces[from]);
     let from_file = from as i8 & 7;
     let mut i = start;
     while {

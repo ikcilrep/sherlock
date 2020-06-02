@@ -1,7 +1,7 @@
 use crate::board::Board;
 use crate::moves::Move;
 use crate::moves::{get_from, get_to};
-use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, UNDEFINED_COLOR, WHITE};
+use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, UNDEFINED_COLOR};
 use crate::pieces::{bishop, king, knight, pawn, queen, rook, BISHOP, EMPTY_SQUARE, KING, KNIGHT};
 
 enum GameState {
@@ -87,11 +87,11 @@ impl Board {
 
         let to = get_to(half_move) as i8;
         if from == king_location {
-            let king = self.pieces[king_location as usize];
-            self.pieces[king_location as usize] = EMPTY_SQUARE;
+            let king = self.state.pieces[king_location as usize];
+            self.state.pieces[king_location as usize] = EMPTY_SQUARE;
 
             let result = self.is_square_attacked(to, self.state.side);
-            self.pieces[king_location as usize] = king;
+            self.state.pieces[king_location as usize] = king;
             return result;
         }
         return !self.is_piece_pinned(from, to, king_location);
@@ -102,7 +102,7 @@ impl Board {
     }
 
     fn can_any_piece_be_moved(self: &mut Board) -> bool {
-        let pieces = self.pieces;
+        let pieces = self.state.pieces;
         let mut from = 0;
         for piece in pieces.iter() {
             if get_piece_color(*piece) == self.state.side
@@ -121,9 +121,9 @@ impl Board {
             ((location >> 3) & 1 == location & 1 && location & 1 == 0) as u8
         }
 
-        match self.pieces_count {
+        match self.state.pieces_count {
             2 => false,
-            3 => self.pieces.iter().any(|piece| {
+            3 => self.state.pieces.iter().any(|piece| {
                 let uncolorized_piece = uncolorize_piece(*piece);
                 uncolorized_piece != KING
                     && uncolorized_piece != BISHOP
@@ -133,7 +133,7 @@ impl Board {
             4 => {
                 let mut last_bishop_color = UNDEFINED_COLOR;
                 let mut last_square_color = UNDEFINED_COLOR;
-                for (location, piece) in self.pieces.iter().enumerate() {
+                for (location, piece) in self.state.pieces.iter().enumerate() {
                     let uncolorized_piece = uncolorize_piece(*piece);
                     if uncolorized_piece == BISHOP {
                         let square_color = get_square_color(location);

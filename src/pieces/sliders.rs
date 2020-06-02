@@ -12,8 +12,8 @@ pub fn add_sliding_move(
     board: &Board,
 ) -> bool {
     result.push(new_move(from, to, board));
-    if board.pieces[to as usize] != EMPTY_SQUARE {
-        if get_piece_color(board.pieces[to as usize]) == slider_color {
+    if board.state.pieces[to as usize] != EMPTY_SQUARE {
+        if get_piece_color(board.state.pieces[to as usize]) == slider_color {
             result.pop();
         }
         return false;

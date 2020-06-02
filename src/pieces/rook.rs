@@ -77,7 +77,7 @@ fn generate_pseudo_legal_moves_on_south(
 }
 
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
-    let rook_color = get_piece_color(board.pieces[from]);
+    let rook_color = get_piece_color(board.state.pieces[from]);
     generate_pseudo_legal_moves_on_east(from, board, rook_color, result);
     generate_pseudo_legal_moves_on_west(from, board, rook_color, result);
     generate_pseudo_legal_moves_on_north(from, board, rook_color, result);
@@ -93,7 +93,7 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     ];
 
     let start = rng.gen_range(0, 4);
-    let rook_color = get_piece_color(board.pieces[from]);
+    let rook_color = get_piece_color(board.state.pieces[from]);
     let mut i = start;
     while {
         let mut moves = Vec::new();

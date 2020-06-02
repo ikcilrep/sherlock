@@ -7,7 +7,8 @@ type AttackingSliderFinder = fn(&Board, i8, ColorizedPiece, Color, i8, fn(i8, i8
 impl Board {
     #[inline]
     fn is_square_not_occupied_by_color(self: &Board, square: usize, color: Color) -> bool {
-        self.pieces[square] == EMPTY_SQUARE || get_piece_color(self.pieces[square]) != color
+        self.state.pieces[square] == EMPTY_SQUARE
+            || get_piece_color(self.state.pieces[square]) != color
     }
 
     pub fn get_attackers_of_king_square_locations(self: &Board, attacked_color: Color) -> Vec<i8> {
@@ -54,7 +55,7 @@ impl Board {
         while predicate(attacker_square, square_file)
             && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
         {
-            if self.pieces[attacker_square as usize] == possible_attacker {
+            if self.state.pieces[attacker_square as usize] == possible_attacker {
                 return attacker_square;
             }
             attacker_square += increment;
@@ -76,7 +77,7 @@ impl Board {
         while predicate(attacker_square, square_file)
             && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
         {
-            let attacker = self.pieces[attacker_square as usize];
+            let attacker = self.state.pieces[attacker_square as usize];
             if attacker == possible_attacker || attacker == colorized_queen {
                 return attacker_square;
             }
@@ -227,7 +228,7 @@ impl Board {
             .zip(moves_to.iter())
             .filter(|(is_move_pseudo_legal, attacker_square)| {
                 is_move_pseudo_legal(square_file, **attacker_square, self, !attacked_color)
-                    && self.pieces[**attacker_square as usize] == piece
+                    && self.state.pieces[**attacker_square as usize] == piece
             })
             .for_each(|(_, attacker_square)| result.push(*attacker_square))
     }

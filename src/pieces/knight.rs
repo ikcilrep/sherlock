@@ -75,7 +75,7 @@ pub fn is_move_southwest_pseudo_legal(
 pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<Move>) {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
-    let knight_color = get_piece_color(board.pieces[from]);
+    let knight_color = get_piece_color(board.state.pieces[from]);
 
     get_moves_to(from)
         .iter()
@@ -89,7 +89,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
 pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
-    let knight_color = get_piece_color(board.pieces[from]);
+    let knight_color = get_piece_color(board.state.pieces[from]);
     let moves_to = get_moves_to(from);
 
     let start = rng.gen_range(0, 8);

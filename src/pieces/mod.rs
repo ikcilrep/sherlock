@@ -48,6 +48,7 @@ pub const PSEUDO_LEGAL_MOVE_GENERATORS: [Generator; 7] = [
 
 pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
     board
+        .state
         .pieces
         .iter()
         .filter(|piece| get_piece_color(**piece) == board.state.side)

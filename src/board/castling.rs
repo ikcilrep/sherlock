@@ -13,16 +13,16 @@ impl Board {
     pub fn is_castling_queens_side_pseudo_legal(self: &Board, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]
             && self.state.has_queens_rook_stayed_in_place[color as usize]
-            && self.pieces[BISHOP_QUEENS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
-            && self.pieces[KNIGHTS_QUEENS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
-            && self.pieces[QUEENS_POSITIONS[color as usize]] == EMPTY_SQUARE
+            && self.state.pieces[BISHOP_QUEENS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
+            && self.state.pieces[KNIGHTS_QUEENS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
+            && self.state.pieces[QUEENS_POSITIONS[color as usize]] == EMPTY_SQUARE
     }
 
     #[inline]
     pub fn is_castling_kings_side_pseudo_legal(self: &Board, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]
             && self.state.has_kings_rook_stayed_in_place[color as usize]
-            && self.pieces[BISHOP_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
-            && self.pieces[KNIGHTS_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
+            && self.state.pieces[BISHOP_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
+            && self.state.pieces[KNIGHTS_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
     }
 }

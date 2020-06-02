@@ -7,7 +7,7 @@ use crate::moves::{
     get_promoted_piece, get_to, Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE,
 };
 use crate::pieces::color::{get_piece_color, Color};
-use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
+use crate::pieces::EMPTY_SQUARE;
 
 pub mod attackers;
 pub mod attackers_locations;
@@ -23,8 +23,6 @@ pub mod straight_line_attackers;
 pub mod straight_line_defenders;
 
 pub struct Board {
-    pub pieces: [ColorizedPiece; 64],
-    pieces_count: u8,
     pub state: BoardState,
     last_state: BoardState,
 }
@@ -32,26 +30,26 @@ pub struct Board {
 impl Board {
     #[inline]
     pub fn can_be_moved(self: &Board, to: i8, piece_to_move_color: Color) -> bool {
-        self.pieces[to as usize] == EMPTY_SQUARE
-            || get_piece_color(self.pieces[to as usize]) != piece_to_move_color
+        self.state.pieces[to as usize] == EMPTY_SQUARE
+            || get_piece_color(self.state.pieces[to as usize]) != piece_to_move_color
     }
 
     #[inline]
     pub fn can_capture(self: &Board, to: i8, piece_to_move_color: Color) -> bool {
-        self.pieces[to as usize] != EMPTY_SQUARE
-            && get_piece_color(self.pieces[to as usize]) != piece_to_move_color
+        self.state.pieces[to as usize] != EMPTY_SQUARE
+            && get_piece_color(self.state.pieces[to as usize]) != piece_to_move_color
     }
 
     #[inline]
     pub fn make_move(self: &mut Board, half_move: Move) {
         let from = get_from(half_move);
         let to = get_to(half_move);
-        self.pieces[get_captured_piece_position(half_move)] = EMPTY_SQUARE;
-        self.pieces[to] = get_promoted_piece(half_move);
-        self.pieces[from] = EMPTY_SQUARE;
+        self.state.pieces[get_captured_piece_position(half_move)] = EMPTY_SQUARE;
+        self.state.pieces[to] = get_promoted_piece(half_move);
+        self.state.pieces[from] = EMPTY_SQUARE;
         let moved_piece = get_moved_piece(half_move);
         let captured_piece = get_captured_piece(half_move);
-        self.pieces_count += (captured_piece != EMPTY_SQUARE) as u8;
+        self.state.pieces_count += (captured_piece != EMPTY_SQUARE) as u8;
         let color = get_piece_color(moved_piece) as usize;
         self.state.update(
             &mut self.last_state,
@@ -64,14 +62,14 @@ impl Board {
 
         match get_move_type(half_move) {
             CASTLING_KINGS_SIDE => {
-                self.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
-                    self.pieces[KINGS_ROOKS_POSITIONS[color]];
-                self.pieces[KINGS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
+                self.state.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
+                    self.state.pieces[KINGS_ROOKS_POSITIONS[color]];
+                self.state.pieces[KINGS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
             }
             CASTLING_QUEENS_SIDE => {
-                self.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
-                    self.pieces[QUEENS_ROOKS_POSITIONS[color]];
-                self.pieces[QUEENS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
+                self.state.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
+                    self.state.pieces[QUEENS_ROOKS_POSITIONS[color]];
+                self.state.pieces[QUEENS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
             }
             _ => {}
         }
@@ -83,25 +81,25 @@ impl Board {
         let color = get_piece_color(moved_piece) as usize;
         let to = get_to(half_move);
 
-        self.pieces[get_from(half_move)] = self.pieces[to];
-        self.pieces[to] = EMPTY_SQUARE;
+        self.state.pieces[get_from(half_move)] = self.state.pieces[to];
+        self.state.pieces[to] = EMPTY_SQUARE;
 
         let captured_piece = get_captured_piece(half_move);
-        self.pieces[get_captured_piece_position(half_move)] = captured_piece;
+        self.state.pieces[get_captured_piece_position(half_move)] = captured_piece;
 
-        self.pieces_count -= (captured_piece != EMPTY_SQUARE) as u8;
+        self.state.pieces_count -= (captured_piece != EMPTY_SQUARE) as u8;
         self.state.revert(&self.last_state);
 
         match get_move_type(half_move) {
             CASTLING_KINGS_SIDE => {
-                self.pieces[KINGS_ROOKS_POSITIONS[color]] =
-                    self.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]];
-                self.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] = EMPTY_SQUARE;
+                self.state.pieces[KINGS_ROOKS_POSITIONS[color]] =
+                    self.state.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]];
+                self.state.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] = EMPTY_SQUARE;
             }
             CASTLING_QUEENS_SIDE => {
-                self.pieces[QUEENS_ROOKS_POSITIONS[color]] =
-                    self.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]];
-                self.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] = EMPTY_SQUARE;
+                self.state.pieces[QUEENS_ROOKS_POSITIONS[color]] =
+                    self.state.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]];
+                self.state.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] = EMPTY_SQUARE;
             }
             _ => {}
         }

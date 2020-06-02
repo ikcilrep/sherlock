@@ -19,11 +19,11 @@ pub fn new_promotion(from: usize, to: i8, promoted_piece: ColorizedPiece, board:
         append!(
             append!(
                 append!(
-                    append!(append!(from, to, 6), board.pieces[to as usize], 4),
+                    append!(append!(from, to, 6), board.state.pieces[to as usize], 4),
                     promoted_piece,
                     4
                 ),
-                board.pieces[from],
+                board.state.pieces[from],
                 4
             ),
             to,
@@ -40,14 +40,14 @@ pub fn new_en_passant(from: usize, to: i8, board: &Board) -> Move {
         append!(
             append!(
                 append!(
-                    append!(append!(from, to, 6), board.pieces[to as usize], 4),
-                    board.pieces[from],
+                    append!(append!(from, to, 6), board.state.pieces[to as usize], 4),
+                    board.state.pieces[from],
                     4
                 ),
-                board.pieces[from],
+                board.state.pieces[from],
                 4
             ),
-            to as i8 + INVERSED_PAWN_STEPS[get_piece_color(board.pieces[from]) as usize],
+            to as i8 + INVERSED_PAWN_STEPS[get_piece_color(board.state.pieces[from]) as usize],
             6
         ),
         EN_PASSANT,
@@ -57,7 +57,7 @@ pub fn new_en_passant(from: usize, to: i8, board: &Board) -> Move {
 
 #[inline]
 pub fn new_move(from: usize, to: i8, board: &Board) -> Move {
-    new_promotion(from, to, board.pieces[from], board)
+    new_promotion(from, to, board.state.pieces[from], board)
 }
 
 #[inline]

@@ -40,7 +40,7 @@ impl Board {
             .zip(moves_to.iter())
             .any(|(is_move_pseudo_legal, defender_square)| {
                 is_move_pseudo_legal(square_file, *defender_square, self, defended_color)
-                    && self.pieces[*defender_square as usize] == colorized_knight
+                    && self.state.pieces[*defender_square as usize] == colorized_knight
                     && !self.is_piece_pinned(*defender_square, square, defended_piece_location)
             })
     }
