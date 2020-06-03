@@ -85,6 +85,8 @@ impl Board {
             plain_color,
         ) {
             self.states.push(self.state);
+        } else {
+            self.state.can_be_repeated = false;
         }
 
         match get_move_type(half_move) {

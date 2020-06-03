@@ -157,11 +157,13 @@ impl Board {
 
     #[inline]
     fn did_threefold_repetition_occured(&mut self) -> bool {
-        self.states
-            .iter()
-            .filter(|state| **state == self.state)
-            .count()
-            >= 3
+        self.state.can_be_repeated
+            && self
+                .states
+                .iter()
+                .filter(|state| **state == self.state)
+                .count()
+                >= 3
     }
 
     #[inline]
