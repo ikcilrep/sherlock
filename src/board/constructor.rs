@@ -3,9 +3,11 @@ use crate::board::Board;
 
 impl Board {
     pub fn new() -> Board {
+        let state = BoardState::new();
+        let states = vec![state];
         Board {
-            state: BoardState::new(),
-            states: Vec::new(),
+            state: state,
+            states: states,
         }
     }
 }
