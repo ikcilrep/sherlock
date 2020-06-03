@@ -155,6 +155,14 @@ impl Board {
         }
     }
 
+    fn has_threefold_repetition_occured(&mut self) -> bool {
+        self.states
+            .iter()
+            .filter(|state| **state == self.state)
+            .count()
+            >= 3
+    }
+
     fn get_game_result(self: &mut Board) -> GameState {
         // Threefold repetition draw will be implemented in future.
         return if self.state.fifty_moves == 100 {
@@ -166,7 +174,10 @@ impl Board {
             )
         {
             GameState::Win(!self.state.side)
-        } else if !self.is_material_sufficient_to_checkmate() || !self.can_any_piece_be_moved() {
+        } else if !self.is_material_sufficient_to_checkmate()
+            || !self.can_any_piece_be_moved()
+            || self.has_threefold_repetition_occured()
+        {
             GameState::Draw
         } else {
             GameState::StillInProgress

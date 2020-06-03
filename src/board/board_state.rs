@@ -9,6 +9,7 @@ pub const QUEENS_ROOKS_AFTER_CASTLING_POSITIONS: [usize; 2] = [3, 59];
 
 pub const INVERSED_PAWN_STEPS: [i8; 2] = [-8, 8];
 
+#[derive(Copy, Clone)]
 pub struct BoardState {
     pub pieces_count: u8,
     pub pieces: [ColorizedPiece; 64],
@@ -20,6 +21,26 @@ pub struct BoardState {
     pub king_positions: [i8; 2],
     pub en_passant_square: i8,
 }
+
+impl PartialEq for BoardState {
+    fn eq(&self, other: &Self) -> bool {
+        self.side == other.side
+            && self.pieces_count == other.pieces_count
+            && self.en_passant_square == other.en_passant_square
+            && self.fifty_moves == other.fifty_moves
+            && self.has_king_stayed_in_place == other.has_king_stayed_in_place
+            && self.has_queens_rook_stayed_in_place == other.has_queens_rook_stayed_in_place
+            && self.has_kings_rook_stayed_in_place == other.has_kings_rook_stayed_in_place
+            && self.king_positions == other.king_positions
+            && self
+                .pieces
+                .iter()
+                .enumerate()
+                .all(|(index, piece)| other.pieces[index] == *piece)
+    }
+}
+
+impl Eq for BoardState {}
 
 impl BoardState {
     #[inline]

@@ -25,4 +25,16 @@ impl Board {
             && self.state.pieces[BISHOP_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
             && self.state.pieces[KNIGHTS_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
     }
+
+    #[inline]
+    pub fn has_castling_kings_side_rights(self: &Board, color: Color) -> bool {
+        self.state.has_king_stayed_in_place[color as usize]
+            && self.state.has_kings_rook_stayed_in_place[color as usize]
+    }
+
+    #[inline]
+    pub fn has_castling_queens_side_rights(self: &Board, color: Color) -> bool {
+        self.state.has_king_stayed_in_place[color as usize]
+            && self.state.has_queens_rook_stayed_in_place[color as usize]
+    }
 }
