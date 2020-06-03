@@ -46,13 +46,18 @@ impl Board {
         self: &mut Board,
         captured_piece: ColorizedPiece,
         moved_piece: ColorizedPiece,
+    ) -> bool {
+        captured_piece == EMPTY_SQUARE && uncolorize_piece(moved_piece) != PAWN
+    }
+
+    #[inline]
+    fn has_the_same_castling_rights(
+        &mut self,
         had_castling_kings_side_rights: bool,
         had_castling_queens_side_rights: bool,
         color: Color,
     ) -> bool {
-        captured_piece == EMPTY_SQUARE
-            && uncolorize_piece(moved_piece) != PAWN
-            && had_castling_kings_side_rights == self.has_castling_kings_side_rights(color)
+        had_castling_kings_side_rights == self.has_castling_kings_side_rights(color)
             && had_castling_queens_side_rights == self.has_castling_queens_side_rights(color)
     }
 
@@ -77,16 +82,17 @@ impl Board {
         self.state
             .update(moved_piece, captured_piece, from, to, color);
 
-        if self.can_position_be_repeated(
-            captured_piece,
-            moved_piece,
-            has_castling_kings_side_rights,
-            has_castling_queens_side_rights,
-            plain_color,
-        ) {
+        if self.can_position_be_repeated(captured_piece, moved_piece) {
             self.states.push(self.state);
+            if !self.has_the_same_castling_rights(
+                has_castling_kings_side_rights,
+                has_castling_queens_side_rights,
+                plain_color,
+            ) {
+                self.state.could_be_repeated = false;
+            }
         } else {
-            self.state.can_be_repeated = false;
+            self.state.could_be_repeated = false;
         }
 
         match get_move_type(half_move) {

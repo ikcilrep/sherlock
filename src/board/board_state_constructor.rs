@@ -80,7 +80,7 @@ impl BoardState {
             has_queens_rook_stayed_in_place: [true, true],
             has_kings_rook_stayed_in_place: [true, true],
             king_positions: [4, 60],
-            can_be_repeated: true,
+            could_be_repeated: true,
         }
     }
 }

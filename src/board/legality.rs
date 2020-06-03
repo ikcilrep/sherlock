@@ -157,7 +157,7 @@ impl Board {
 
     #[inline]
     fn did_threefold_repetition_occured(&mut self) -> bool {
-        self.state.can_be_repeated
+        self.state.could_be_repeated
             && self
                 .states
                 .iter()

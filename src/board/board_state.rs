@@ -20,7 +20,7 @@ pub struct BoardState {
     pub has_kings_rook_stayed_in_place: [bool; 2],
     pub king_positions: [i8; 2],
     pub en_passant_square: i8,
-    pub can_be_repeated: bool,
+    pub could_be_repeated: bool,
 }
 
 impl PartialEq for BoardState {
