@@ -177,8 +177,8 @@ impl Board {
     fn is_game_drawn(&mut self) -> bool {
         self.state.fifty_moves == 100
             || !self.is_material_sufficient_to_checkmate()
-            || !self.can_any_piece_be_moved()
             || self.did_threefold_repetition_occured()
+            || !self.can_any_piece_be_moved()
     }
 
     fn get_game_result(self: &mut Board) -> GameState {
