@@ -165,7 +165,7 @@ impl Board {
     }
 
     #[inline]
-    fn did_checkmate_occured(&mut self) -> bool {
+    fn is_game_lost(&mut self) -> bool {
         self.is_king_checked(self.state.side)
             && !self.can_get_out_of_check(
                 &self.get_attackers_of_king_square_locations(self.state.side),
@@ -175,19 +175,18 @@ impl Board {
 
     #[inline]
     fn is_game_drawn(&mut self) -> bool {
-        !self.is_material_sufficient_to_checkmate()
+        self.state.fifty_moves == 100
+            || !self.is_material_sufficient_to_checkmate()
             || !self.can_any_piece_be_moved()
             || self.did_threefold_repetition_occured()
     }
 
     fn get_game_result(self: &mut Board) -> GameState {
         // Threefold repetition draw will be implemented in future.
-        return if self.state.fifty_moves == 100 {
+        return if self.is_game_drawn() {
             GameState::Draw
-        } else if self.did_checkmate_occured() {
+        } else if self.is_game_lost() {
             GameState::Win(!self.state.side)
-        } else if self.is_game_drawn() {
-            GameState::Draw
         } else {
             GameState::StillInProgress
         };
