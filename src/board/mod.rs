@@ -84,13 +84,12 @@ impl Board {
 
         if self.can_position_be_repeated(captured_piece, moved_piece) {
             self.states.push(self.state);
-            if !self.has_the_same_castling_rights(
-                has_castling_kings_side_rights,
-                has_castling_queens_side_rights,
-                plain_color,
-            ) {
-                self.state.could_be_repeated = false;
-            }
+            self.state.could_be_repeated = get_promoted_piece(half_move) == moved_piece
+                && self.has_the_same_castling_rights(
+                    has_castling_kings_side_rights,
+                    has_castling_queens_side_rights,
+                    plain_color,
+                );
         } else {
             self.state.could_be_repeated = false;
         }
