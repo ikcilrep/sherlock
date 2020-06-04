@@ -1,4 +1,4 @@
-use crate::board::board_state::BoardState;
+use crate::board::state::BoardState;
 use crate::pieces;
 use crate::pieces::color::WHITE;
 

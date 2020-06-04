@@ -9,6 +9,8 @@ pub const QUEENS_ROOKS_AFTER_CASTLING_POSITIONS: [usize; 2] = [3, 59];
 
 pub const INVERSED_PAWN_STEPS: [i8; 2] = [-8, 8];
 
+pub mod constructor;
+
 #[derive(Copy, Clone)]
 pub struct BoardState {
     pub pieces_count: u8,

@@ -3,6 +3,9 @@ use crate::pieces::color::{colorize_piece, Color};
 use crate::pieces::knight;
 use crate::pieces::{ColorizedPiece, KNIGHT};
 
+pub mod diagonal;
+pub mod straight_line;
+
 impl Board {
     pub fn is_square_defended_by_slider(
         self: &mut Board,

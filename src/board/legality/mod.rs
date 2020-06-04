@@ -10,6 +10,8 @@ enum GameState {
     StillInProgress,
 }
 
+pub mod getting_out_of_check;
+
 pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 7] = [
     pawn::can_be_moved,
     rook::can_be_moved,

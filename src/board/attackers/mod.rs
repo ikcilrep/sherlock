@@ -4,6 +4,10 @@ use crate::pieces::{king, knight};
 use crate::pieces::{ColorizedPiece, KING, KNIGHT, PAWN};
 pub const INVERSED_PAWN_CAPTURES: [[i8; 2]; 2] = [[-7, -9], [9, 7]];
 
+pub mod diagonal;
+pub mod locations;
+pub mod straight_line;
+
 impl Board {
     pub fn is_square_attacked_by_slider(
         self: &Board,

@@ -1,4 +1,4 @@
-use crate::board::board_state::{
+use crate::board::state::{
     BoardState, KINGS_ROOKS_AFTER_CASTLING_POSITIONS, KINGS_ROOKS_POSITIONS,
     QUEENS_ROOKS_AFTER_CASTLING_POSITIONS, QUEENS_ROOKS_POSITIONS,
 };
@@ -10,18 +10,11 @@ use crate::pieces::color::{get_piece_color, uncolorize_piece, Color};
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, PAWN};
 
 pub mod attackers;
-pub mod attackers_locations;
-pub mod board_state;
-pub mod board_state_constructor;
 pub mod castling;
 pub mod constructor;
 pub mod defenders;
-pub mod diagonal_attackers;
-pub mod diagonal_defenders;
-pub mod getting_out_of_check;
 pub mod legality;
-pub mod straight_line_attackers;
-pub mod straight_line_defenders;
+pub mod state;
 
 pub struct Board {
     pub state: BoardState,
