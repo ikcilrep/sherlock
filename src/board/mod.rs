@@ -67,13 +67,14 @@ impl Board {
         let to = get_to(half_move);
         let moved_piece = get_moved_piece(half_move);
         let plain_color = get_piece_color(moved_piece);
+        let promoted_piece = get_promoted_piece(half_move);
         let color = plain_color as usize;
 
         let has_castling_queens_side_rights = self.has_castling_queens_side_rights(plain_color);
         let has_castling_kings_side_rights = self.has_castling_kings_side_rights(plain_color);
 
         self.state.pieces[get_captured_piece_position(half_move)] = EMPTY_SQUARE;
-        self.state.pieces[to] = get_promoted_piece(half_move);
+        self.state.pieces[to] = promoted_piece;
         self.state.pieces[from] = EMPTY_SQUARE;
 
         let captured_piece = get_captured_piece(half_move);
@@ -84,7 +85,7 @@ impl Board {
 
         if self.can_position_be_repeated(captured_piece, moved_piece) {
             self.states.push(self.state);
-            self.state.could_be_repeated = get_promoted_piece(half_move) == moved_piece
+            self.state.could_be_repeated = promoted_piece == moved_piece
                 && self.has_the_same_castling_rights(
                     has_castling_kings_side_rights,
                     has_castling_queens_side_rights,
