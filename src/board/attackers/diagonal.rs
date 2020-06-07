@@ -4,7 +4,7 @@ use crate::pieces::BISHOP;
 
 impl Board {
     pub fn is_square_attacked_from_northeast_diagonal_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -21,7 +21,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_from_southwest_diagonal_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -36,7 +36,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_from_northwest_diagonal_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -53,7 +53,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_from_southeast_diagonal_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -68,7 +68,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_on_diagonal_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {

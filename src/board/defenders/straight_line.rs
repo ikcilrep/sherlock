@@ -4,7 +4,7 @@ use crate::pieces::ROOK;
 
 impl Board {
     pub fn is_square_defended_from_straight_line_on_file_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,
@@ -28,7 +28,7 @@ impl Board {
     }
 
     pub fn is_square_defended_from_straight_line_on_rank_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,
@@ -52,7 +52,7 @@ impl Board {
     }
 
     pub fn is_square_defended_from_straight_line_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,

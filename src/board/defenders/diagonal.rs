@@ -4,7 +4,7 @@ use crate::pieces::BISHOP;
 
 impl Board {
     pub fn is_square_defended_from_northeast_southwest_diagonal_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,
@@ -30,7 +30,7 @@ impl Board {
     }
 
     pub fn is_square_defended_from_northwest_southeast_diagonal_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,
@@ -56,7 +56,7 @@ impl Board {
     }
 
     pub fn is_square_defended_from_diagonal_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,

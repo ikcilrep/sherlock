@@ -8,7 +8,7 @@ pub mod straight_line;
 
 impl Board {
     pub fn is_square_defended_by_slider(
-        self: &mut Board,
+        &mut self,
         square: i8,
         possible_attacker: ColorizedPiece,
         defended_piece_location: i8,
@@ -28,7 +28,7 @@ impl Board {
     }
 
     pub fn is_square_defended_by_knight(
-        self: &mut Board,
+        &mut self,
         square: i8,
         defended_piece_location: i8,
         defended_color: Color,

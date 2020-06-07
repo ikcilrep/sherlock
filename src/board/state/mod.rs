@@ -48,7 +48,7 @@ impl Eq for BoardState {}
 impl BoardState {
     #[inline]
     fn update_fifty_moves(
-        self: &mut BoardState,
+        &mut self,
         moved_piece: ColorizedPiece,
         captured_piece: ColorizedPiece,
     ) {
@@ -60,7 +60,7 @@ impl BoardState {
     }
 
     #[inline]
-    fn update_has_stayed(self: &mut BoardState, from: usize, color: usize) {
+    fn update_has_stayed(&mut self, from: usize, color: usize) {
         self.has_king_stayed_in_place[color] &= KING_POSITIONS[color] != from;
         self.has_kings_rook_stayed_in_place[color] &= KINGS_ROOKS_POSITIONS[color] != from;
         self.has_queens_rook_stayed_in_place[color] &= QUEENS_ROOKS_POSITIONS[color] != from;
@@ -69,7 +69,7 @@ impl BoardState {
     // Probably, to be optimized.
     #[inline]
     fn update_en_passant_square(
-        self: &mut BoardState,
+        &mut self,
         from: usize,
         to: usize,
         moved_piece: ColorizedPiece,
@@ -87,7 +87,7 @@ impl BoardState {
     // Probably, to be optimized.
     #[inline]
     fn update_king_position(
-        self: &mut BoardState,
+        &mut self,
         moved_piece: ColorizedPiece,
         to: usize,
         color: usize,
@@ -98,13 +98,13 @@ impl BoardState {
     }
 
     #[inline]
-    fn update_side(self: &mut BoardState) {
+    fn update_side(&mut self) {
         self.side = !self.side;
     }
 
     #[inline]
     pub fn update(
-        self: &mut BoardState,
+        &mut self,
         moved_piece: ColorizedPiece,
         captured_piece: ColorizedPiece,
         from: usize,
@@ -119,7 +119,7 @@ impl BoardState {
     }
 
     #[inline]
-    pub fn revert(self: &mut BoardState, last_state: &BoardState) {
+    pub fn revert(&mut self, last_state: &BoardState) {
         let color = last_state.side as usize;
         self.fifty_moves = last_state.fifty_moves;
         self.en_passant_square = last_state.en_passant_square;

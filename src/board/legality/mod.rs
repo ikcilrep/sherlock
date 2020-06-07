@@ -23,12 +23,7 @@ pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 7] = [
 ];
 
 impl Board {
-    pub fn is_piece_pinned(
-        self: &mut Board,
-        from: i8,
-        to: i8,
-        protected_piece_location: i8,
-    ) -> bool {
+    pub fn is_piece_pinned(&mut self, from: i8, to: i8, protected_piece_location: i8) -> bool {
         let protected_piece_file = protected_piece_location & 7;
         let protected_piece_rank = protected_piece_location >> 3;
         let from_file = from & 7;
@@ -83,7 +78,7 @@ impl Board {
                     )))
     }
 
-    pub fn is_move_legal(self: &mut Board, half_move: Move) -> bool {
+    pub fn is_move_legal(&mut self, half_move: Move) -> bool {
         let king_location = self.state.king_positions[self.state.side as usize];
         let from = get_from(half_move) as i8;
 
@@ -99,11 +94,11 @@ impl Board {
         return !self.is_piece_pinned(from, to, king_location);
     }
 
-    fn is_king_checked(self: &Board, color: Color) -> bool {
+    fn is_king_checked(&self, color: Color) -> bool {
         self.is_square_attacked(self.state.king_positions[color as usize], color)
     }
 
-    fn can_any_piece_be_moved(self: &mut Board) -> bool {
+    fn can_any_piece_be_moved(&mut self) -> bool {
         let pieces = self.state.pieces;
         let mut from = 0;
         for piece in pieces.iter() {
@@ -117,7 +112,7 @@ impl Board {
         false
     }
 
-    fn is_material_sufficient_to_checkmate(self: &mut Board) -> bool {
+    fn is_material_sufficient_to_checkmate(&mut self) -> bool {
         #[inline]
         fn get_square_color(location: usize) -> Color {
             ((location >> 3) & 1 == location & 1 && location & 1 == 0) as u8
@@ -185,7 +180,7 @@ impl Board {
             || !self.can_any_piece_be_moved()
     }
 
-    fn get_game_result(self: &mut Board) -> GameState {
+    fn get_game_result(&mut self) -> GameState {
         // Threefold repetition draw will be implemented in future.
         return if self.is_game_drawn() {
             GameState::Draw

@@ -4,7 +4,7 @@ use crate::pieces::ROOK;
 
 impl Board {
     pub fn is_square_attacked_from_north_straight_line_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -19,7 +19,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_from_south_straight_line_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -34,7 +34,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_from_east_straight_line_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -49,7 +49,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_from_west_straight_line_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {
@@ -64,7 +64,7 @@ impl Board {
     }
 
     pub fn is_square_attacked_on_straight_line_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         attacked_color: Color,
     ) -> bool {

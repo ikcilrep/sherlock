@@ -4,7 +4,7 @@ use crate::pieces::{king, pawn};
 
 impl Board {
     fn can_get_out_of_check_on_rank(
-        self: &mut Board,
+        &mut self,
         attacker_location: i8,
         king_location: i8,
         color: Color,
@@ -42,7 +42,7 @@ impl Board {
     }
 
     fn can_get_out_of_check_on_file(
-        self: &mut Board,
+        &mut self,
         attacker_location: i8,
         king_location: i8,
         color: Color,
@@ -78,7 +78,7 @@ impl Board {
     }
 
     fn can_get_out_of_check_on_northwest_southeast_diagonal(
-        self: &mut Board,
+        &mut self,
         attacker_location: i8,
         king_location: i8,
         color: Color,
@@ -120,7 +120,7 @@ impl Board {
     }
 
     fn can_get_out_of_check_on_northeast_southwest_diagonal(
-        self: &mut Board,
+        &mut self,
         attacker_location: i8,
         king_location: i8,
         color: Color,
@@ -161,7 +161,7 @@ impl Board {
     }
 
     pub fn can_get_out_of_check(
-        self: &mut Board,
+        &mut self,
         king_attackers_locations: &Vec<i8>,
         color: Color,
     ) -> bool {

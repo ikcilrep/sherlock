@@ -10,7 +10,7 @@ pub mod straight_line;
 
 impl Board {
     pub fn is_square_attacked_by_slider(
-        self: &Board,
+        &self,
         square: i8,
         possible_attacker: ColorizedPiece,
         attacked_color: Color,
@@ -27,12 +27,12 @@ impl Board {
     }
 
     #[inline]
-    pub fn is_square_on_board(self: &Board, square: i8) -> bool {
+    pub fn is_square_on_board(&self, square: i8) -> bool {
         square >= 0 && square < 64
     }
 
     #[inline]
-    pub fn is_square_attacked_by_pawn(self: &Board, square: i8, attacked_color: Color) -> bool {
+    pub fn is_square_attacked_by_pawn(&self, square: i8, attacked_color: Color) -> bool {
         let colorized_pawn = colorize_piece(PAWN, !attacked_color);
         let square_file = square & 7;
         let attacker_square1 = square + INVERSED_PAWN_CAPTURES[attacked_color as usize][0];
@@ -45,7 +45,7 @@ impl Board {
                 && self.state.pieces[attacker_square2 as usize] == colorized_pawn)
     }
 
-    fn is_square_attacked_by_knight(self: &Board, square: i8, attacked_color: Color) -> bool {
+    fn is_square_attacked_by_knight(&self, square: i8, attacked_color: Color) -> bool {
         let colorized_knight = colorize_piece(KNIGHT, !attacked_color);
         self.is_square_attacked_by_piece(
             square,
@@ -56,7 +56,7 @@ impl Board {
         )
     }
 
-    fn is_square_attacked_by_king(self: &Board, square: i8, attacked_color: Color) -> bool {
+    fn is_square_attacked_by_king(&self, square: i8, attacked_color: Color) -> bool {
         let colorized_king = colorize_piece(KING, !attacked_color);
         self.is_square_attacked_by_piece(
             square,
@@ -68,7 +68,7 @@ impl Board {
     }
 
     fn is_square_attacked_by_piece(
-        self: &Board,
+        &self,
         square: i8,
         piece: ColorizedPiece,
         moves_to: [i8; 8],
@@ -87,7 +87,7 @@ impl Board {
     }
 
     // Probably, to be optimized.
-    pub fn is_square_attacked(self: &Board, square: i8, attacked_color: Color) -> bool {
+    pub fn is_square_attacked(&self, square: i8, attacked_color: Color) -> bool {
         self.is_square_attacked_by_king(square, attacked_color)
             || self.is_square_attacked_by_knight(square, attacked_color)
             || self.is_square_attacked_by_pawn(square, attacked_color)

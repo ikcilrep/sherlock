@@ -10,7 +10,7 @@ const QUEENS_POSITIONS: [usize; 2] = [3, 59];
 
 impl Board {
     #[inline]
-    pub fn is_castling_queens_side_pseudo_legal(self: &Board, color: Color) -> bool {
+    pub fn is_castling_queens_side_pseudo_legal(&self, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]
             && self.state.has_queens_rook_stayed_in_place[color as usize]
             && self.state.pieces[BISHOP_QUEENS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
@@ -19,7 +19,7 @@ impl Board {
     }
 
     #[inline]
-    pub fn is_castling_kings_side_pseudo_legal(self: &Board, color: Color) -> bool {
+    pub fn is_castling_kings_side_pseudo_legal(&self, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]
             && self.state.has_kings_rook_stayed_in_place[color as usize]
             && self.state.pieces[BISHOP_KINGS_SIDE_POSITIONS[color as usize]] == EMPTY_SQUARE
@@ -27,13 +27,13 @@ impl Board {
     }
 
     #[inline]
-    pub fn has_castling_kings_side_rights(self: &Board, color: Color) -> bool {
+    pub fn has_castling_kings_side_rights(&self, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]
             && self.state.has_kings_rook_stayed_in_place[color as usize]
     }
 
     #[inline]
-    pub fn has_castling_queens_side_rights(self: &Board, color: Color) -> bool {
+    pub fn has_castling_queens_side_rights(&self, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]
             && self.state.has_queens_rook_stayed_in_place[color as usize]
     }

@@ -23,20 +23,20 @@ pub struct Board {
 
 impl Board {
     #[inline]
-    pub fn can_be_moved(self: &Board, to: i8, piece_to_move_color: Color) -> bool {
+    pub fn can_be_moved(&self, to: i8, piece_to_move_color: Color) -> bool {
         self.state.pieces[to as usize] == EMPTY_SQUARE
             || get_piece_color(self.state.pieces[to as usize]) != piece_to_move_color
     }
 
     #[inline]
-    pub fn can_capture(self: &Board, to: i8, piece_to_move_color: Color) -> bool {
+    pub fn can_capture(&self, to: i8, piece_to_move_color: Color) -> bool {
         self.state.pieces[to as usize] != EMPTY_SQUARE
             && get_piece_color(self.state.pieces[to as usize]) != piece_to_move_color
     }
 
     #[inline]
     fn can_position_be_repeated(
-        self: &mut Board,
+        &mut self,
         captured_piece: ColorizedPiece,
         moved_piece: ColorizedPiece,
     ) -> bool {
@@ -55,7 +55,7 @@ impl Board {
     }
 
     #[inline]
-    pub fn make_move(self: &mut Board, half_move: Move) {
+    pub fn make_move(&mut self, half_move: Move) {
         let from = get_from(half_move);
         let to = get_to(half_move);
         let moved_piece = get_moved_piece(half_move);

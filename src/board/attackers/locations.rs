@@ -9,12 +9,12 @@ type AttackingSliderFinder = fn(&Board, i8, ColorizedPiece, Color, i8, fn(i8, i8
 
 impl Board {
     #[inline]
-    fn is_square_not_occupied_by_color(self: &Board, square: usize, color: Color) -> bool {
+    fn is_square_not_occupied_by_color(&self, square: usize, color: Color) -> bool {
         self.state.pieces[square] == EMPTY_SQUARE
             || get_piece_color(self.state.pieces[square]) != color
     }
 
-    pub fn get_attackers_of_king_square_locations(self: &Board, attacked_color: Color) -> Vec<i8> {
+    pub fn get_attackers_of_king_square_locations(&self, attacked_color: Color) -> Vec<i8> {
         let square = self.state.king_positions[attacked_color as usize];
         let mut result = Vec::new();
         self.get_pieces_attacking_square_locations(
@@ -72,7 +72,7 @@ impl Board {
     }
 
     fn get_slider_attacking_square_location(
-        self: &Board,
+        &self,
         square: i8,
         possible_attacker: ColorizedPiece,
         attacked_color: Color,
@@ -93,7 +93,7 @@ impl Board {
     }
 
     pub fn get_slider_or_queen_attacking_square_location(
-        self: &Board,
+        &self,
         square: i8,
         possible_attacker: ColorizedPiece,
         attacked_color: Color,
@@ -116,7 +116,7 @@ impl Board {
     }
 
     fn get_piece_attacking_square_on_straight_lines_locations(
-        self: &Board,
+        &self,
         piece: ColorizedPiece,
         square: i8,
         attacked_color: Color,
@@ -177,7 +177,7 @@ impl Board {
     }
 
     pub fn get_piece_attacking_square_on_diagonals_locations(
-        self: &Board,
+        &self,
         piece: ColorizedPiece,
         square: i8,
         attacked_color: Color,
@@ -242,7 +242,7 @@ impl Board {
     }
 
     fn get_pieces_attacking_square_locations(
-        self: &Board,
+        &self,
         piece: ColorizedPiece,
         square: i8,
         moves_to: [i8; 8],
@@ -263,7 +263,7 @@ impl Board {
     }
 
     pub fn get_pieces_of_type_attacking_square_locations(
-        self: &Board,
+        &self,
         square: i8,
         piece: ColorizedPiece,
         attacked_color: Color,
