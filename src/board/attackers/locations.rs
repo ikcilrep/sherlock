@@ -26,7 +26,7 @@ impl Board {
             &mut result,
         );
 
-        self.get_piece_attacking_square_on_straight_lines_locations(
+        self.get_pieces_attacking_square_on_straight_lines_locations(
             colorize_piece(ROOK, !attacked_color),
             square,
             attacked_color,
@@ -36,7 +36,7 @@ impl Board {
 
         self.get_pawn_attacking_king_square_location(square, attacked_color, &mut result);
 
-        self.get_piece_attacking_square_on_diagonals_locations(
+        self.get_pieces_attacking_square_on_diagonals_locations(
             colorize_piece(BISHOP, !attacked_color),
             square,
             attacked_color,
@@ -115,7 +115,7 @@ impl Board {
         -1
     }
 
-    fn get_piece_attacking_square_on_straight_lines_locations(
+    fn get_pieces_attacking_square_on_straight_lines_locations(
         &self,
         piece: ColorizedPiece,
         square: i8,
@@ -142,7 +142,7 @@ impl Board {
             piece,
             attacked_color,
             -8,
-            |attacker_square, _| attacker_square > 0,
+            |attacker_square, _| attacker_square >= 0,
         );
 
         if location2 != -1 {
@@ -176,7 +176,7 @@ impl Board {
         }
     }
 
-    pub fn get_piece_attacking_square_on_diagonals_locations(
+    pub fn get_pieces_attacking_square_on_diagonals_locations(
         &self,
         piece: ColorizedPiece,
         square: i8,
@@ -205,7 +205,9 @@ impl Board {
             piece,
             attacked_color,
             -9,
-            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 < square_file,
+            |attacker_square, square_file| {
+                attacker_square >= 0 && attacker_square & 7 < square_file
+            },
         );
 
         if location2 != -1 {
@@ -233,7 +235,9 @@ impl Board {
             piece,
             attacked_color,
             -7,
-            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 > square_file,
+            |attacker_square, square_file| {
+                attacker_square >= 0 && attacker_square & 7 > square_file
+            },
         );
 
         if location4 != -1 {
@@ -292,7 +296,7 @@ impl Board {
             }
 
             ROOK => {
-                self.get_piece_attacking_square_on_straight_lines_locations(
+                self.get_pieces_attacking_square_on_straight_lines_locations(
                     piece,
                     square,
                     attacked_color,
@@ -301,7 +305,7 @@ impl Board {
                 );
             }
             BISHOP => {
-                self.get_piece_attacking_square_on_diagonals_locations(
+                self.get_pieces_attacking_square_on_diagonals_locations(
                     piece,
                     square,
                     attacked_color,
@@ -311,7 +315,7 @@ impl Board {
             }
 
             QUEEN => {
-                self.get_piece_attacking_square_on_straight_lines_locations(
+                self.get_pieces_attacking_square_on_straight_lines_locations(
                     piece,
                     square,
                     attacked_color,
@@ -319,7 +323,7 @@ impl Board {
                     &mut result,
                 );
 
-                self.get_piece_attacking_square_on_diagonals_locations(
+                self.get_pieces_attacking_square_on_diagonals_locations(
                     piece,
                     square,
                     attacked_color,
