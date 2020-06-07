@@ -13,15 +13,13 @@ const PAWN_START_ROWS: [usize; 2] = [1, 6];
 
 const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 3] = [
     |from_file, to, board, pawn_color| {
-        to < 64
-            && to >= 0
+        board.is_square_on_board(to)
             && to & 7 < from_file
             && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     },
     |_, to, board, _| board.state.pieces[to as usize] == EMPTY_SQUARE,
     |from_file, to, board, pawn_color| {
-        to < 64
-            && to >= 0
+        board.is_square_on_board(to)
             && to & 7 > from_file
             && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     },
@@ -76,7 +74,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     {
         if to < 56 && to > 7 {
             result.push(new_move(from, to, board));
-        } else if to < 64 && to >= 0 {
+        } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
     }
@@ -92,7 +90,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         {
             result.push(new_move(from, to, board));
         }
-    } else if to < 64 && to >= 0 && board.state.pieces[to as usize] == EMPTY_SQUARE {
+    } else if board.is_square_on_board(to) && board.state.pieces[to as usize] == EMPTY_SQUARE {
         add_promotions(from, to, pawn_color, board, result);
     }
 
@@ -102,7 +100,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     {
         if to < 56 && to > 7 {
             result.push(new_en_passant(from, to, board));
-        } else if to < 64 && to >= 0 {
+        } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
     }
@@ -110,21 +108,19 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
 
 #[inline]
 fn is_move_northwest_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_color: Color) -> bool {
-    to < 64
-        && to >= 0
+    board.is_square_on_board(to)
         && to & 7 < from_file
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
 }
 
 #[inline]
 fn is_move_north_pseudo_legal(_: i8, to: i8, board: &Board, _: Color) -> bool {
-    to < 64 && to >= 0 && board.state.pieces[to as usize] == EMPTY_SQUARE
+    board.is_square_on_board(to) && board.state.pieces[to as usize] == EMPTY_SQUARE
 }
 
 #[inline]
 fn is_move_northeast_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_color: Color) -> bool {
-    to < 64
-        && to >= 0
+    board.is_square_on_board(to)
         && to & 7 > from_file
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
 }
