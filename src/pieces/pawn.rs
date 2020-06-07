@@ -200,8 +200,20 @@ pub fn can_be_moved_on_empty_square_without_capture(empty_square: i8, board: &mu
 
 pub fn can_capture_on_enemy_occupied_square(enemy_occupied_square: i8, board: &mut Board) -> bool {
     let color = board.state.side as usize;
-    let from1 = (enemy_occupied_square - PAWN_STEPS[color][0]) as usize;
-    let from2 = (enemy_occupied_square - PAWN_STEPS[color][2]) as usize;
+    let from1 = enemy_occupied_square - PAWN_STEPS[color][0];
+    let from2 = enemy_occupied_square - PAWN_STEPS[color][2];
+    let enemy_occupied_square_file = enemy_occupied_square & 7;
     let colorized_pawn = colorize_piece(PAWN, board.state.side);
-    board.state.pieces[from1] == colorized_pawn || board.state.pieces[from2] == colorized_pawn
+    let mut can_capture = |from: i8| -> bool {
+        board.is_square_on_board(from)
+            && board.state.pieces[from as usize] == colorized_pawn
+            && !board.is_piece_pinned(
+                from,
+                enemy_occupied_square,
+                board.state.king_positions[color],
+            )
+    };
+
+    (from1 & 7 > enemy_occupied_square_file && can_capture(from1))
+        || (from2 & 7 < enemy_occupied_square_file && can_capture(from2))
 }
