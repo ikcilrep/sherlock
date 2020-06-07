@@ -1,6 +1,9 @@
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
-use crate::pieces::{knight, ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, QUEEN, ROOK};
+use crate::pieces::pawn::PAWN_STEPS;
+use crate::pieces::{
+    knight, ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK,
+};
 
 type AttackingSliderFinder = fn(&Board, i8, ColorizedPiece, Color, i8, fn(i8, i8) -> bool) -> i8;
 
@@ -31,6 +34,8 @@ impl Board {
             &mut result,
         );
 
+        self.get_pawn_attacking_king_square_location(square, attacked_color, &mut result);
+
         self.get_piece_attacking_square_on_diagonals_locations(
             colorize_piece(BISHOP, !attacked_color),
             square,
@@ -40,6 +45,30 @@ impl Board {
         );
 
         result
+    }
+
+    fn get_pawn_attacking_king_square_location(
+        &self,
+        king_square: i8,
+        king_color: Color,
+        result: &mut Vec<i8>,
+    ) {
+        let king_square_file = king_square & 7;
+        let color = king_color as usize;
+        let from1 = king_square + PAWN_STEPS[color][0];
+        let from2 = king_square + PAWN_STEPS[color][2];
+        let colorized_pawn = colorize_piece(PAWN, !king_color);
+        if self.is_square_on_board(from1)
+            && king_square_file > from1 & 7
+            && self.state.pieces[from1 as usize] == colorized_pawn
+        {
+            result.push(from1);
+        } else if self.is_square_on_board(from2)
+            && king_square_file < from2 & 7
+            && self.state.pieces[from2 as usize] == colorized_pawn
+        {
+            result.push(from2);
+        }
     }
 
     fn get_slider_attacking_square_location(

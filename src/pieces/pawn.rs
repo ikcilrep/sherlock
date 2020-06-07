@@ -8,7 +8,7 @@ use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
-const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
+pub const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
 const PAWN_START_ROWS: [usize; 2] = [1, 6];
 
 const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 3] = [

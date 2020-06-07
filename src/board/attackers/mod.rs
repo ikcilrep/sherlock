@@ -27,7 +27,7 @@ impl Board {
     }
 
     #[inline]
-    fn is_square_on_board(self: &Board, square: i8) -> bool {
+    pub fn is_square_on_board(self: &Board, square: i8) -> bool {
         square >= 0 && square < 64
     }
 
