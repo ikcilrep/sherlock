@@ -23,7 +23,7 @@ impl Board {
             defended_piece_location,
             defended_color,
             -8,
-            |attacker_square, _| attacker_square > 0,
+            |attacker_square, _| attacker_square >= 0,
         )
     }
 
@@ -85,7 +85,7 @@ impl Board {
             defended_piece_location,
             defended_color,
             -8,
-            |attacker_square, _| attacker_square > 0,
+            |attacker_square, _| attacker_square >= 0,
         )
     }
 }

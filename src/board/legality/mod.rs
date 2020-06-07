@@ -32,7 +32,7 @@ impl Board {
         let to_rank = to >> 3;
         let difference = protected_piece_location - from;
         // I know how hard to read it is, but it's fast.
-        (difference > 0
+        (difference >= 0
             && ((from_file == protected_piece_file
                 && to_file != from_file
                 && self

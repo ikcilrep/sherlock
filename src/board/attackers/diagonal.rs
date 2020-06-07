@@ -31,7 +31,9 @@ impl Board {
             colorized_bishop,
             attacked_color,
             -9,
-            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 < square_file,
+            |attacker_square, square_file| {
+                attacker_square >= 0 && attacker_square & 7 < square_file
+            },
         )
     }
 
@@ -63,7 +65,9 @@ impl Board {
             colorized_bishop,
             attacked_color,
             -7,
-            |attacker_square, square_file| attacker_square > 0 && attacker_square & 7 > square_file,
+            |attacker_square, square_file| {
+                attacker_square >= 0 && attacker_square & 7 > square_file
+            },
         )
     }
 

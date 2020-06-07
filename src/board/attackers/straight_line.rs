@@ -29,7 +29,7 @@ impl Board {
             colorized_rook,
             attacked_color,
             -8,
-            |attacker_square, _| attacker_square > 0,
+            |attacker_square, _| attacker_square >= 0,
         )
     }
 

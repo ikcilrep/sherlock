@@ -12,13 +12,13 @@ const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bo
         to < 64 && to & 7 > from_file && board.can_be_moved(to, bishop_color)
     },
     |to, from_file, board, bishop_color| {
-        to > 0 && to & 7 < from_file && board.can_be_moved(to, bishop_color)
+        to >= 0 && to & 7 < from_file && board.can_be_moved(to, bishop_color)
     },
     |to, from_file, board, bishop_color| {
         to < 64 && to & 7 < from_file && board.can_be_moved(to, bishop_color)
     },
     |to, from_file, board, bishop_color| {
-        to > 0 && to & 7 > from_file && board.can_be_moved(to, bishop_color)
+        to >= 0 && to & 7 > from_file && board.can_be_moved(to, bishop_color)
     },
 ];
 
@@ -54,7 +54,7 @@ fn generate_pseudo_legal_moves_on_southwest(
     result: &mut Vec<Move>,
 ) {
     let mut to = from as i8 - 9;
-    while to > 0 && to & 7 < from_file && add_sliding_move(from, to, bishop_color, result, board) {
+    while to >= 0 && to & 7 < from_file && add_sliding_move(from, to, bishop_color, result, board) {
         to -= 9;
     }
 }
@@ -80,7 +80,7 @@ fn generate_pseudo_legal_moves_on_southeast(
     result: &mut Vec<Move>,
 ) {
     let mut to = from as i8 - 7;
-    while to > 0 && to & 7 > from_file && add_sliding_move(from, to, bishop_color, result, board) {
+    while to >= 0 && to & 7 > from_file && add_sliding_move(from, to, bishop_color, result, board) {
         to -= 7;
     }
 }
