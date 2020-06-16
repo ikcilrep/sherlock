@@ -13,10 +13,16 @@ pub mod diagonals;
 pub mod straight_lines;
 
 #[inline]
-pub fn get_two_random_indexes(rng: &mut ThreadRng) -> [usize; 2] {
-    let index1 = rng.gen_range(0, 2) as usize;
-    let index2 = (index1 + 1) & 1;
-    [index1, index2]
+pub fn get_three_random_indexes(rng: &mut ThreadRng) -> [usize; 3] {
+    let index = rng.gen_range(0, 6) as usize;
+    [
+        [0, 1, 2],
+        [0, 2, 1],
+        [1, 0, 2],
+        [1, 2, 0],
+        [2, 0, 1],
+        [2, 1, 0],
+    ][index]
 }
 
 #[inline]
@@ -48,7 +54,7 @@ impl Board {
         king_location: i8,
         king_attacker_location: i8,
         increment: i8,
-        defender_locations_getters: [fn(&mut Board, i8, i8, Color, &mut Vec<i8>); 2],
+        defender_locations_getters: [fn(&mut Board, i8, i8, Color, &mut Vec<i8>); 3],
         rng: &mut ThreadRng,
     ) -> Move {
         let (start, min, max) =
@@ -59,7 +65,7 @@ impl Board {
 
         let mut defender_locations = Vec::new();
 
-        let indexes = get_two_random_indexes(rng);
+        let indexes = get_three_random_indexes(rng);
 
         while {
             let square = min + i;
