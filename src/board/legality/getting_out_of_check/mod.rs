@@ -2,6 +2,8 @@ use crate::board::Board;
 use crate::pieces::color::Color;
 use crate::pieces::{king, pawn};
 
+pub mod move_generation;
+
 impl Board {
     fn can_get_out_of_check_on_rank(
         &mut self,

@@ -63,6 +63,17 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     }
 }
 
+#[inline]
+pub fn generate_random_getting_of_check_move(
+    from: usize,
+    legal_moves_to: &Vec<i8>,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Move {
+    let index = rng.gen_range(0, legal_moves_to.len());
+    return new_move(from, legal_moves_to[index], board);
+}
+
 pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
@@ -89,6 +100,23 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
         i != start
     } {}
     NULL_MOVE
+}
+
+pub fn get_legal_moves_to(from: usize, board: &mut Board) -> Vec<i8> {
+    let king = board.state.pieces[from];
+    board.state.pieces[from] = EMPTY_SQUARE;
+    let from_file = from as i8 & 7;
+    let result = get_moves_to(from)
+        .iter()
+        .enumerate()
+        .filter(|&(i, &to)| {
+            MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, to, board, board.state.side)
+                && !board.is_square_attacked(to, board.state.side)
+        })
+        .map(|(_, &to)| to)
+        .collect();
+    board.state.pieces[from] = king;
+    result
 }
 
 pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
