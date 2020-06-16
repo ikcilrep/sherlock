@@ -1,7 +1,9 @@
 extern crate rand;
 
 use crate::board::Board;
+use crate::moves::constructors::new_move;
 use crate::moves::{Move, NULL_MOVE};
+use crate::pieces::color::Color;
 use crate::pieces::king;
 
 use rand::rngs::ThreadRng;
@@ -10,12 +12,14 @@ use rand::Rng;
 pub mod diagonals;
 pub mod straight_lines;
 
+#[inline]
 pub fn get_two_random_indexes(rng: &mut ThreadRng) -> [usize; 2] {
     let index1 = rng.gen_range(0, 2) as usize;
     let index2 = (index1 + 1) & 1;
     [index1, index2]
 }
 
+#[inline]
 pub fn get_start_min_max(
     king_location: i8,
     king_attacker_location: i8,
@@ -38,6 +42,50 @@ pub fn get_start_min_max(
 }
 
 impl Board {
+    #[inline]
+    pub fn generate_random_out_of_specific_check_move(
+        &mut self,
+        king_location: i8,
+        king_attacker_location: i8,
+        increment: i8,
+        defender_locations_getters: [fn(&mut Board, i8, i8, Color, &mut Vec<i8>); 2],
+        rng: &mut ThreadRng,
+    ) -> Move {
+        let (start, min, max) =
+            get_start_min_max(king_location, king_attacker_location, increment, rng);
+
+        let i_upper_limit = max - min + 1;
+        let mut i = start;
+
+        let mut defender_locations = Vec::new();
+
+        let indexes = get_two_random_indexes(rng);
+
+        while {
+            let square = min + i;
+            for &index in indexes.iter() {
+                defender_locations_getters[index](
+                    self,
+                    square,
+                    king_location,
+                    self.state.side,
+                    &mut defender_locations,
+                );
+                if defender_locations.len() > 0 {
+                    let location_index = rng.gen_range(0, defender_locations.len());
+                    let location = defender_locations[location_index];
+                    return new_move(location as usize, square, self);
+                }
+            }
+
+            i += increment;
+            i %= i_upper_limit;
+            i != start
+        } {}
+
+        NULL_MOVE
+    }
+
     fn generate_random_out_of_check_move(
         &mut self,
         king_attackers_locations: Vec<i8>,
