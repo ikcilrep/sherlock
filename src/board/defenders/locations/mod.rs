@@ -1,12 +1,51 @@
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
+use crate::pieces::pawn::PAWN_STEPS;
 use crate::pieces::ColorizedPiece;
-use crate::pieces::{knight, KNIGHT};
+use crate::pieces::{knight, EMPTY_SQUARE, KNIGHT, PAWN};
 
 pub mod diagonals;
 pub mod straight_lines;
 
 impl Board {
+    pub fn get_pawns_defending_square_locations(
+        &mut self,
+        square: i8,
+        defended_piece_location: i8,
+        defended_color: Color,
+        result: &mut Vec<i8>,
+    ) {
+        let colorized_pawn = colorize_piece(PAWN, defended_color);
+        if self.state.pieces[square as usize] == EMPTY_SQUARE {
+            let from = square - PAWN_STEPS[defended_color as usize][1];
+            if self.is_square_on_board(from)
+                && self.state.pieces[from as usize] == colorized_pawn
+                && !self.is_piece_pinned(from, square, defended_piece_location)
+            {
+                result.push(from);
+            }
+        } else {
+            let square_file = square & 7;
+            let from1 = square - PAWN_STEPS[defended_color as usize][0];
+            if self.is_square_on_board(from1)
+                && from1 & 7 > square_file
+                && self.state.pieces[from1 as usize] == colorized_pawn
+                && !self.is_piece_pinned(from1, square, defended_piece_location)
+            {
+                result.push(from1);
+            }
+
+            let from2 = square - PAWN_STEPS[defended_color as usize][2];
+            if self.is_square_on_board(from2)
+                && from2 & 7 < square_file
+                && self.state.pieces[from2 as usize] == colorized_pawn
+                && !self.is_piece_pinned(from2, square, defended_piece_location)
+            {
+                result.push(from2);
+            }
+        }
+    }
+
     pub fn get_slider_or_queen_defending_square_location(
         &mut self,
         square: i8,

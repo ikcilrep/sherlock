@@ -13,15 +13,33 @@ pub mod diagonals;
 pub mod straight_lines;
 
 #[inline]
-pub fn get_three_random_indexes(rng: &mut ThreadRng) -> [usize; 3] {
-    let index = rng.gen_range(0, 6) as usize;
+pub fn get_four_random_indexes(rng: &mut ThreadRng) -> [usize; 4] {
+    let index = rng.gen_range(0, 24) as usize;
     [
-        [0, 1, 2],
-        [0, 2, 1],
-        [1, 0, 2],
-        [1, 2, 0],
-        [2, 0, 1],
-        [2, 1, 0],
+        [0, 3, 1, 2],
+        [0, 2, 3, 1],
+        [0, 1, 2, 3],
+        [0, 2, 1, 3],
+        [0, 1, 3, 2],
+        [0, 3, 2, 1],
+        [1, 3, 0, 2],
+        [1, 2, 3, 0],
+        [1, 0, 2, 3],
+        [1, 2, 0, 3],
+        [1, 0, 3, 2],
+        [1, 3, 2, 0],
+        [2, 3, 0, 1],
+        [2, 1, 3, 0],
+        [2, 0, 1, 3],
+        [2, 1, 0, 3],
+        [2, 0, 3, 1],
+        [2, 3, 1, 0],
+        [3, 2, 0, 1],
+        [3, 1, 2, 0],
+        [3, 0, 1, 3],
+        [3, 1, 0, 3],
+        [3, 0, 3, 1],
+        [3, 3, 1, 0],
     ][index]
 }
 
@@ -54,7 +72,7 @@ impl Board {
         king_location: i8,
         king_attacker_location: i8,
         increment: i8,
-        defender_locations_getters: [fn(&mut Board, i8, i8, Color, &mut Vec<i8>); 3],
+        defender_locations_getters: [fn(&mut Board, i8, i8, Color, &mut Vec<i8>); 4],
         rng: &mut ThreadRng,
     ) -> Move {
         let (start, min, max) =
@@ -65,7 +83,7 @@ impl Board {
 
         let mut defender_locations = Vec::new();
 
-        let indexes = get_three_random_indexes(rng);
+        let indexes = get_four_random_indexes(rng);
 
         while {
             let square = min + i;
