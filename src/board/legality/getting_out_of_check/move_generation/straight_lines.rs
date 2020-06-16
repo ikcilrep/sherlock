@@ -1,5 +1,6 @@
 extern crate rand;
 
+use crate::board::legality::getting_out_of_check::move_generation::get_two_random_indexes;
 use crate::board::Board;
 use crate::moves::constructors::new_move;
 use crate::moves::{Move, NULL_MOVE};
@@ -37,11 +38,7 @@ impl Board {
 
         let mut defender_locations = Vec::new();
 
-        let indexes = {
-            let index1 = rng.gen_range(0, 2) as usize;
-            let index2 = (index1 + 1) & 1;
-            [index1, index2]
-        };
+        let indexes = get_two_random_indexes(rng);
 
         while {
             let square = min + i;
@@ -98,11 +95,7 @@ impl Board {
 
         let mut defender_locations = Vec::new();
 
-        let indexes = {
-            let index1 = rng.gen_range(0, 2) as usize;
-            let index2 = (index1 + 1) & 1;
-            [index1, index2]
-        };
+        let indexes = get_two_random_indexes(rng);
 
         while {
             let square = min + i;

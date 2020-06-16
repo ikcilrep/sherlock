@@ -3,10 +3,18 @@ extern crate rand;
 use crate::board::Board;
 use crate::moves::{Move, NULL_MOVE};
 use crate::pieces::king;
+
 use rand::rngs::ThreadRng;
+use rand::Rng;
 
 pub mod diagonals;
 pub mod straight_lines;
+
+pub fn get_two_random_indexes(rng: &mut ThreadRng) -> [usize; 2] {
+    let index1 = rng.gen_range(0, 2) as usize;
+    let index2 = (index1 + 1) & 1;
+    [index1, index2]
+}
 
 impl Board {
     fn generate_random_out_of_check_move(
