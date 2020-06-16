@@ -6,6 +6,7 @@ use rand::rngs::ThreadRng;
 
 // knights in future
 impl Board {
+    #[inline]
     pub fn generate_random_out_of_check_on_file_move(
         &mut self,
         king_location: i8,
@@ -26,6 +27,7 @@ impl Board {
         )
     }
 
+    #[inline]
     pub fn generate_random_out_of_check_on_rank_move(
         &mut self,
         king_location: i8,

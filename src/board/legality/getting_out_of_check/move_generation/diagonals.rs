@@ -7,6 +7,7 @@ use rand::rngs::ThreadRng;
 
 // knights in future
 impl Board {
+    #[inline]
     pub fn generate_random_out_of_check_on_northeast_southwest_diagonal_move(
         &mut self,
         king_location: i8,
@@ -27,6 +28,7 @@ impl Board {
         )
     }
 
+    #[inline]
     pub fn generate_random_out_of_check_on_northwest_southeast_diagonal_move(
         &mut self,
         king_location: i8,
