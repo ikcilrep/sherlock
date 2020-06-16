@@ -16,6 +16,27 @@ pub fn get_two_random_indexes(rng: &mut ThreadRng) -> [usize; 2] {
     [index1, index2]
 }
 
+pub fn get_start_min_max(
+    king_location: i8,
+    king_attacker_location: i8,
+    increment: i8,
+    rng: &mut ThreadRng,
+) -> (i8, i8, i8) {
+    return if king_attacker_location > king_location {
+        (
+            rng.gen_range(0, king_attacker_location - king_location),
+            king_location + increment,
+            king_attacker_location,
+        )
+    } else {
+        (
+            rng.gen_range(0, king_location - king_attacker_location),
+            king_attacker_location,
+            king_location - increment,
+        )
+    };
+}
+
 impl Board {
     fn generate_random_out_of_check_move(
         &mut self,
@@ -56,7 +77,7 @@ impl Board {
                     rng,
                 )
             } else if difference % 9 == 0 {
-                self.generate_random_out_of_check_on_northwest_southeast_diagonal_move(
+                self.generate_random_out_of_check_on_northeast_southwest_diagonal_move(
                     king_location,
                     attacker_location,
                     rng,

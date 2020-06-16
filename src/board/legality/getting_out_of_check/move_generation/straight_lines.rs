@@ -1,6 +1,8 @@
 extern crate rand;
 
-use crate::board::legality::getting_out_of_check::move_generation::get_two_random_indexes;
+use crate::board::legality::getting_out_of_check::move_generation::{
+    get_start_min_max, get_two_random_indexes,
+};
 use crate::board::Board;
 use crate::moves::constructors::new_move;
 use crate::moves::{Move, NULL_MOVE};
@@ -14,19 +16,7 @@ impl Board {
         king_attacker_location: i8,
         rng: &mut ThreadRng,
     ) -> Move {
-        let (start, min, max) = if king_attacker_location > king_location {
-            (
-                rng.gen_range(0, king_attacker_location - king_location),
-                king_location + 8,
-                king_attacker_location,
-            )
-        } else {
-            (
-                rng.gen_range(0, king_location - king_attacker_location),
-                king_attacker_location,
-                king_location - 8,
-            )
-        };
+        let (start, min, max) = get_start_min_max(king_location, king_attacker_location, 8, rng);
 
         let i_upper_limit = max - min + 1;
         let mut i = start;
@@ -71,19 +61,7 @@ impl Board {
         king_attacker_location: i8,
         rng: &mut ThreadRng,
     ) -> Move {
-        let (start, min, max) = if king_attacker_location > king_location {
-            (
-                rng.gen_range(0, king_attacker_location - king_location),
-                king_location + 1,
-                king_attacker_location,
-            )
-        } else {
-            (
-                rng.gen_range(0, king_location - king_attacker_location),
-                king_attacker_location,
-                king_location - 1,
-            )
-        };
+        let (start, min, max) = get_start_min_max(king_location, king_attacker_location, 1, rng);
 
         let i_upper_limit = max - min + 1;
         let mut i = start;
