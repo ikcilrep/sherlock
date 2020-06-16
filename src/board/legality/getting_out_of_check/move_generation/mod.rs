@@ -5,6 +5,7 @@ use crate::moves::{Move, NULL_MOVE};
 use crate::pieces::king;
 use rand::rngs::ThreadRng;
 
+pub mod diagonals;
 pub mod straight_lines;
 
 impl Board {
@@ -47,7 +48,11 @@ impl Board {
                     rng,
                 )
             } else if difference % 9 == 0 {
-                NULL_MOVE
+                self.generate_random_out_of_check_on_northwest_southeast_diagonal_move(
+                    king_location,
+                    attacker_location,
+                    rng,
+                )
             } else if difference % 7 == 0 {
                 NULL_MOVE
             } else {
