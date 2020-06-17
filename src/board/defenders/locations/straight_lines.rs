@@ -11,30 +11,28 @@ impl Board {
         result: &mut Vec<i8>,
     ) {
         let colorized_rook = colorize_piece(ROOK, defended_color);
-        let location1 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_rook,
             defended_piece_location,
             defended_color,
             8,
             |defended_square, _| defended_square < 64,
-        );
-
-        if location1 != -1 {
-            result.push(location1);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
 
-        let location2 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_rook,
             defended_piece_location,
             defended_color,
             -8,
             |defended_square, _| defended_square >= 0,
-        );
-
-        if location2 != -1 {
-            result.push(location2);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
     }
 
@@ -46,30 +44,28 @@ impl Board {
         result: &mut Vec<i8>,
     ) {
         let colorized_rook = colorize_piece(ROOK, defended_color);
-        let location1 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_rook,
             defended_piece_location,
             defended_color,
             1,
             |defended_square, _| defended_square & 7 != 0,
-        );
-
-        if location1 != -1 {
-            result.push(location1);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
 
-        let location2 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_rook,
             defended_piece_location,
             defended_color,
             -1,
             |defended_square, _| defended_square & 7 != 7,
-        );
-
-        if location2 != -1 {
-            result.push(location2);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
     }
 

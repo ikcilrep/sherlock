@@ -26,7 +26,7 @@ pub const CASTLING_QUEENS_SIDE: MoveType = 1;
 pub const EN_PASSANT: MoveType = 2;
 pub const NORMAL_MOVE: MoveType = 3;
 
-pub const NULL_MOVE: Move = append!(
+/*pub const NULL_MOVE: Move = append!(
     append!(
         append!(append!(0, EMPTY_SQUARE, 4), EMPTY_SQUARE, 4),
         EMPTY_SQUARE,
@@ -34,7 +34,8 @@ pub const NULL_MOVE: Move = append!(
     ),
     NORMAL_MOVE,
     8
-);
+);*/
+
 #[inline]
 pub fn get_from(half_move: Move) -> usize {
     (half_move >> 26) as usize

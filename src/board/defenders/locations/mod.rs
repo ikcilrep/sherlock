@@ -54,7 +54,7 @@ impl Board {
         defended_color: Color,
         increment: i8,
         predicate: fn(i8, i8) -> bool,
-    ) -> i8 {
+    ) -> Option<i8> {
         let defender_location = self.get_slider_or_queen_attacking_square_location(
             square,
             possible_attacker,
@@ -62,12 +62,13 @@ impl Board {
             increment,
             predicate,
         );
-        return if defender_location > -1
-            && !self.is_piece_pinned(defender_location, square, defended_piece_location)
+
+        return if defender_location.is_some()
+            && !self.is_piece_pinned(defender_location.unwrap(), square, defended_piece_location)
         {
             defender_location
         } else {
-            -1
+            None
         };
     }
 

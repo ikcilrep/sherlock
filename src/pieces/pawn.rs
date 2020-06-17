@@ -2,7 +2,7 @@ extern crate rand;
 
 use crate::board::Board;
 use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
-use crate::moves::{Move, NULL_MOVE};
+use crate::moves::Move;
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
 use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
 use rand::rngs::ThreadRng;
@@ -144,7 +144,11 @@ fn get_capture(from: usize, to: i8, board: &Board, _: Color) -> Move {
     new_move(from, to, board)
 }
 
-pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
+pub fn generate_random_pseudo_legal_move(
+    from: usize,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Option<Move> {
     let pawn_color = get_piece_color(board.state.pieces[from]);
     let signed_from = from as i8;
     let from_file = signed_from & 7;
@@ -167,17 +171,17 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     let mut i = start;
     while {
         if move_pseudo_legality_validators[i](from_file, moves_to[i], board, pawn_color) {
-            return if moves_to[i] > 7 && moves_to[i] < 56 {
+            return Some(if moves_to[i] > 7 && moves_to[i] < 56 {
                 move_getters[i](from, moves_to[i], board, pawn_color)
             } else {
                 random_promotion(from, moves_to[i], pawn_color, board, rng)
-            };
+            });
         }
         i += 1;
         i %= 3;
         i != start
     } {}
-    NULL_MOVE
+    None
 }
 
 #[inline]

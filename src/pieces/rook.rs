@@ -1,7 +1,7 @@
 extern crate rand;
 
 use crate::board::Board;
-use crate::moves::{Move, NULL_MOVE};
+use crate::moves::Move;
 use crate::pieces::color::{get_piece_color, Color};
 use crate::pieces::sliders::add_sliding_move;
 use rand::rngs::ThreadRng;
@@ -84,7 +84,11 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     generate_pseudo_legal_moves_on_south(from, board, rook_color, result);
 }
 
-pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
+pub fn generate_random_pseudo_legal_move(
+    from: usize,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Option<Move> {
     let move_generators = [
         generate_pseudo_legal_moves_on_east,
         generate_pseudo_legal_moves_on_west,
@@ -103,11 +107,11 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
             i &= 3;
         } else {
             let move_index = rng.gen_range(0, moves.len());
-            return moves[move_index];
+            return Some(moves[move_index]);
         }
         i != start
     } {}
-    NULL_MOVE
+    None
 }
 
 #[inline]

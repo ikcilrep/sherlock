@@ -2,7 +2,7 @@ extern crate rand;
 
 use crate::board::Board;
 use crate::moves::constructors::new_move;
-use crate::moves::{Move, NULL_MOVE};
+use crate::moves::Move;
 use crate::pieces::color::Color;
 use crate::pieces::king;
 
@@ -74,7 +74,7 @@ impl Board {
         increment: i8,
         defender_locations_getters: [fn(&mut Board, i8, i8, Color, &mut Vec<i8>); 4],
         rng: &mut ThreadRng,
-    ) -> Move {
+    ) -> Option<Move> {
         let (start, min, max) =
             get_start_min_max(king_location, king_attacker_location, increment, rng);
 
@@ -98,7 +98,7 @@ impl Board {
                 if defender_locations.len() > 0 {
                     let location_index = rng.gen_range(0, defender_locations.len());
                     let location = defender_locations[location_index];
-                    return new_move(location as usize, square, self);
+                    return Some(new_move(location as usize, square, self));
                 }
             }
 
@@ -107,24 +107,24 @@ impl Board {
             i != start
         } {}
 
-        NULL_MOVE
+        None
     }
 
     fn generate_random_out_of_check_move(
         &mut self,
         king_attackers_locations: Vec<i8>,
         rng: &mut ThreadRng,
-    ) -> Move {
+    ) -> Option<Move> {
         let color = self.state.side;
         let king_location = self.state.king_positions[color as usize];
         let legal_moves_to = king::get_legal_moves_to(king_location as usize, self);
         if legal_moves_to.len() > 0 {
-            return king::generate_random_getting_of_check_move(
+            return Some(king::generate_random_getting_of_check_move(
                 king_location as usize,
                 &legal_moves_to,
                 self,
                 rng,
-            );
+            ));
         }
 
         if king_attackers_locations.len() == 1 {
@@ -161,9 +161,9 @@ impl Board {
                     rng,
                 )
             } else {
-                NULL_MOVE
+                None
             };
         }
-        NULL_MOVE
+        None
     }
 }

@@ -24,8 +24,8 @@ impl Board {
             increment,
             predicate,
         );
-        defender_location > -1
-            && !self.is_piece_pinned(defender_location, square, defended_piece_location)
+        defender_location.is_some()
+            && !self.is_piece_pinned(defender_location.unwrap(), square, defended_piece_location)
     }
 
     pub fn is_square_defended_by_knight(

@@ -12,7 +12,7 @@ impl Board {
         king_location: i8,
         king_attacker_location: i8,
         rng: &mut ThreadRng,
-    ) -> Move {
+    ) -> Option<Move> {
         let defender_locations_getters = [
             Board::get_sliders_or_queens_defending_square_on_rank_locations,
             Board::get_pieces_defending_square_on_diagonals_locations,
@@ -35,7 +35,7 @@ impl Board {
         king_location: i8,
         king_attacker_location: i8,
         rng: &mut ThreadRng,
-    ) -> Move {
+    ) -> Option<Move> {
         let defender_locations_getters = [
             Board::get_sliders_or_queens_defending_square_on_file_locations,
             Board::get_pieces_defending_square_on_diagonals_locations,

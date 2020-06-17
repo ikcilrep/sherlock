@@ -23,7 +23,8 @@ impl Board {
             attacked_color,
             increment,
             predicate,
-        ) > -1
+        )
+        .is_some()
     }
 
     #[inline]

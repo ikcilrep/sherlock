@@ -2,7 +2,7 @@ extern crate rand;
 
 use crate::board::Board;
 use crate::moves::constructors::{new_castling, new_move};
-use crate::moves::{Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, NULL_MOVE};
+use crate::moves::{Move, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE};
 use crate::pieces::color::{get_piece_color, Color};
 use crate::pieces::EMPTY_SQUARE;
 use rand::rngs::ThreadRng;
@@ -74,7 +74,11 @@ pub fn generate_random_getting_of_check_move(
     return new_move(from, legal_moves_to[index], board);
 }
 
-pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
+pub fn generate_random_pseudo_legal_move(
+    from: usize,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Option<Move> {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
     let king = board.state.pieces[from];
@@ -83,9 +87,9 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
 
     if rng.gen_bool(0.5) {
         if rng.gen_bool(0.5) && board.is_castling_queens_side_pseudo_legal(king_color) {
-            return new_castling(CASTLING_QUEENS_SIDE, from, king, king_color);
+            return Some(new_castling(CASTLING_QUEENS_SIDE, from, king, king_color));
         } else if board.is_castling_kings_side_pseudo_legal(king_color) {
-            return new_castling(CASTLING_KINGS_SIDE, from, king, king_color);
+            return Some(new_castling(CASTLING_KINGS_SIDE, from, king, king_color));
         }
     }
 
@@ -93,13 +97,13 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     let mut i = start;
     while {
         if MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, moves_to[i], board, king_color) {
-            return new_move(from, moves_to[i], board);
+            return Some(new_move(from, moves_to[i], board));
         }
         i += 1;
         i &= 7;
         i != start
     } {}
-    NULL_MOVE
+    None
 }
 
 pub fn get_legal_moves_to(from: usize, board: &mut Board) -> Vec<i8> {

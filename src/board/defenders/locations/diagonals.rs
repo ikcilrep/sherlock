@@ -11,7 +11,7 @@ impl Board {
         result: &mut Vec<i8>,
     ) {
         let colorized_bishop = colorize_piece(BISHOP, defended_color);
-        let location1 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_bishop,
             defended_piece_location,
@@ -20,13 +20,12 @@ impl Board {
             |attacker_square, square_file| {
                 attacker_square < 64 && attacker_square & 7 > square_file
             },
-        );
-
-        if location1 != -1 {
-            result.push(location1);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
 
-        let location2 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_bishop,
             defended_piece_location,
@@ -35,10 +34,9 @@ impl Board {
             |attacker_square, square_file| {
                 attacker_square >= 0 && attacker_square & 7 < square_file
             },
-        );
-
-        if location2 != -1 {
-            result.push(location2);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
     }
 
@@ -50,7 +48,7 @@ impl Board {
         result: &mut Vec<i8>,
     ) {
         let colorized_bishop = colorize_piece(BISHOP, defended_color);
-        let location1 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_bishop,
             defended_piece_location,
@@ -59,13 +57,12 @@ impl Board {
             |attacker_square, square_file| {
                 attacker_square < 64 && attacker_square & 7 < square_file
             },
-        );
-
-        if location1 != -1 {
-            result.push(location1);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
 
-        let location2 = self.get_slider_or_queen_defending_square_location(
+        match self.get_slider_or_queen_defending_square_location(
             square,
             colorized_bishop,
             defended_piece_location,
@@ -74,10 +71,9 @@ impl Board {
             |attacker_square, square_file| {
                 attacker_square >= 0 && attacker_square & 7 > square_file
             },
-        );
-
-        if location2 != -1 {
-            result.push(location2);
+        ) {
+            Some(location) => result.push(location),
+            None => {}
         }
     }
     pub fn get_pieces_defending_square_on_diagonals_locations(

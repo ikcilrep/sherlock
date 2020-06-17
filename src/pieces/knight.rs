@@ -2,7 +2,7 @@ extern crate rand;
 
 use crate::board::Board;
 use crate::moves::constructors::new_move;
-use crate::moves::{Move, NULL_MOVE};
+use crate::moves::Move;
 use crate::pieces::color::{get_piece_color, Color};
 use rand::rngs::ThreadRng;
 use rand::Rng;
@@ -86,7 +86,11 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         .for_each(|(_, to)| result.push(new_move(from, *to, board)));
 }
 
-pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
+pub fn generate_random_pseudo_legal_move(
+    from: usize,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Option<Move> {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
     let knight_color = get_piece_color(board.state.pieces[from]);
@@ -96,13 +100,13 @@ pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut T
     let mut i = start;
     while {
         if MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, moves_to[i], board, knight_color) {
-            return new_move(from, moves_to[i], board);
+            return Some(new_move(from, moves_to[i], board));
         }
         i += 1;
         i &= 7;
         i != start
     } {}
-    NULL_MOVE
+    None
 }
 
 #[inline]

@@ -1,7 +1,7 @@
 extern crate rand;
 
 use crate::board::Board;
-use crate::moves::{Move, NULL_MOVE};
+use crate::moves::Move;
 use crate::pieces::bishop;
 use crate::pieces::rook;
 use rand::rngs::ThreadRng;
@@ -12,10 +12,14 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     rook::generate_pseudo_legal_moves(from, board, result);
 }
 
-pub fn generate_random_pseudo_legal_move(from: usize, board: &Board, rng: &mut ThreadRng) -> Move {
+pub fn generate_random_pseudo_legal_move(
+    from: usize,
+    board: &Board,
+    rng: &mut ThreadRng,
+) -> Option<Move> {
     if rng.gen_bool(0.5) {
         let bishop_move = bishop::generate_random_pseudo_legal_move(from, board, rng);
-        if bishop_move != NULL_MOVE {
+        if bishop_move.is_some() {
             return bishop_move;
         };
     }
