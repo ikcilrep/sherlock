@@ -5,8 +5,8 @@ use crate::moves::{
     get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move,
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
 };
-use crate::pieces::color::{get_piece_color, uncolorize_piece};
-use crate::pieces::{Piece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
+use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece};
+use crate::pieces::{ColorizedPiece, Piece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
 
 fn file_to_char(file: u8) -> char {
     (file + 97) as char
@@ -33,6 +33,17 @@ fn piece_to_char(piece: Piece) -> char {
         QUEEN => 'Q',
         ROOK => 'R',
         _ => panic!("Invalid piece type."),
+    }
+}
+
+fn char_to_piece(piece: char) -> Option<Piece> {
+    match piece {
+        'B' => Some(BISHOP),
+        'K' => Some(KING),
+        'N' => Some(KNIGHT),
+        'Q' => Some(QUEEN),
+        'R' => Some(ROOK),
+        _ => None,
     }
 }
 
@@ -91,4 +102,27 @@ pub fn to_algebraic_notation(half_move: Move, board: &Board) -> String {
         }
         _ => panic!("Invalid move type."),
     }
+}
+
+fn get_piece_from_move_string(move_string: &String, board: &Board) -> Option<ColorizedPiece> {
+    move_string
+        .chars()
+        .next()
+        .and_then(|first_char| {
+            if first_char.is_uppercase() {
+                char_to_piece(first_char)
+            } else {
+                Some(PAWN)
+            }
+        })
+        .map(|piece| colorize_piece(piece, board.state.side))
+}
+
+pub fn from_algebraic_notaton(move_string: &String, board: &Board) -> Option<Move> {
+    match get_piece_from_move_string(move_string, board) {
+        Some(_) => {}
+        None => return None,
+    };
+
+    None
 }
