@@ -1,9 +1,7 @@
 use crate::board::Board;
-use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
+use crate::pieces::color::{colorize_piece, get_piece_color, Color};
 use crate::pieces::pawn::PAWN_STEPS;
-use crate::pieces::{
-    knight, ColorizedPiece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK,
-};
+use crate::pieces::{knight, ColorizedPiece, BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, ROOK};
 
 pub mod sliders;
 
@@ -25,7 +23,6 @@ impl Board {
             attacked_color,
             &mut result,
         );
-
         self.get_pieces_attacking_square_on_straight_lines_locations(
             colorize_piece(ROOK, !attacked_color),
             square,
@@ -90,76 +87,5 @@ impl Board {
                     && self.state.pieces[**attacker_square as usize] == piece
             })
             .for_each(|(_, attacker_square)| result.push(*attacker_square))
-    }
-
-    pub fn get_pieces_of_type_attacking_square_locations(
-        &self,
-        square: i8,
-        piece: ColorizedPiece,
-        attacked_color: Color,
-    ) -> Vec<i8> {
-        let mut result = Vec::new();
-        match uncolorize_piece(piece) {
-            KNIGHT => {
-                self.get_pieces_attacking_square_locations(
-                    piece,
-                    square,
-                    knight::get_moves_to(square as usize),
-                    knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-                    attacked_color,
-                    &mut result,
-                );
-            }
-            KING => {
-                self.get_pieces_attacking_square_locations(
-                    piece,
-                    square,
-                    knight::get_moves_to(square as usize),
-                    knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-                    attacked_color,
-                    &mut result,
-                );
-            }
-
-            ROOK => {
-                self.get_pieces_attacking_square_on_straight_lines_locations(
-                    piece,
-                    square,
-                    attacked_color,
-                    Board::get_slider_attacking_square_location,
-                    &mut result,
-                );
-            }
-            BISHOP => {
-                self.get_pieces_attacking_square_on_diagonals_locations(
-                    piece,
-                    square,
-                    attacked_color,
-                    Board::get_slider_attacking_square_location,
-                    &mut result,
-                );
-            }
-
-            QUEEN => {
-                self.get_pieces_attacking_square_on_straight_lines_locations(
-                    piece,
-                    square,
-                    attacked_color,
-                    Board::get_slider_attacking_square_location,
-                    &mut result,
-                );
-
-                self.get_pieces_attacking_square_on_diagonals_locations(
-                    piece,
-                    square,
-                    attacked_color,
-                    Board::get_slider_attacking_square_location,
-                    &mut result,
-                );
-            }
-            _ => panic!("Invalid piece type."),
-        };
-
-        result
     }
 }

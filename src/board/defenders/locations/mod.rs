@@ -1,8 +1,8 @@
 use crate::board::Board;
-use crate::pieces::color::{colorize_piece, Color};
+use crate::pieces::color::{colorize_piece, uncolorize_piece, Color};
 use crate::pieces::pawn::PAWN_STEPS;
 use crate::pieces::ColorizedPiece;
-use crate::pieces::{knight, EMPTY_SQUARE, KNIGHT, PAWN};
+use crate::pieces::{king, knight, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
 
 pub mod diagonals;
 pub mod straight_lines;
@@ -71,6 +71,31 @@ impl Board {
             None
         };
     }
+    pub fn get_slider_defending_square_location(
+        &mut self,
+        square: i8,
+        possible_attacker: ColorizedPiece,
+        defended_piece_location: i8,
+        defended_color: Color,
+        increment: i8,
+        predicate: fn(i8, i8) -> bool,
+    ) -> Option<i8> {
+        let defender_location = self.get_slider_attacking_square_location(
+            square,
+            possible_attacker,
+            !defended_color,
+            increment,
+            predicate,
+        );
+
+        return if defender_location.is_some()
+            && !self.is_piece_pinned(defender_location.unwrap(), square, defended_piece_location)
+        {
+            defender_location
+        } else {
+            None
+        };
+    }
 
     pub fn get_knights_defending_square_locations(
         &mut self,
@@ -93,5 +118,62 @@ impl Board {
                     && !self.is_piece_pinned(defender_square, square, defended_piece_location)
             })
             .for_each(|(_, &defender_square)| result.push(defender_square));
+    }
+
+    pub fn get_pieces_of_type_defending_square_locations(
+        &mut self,
+        square: i8,
+        piece: ColorizedPiece,
+    ) -> Vec<i8> {
+        let mut result = Vec::new();
+        let king_location = self.state.king_positions[self.state.side as usize];
+        match uncolorize_piece(piece) {
+            KING => {
+                let legal_moves_to = king::get_legal_moves_to(square as usize, self);
+                legal_moves_to
+                    .iter()
+                    .filter(|&&square| self.state.pieces[square as usize] == piece)
+                    .for_each(|&square| result.push(square));
+            }
+            ROOK => self.get_sliders_defending_square_on_straight_lines_locations(
+                square,
+                piece,
+                king_location,
+                self.state.side,
+                &mut result,
+            ),
+            BISHOP => self.get_sliders_defending_square_on_diagonals_locations(
+                square,
+                piece,
+                king_location,
+                self.state.side,
+                &mut result,
+            ),
+            KNIGHT => self.get_knights_defending_square_locations(
+                square,
+                king_location,
+                self.state.side,
+                &mut result,
+            ),
+            QUEEN => {
+                self.get_sliders_defending_square_on_straight_lines_locations(
+                    square,
+                    piece,
+                    king_location,
+                    self.state.side,
+                    &mut result,
+                );
+
+                self.get_sliders_defending_square_on_diagonals_locations(
+                    square,
+                    piece,
+                    king_location,
+                    self.state.side,
+                    &mut result,
+                );
+            }
+            _ => {}
+        };
+        result
     }
 }

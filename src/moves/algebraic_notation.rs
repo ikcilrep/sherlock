@@ -2,12 +2,12 @@
 extern crate regex;
 
 use crate::board::Board;
-use crate::moves::constructors::new_promotion;
+use crate::moves::constructors::{new_move, new_promotion};
 use crate::moves::{
     get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move,
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
 };
-use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece};
+use crate::pieces::color::{colorize_piece, uncolorize_piece};
 use crate::pieces::pawn::PAWN_STEPS;
 use crate::pieces::{ColorizedPiece, Piece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
 
@@ -22,7 +22,7 @@ fn rank_to_char(rank: u8) -> char {
 }
 
 fn char_to_rank(rank: char) -> i8 {
-    rank as i8 - 1
+    rank.to_string().parse::<i8>().unwrap() - 1
 }
 
 fn char_to_file(file: char) -> i8 {
@@ -66,14 +66,13 @@ fn char_to_piece(piece: char) -> Option<Piece> {
     }
 }
 
-fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &Board) {
+fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &mut Board) {
     let from = get_from(half_move) as i8;
     let moved_piece = get_moved_piece(half_move);
-    let attacked_color = get_piece_color(moved_piece);
     let to = get_to(half_move);
     let attackers_locations =
-        board.get_pieces_of_type_attacking_square_locations(to as i8, moved_piece, attacked_color);
-
+        board.get_pieces_of_type_defending_square_locations(to as i8, moved_piece);
+    // more ambiguous attackers in future
     for attacker_location in attackers_locations {
         if attacker_location != from {
             let attacker_location_rank = attacker_location >> 3;
@@ -93,7 +92,7 @@ fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &Bo
     }
 }
 
-pub fn to_algebraic_notation(half_move: Move, board: &Board) -> String {
+pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
     match get_move_type(half_move) {
         CASTLING_KINGS_SIDE => String::from("O-O"),
         CASTLING_QUEENS_SIDE => String::from("O-O-O"),
@@ -134,25 +133,89 @@ fn get_piece_from_string(piece_string: &str, board: &Board) -> ColorizedPiece {
     )
 }
 
+fn get_unambiguous_from(
+    candidate_froms: &Vec<i8>,
+    unambiguity: Option<&str>,
+    piece_to_move: ColorizedPiece,
+    board: &mut Board,
+) -> Option<i8> {
+    let find_unambiguous_from = || {
+        let unambiguous_froms: Vec<i8> = candidate_froms
+            .iter()
+            .filter(|&&from| board.state.pieces[from as usize] == piece_to_move)
+            .map(|&from| from)
+            .collect();
+        if unambiguous_froms.len() == 1 {
+            Some(unambiguous_froms[0])
+        } else {
+            None
+        }
+    };
+    match unambiguity {
+        Some(unambiguity) => match unambiguity.len() {
+            1 => {
+                let first_char = first_char(unambiguity);
+                let unambiguous_froms: Vec<i8> = if first_char.is_digit(10) {
+                    let rank = char_to_rank(first_char);
+                    candidate_froms
+                        .iter()
+                        .filter(|&&from| from >> 3 == rank)
+                        .map(|&from| from)
+                        .collect()
+                } else {
+                    let file = char_to_file(first_char);
+                    candidate_froms
+                        .iter()
+                        .filter(|&&from| from & 7 == file)
+                        .map(|&from| from)
+                        .collect()
+                };
+
+                if unambiguous_froms.len() == 1 {
+                    Some(unambiguous_froms[0])
+                } else {
+                    None
+                }
+            }
+            2 => {
+                let location = string_to_location(unambiguity);
+                if candidate_froms.contains(&location) {
+                    Some(location)
+                } else {
+                    None
+                }
+            }
+            0 => find_unambiguous_from(),
+            _ => None,
+        },
+        None => find_unambiguous_from(),
+    }
+}
+
 pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Option<Move> {
     lazy_static! {
         static ref PAWN_MOVE: Regex = Regex::new(
-            "^(?:(?P<file>[a-e])x)?(?P<to>[a-e][1-8])(?:=(?P<promoted_piece>[KQRNB]))?$"
+            "^(?:(?P<file>[a-e])x)?(?P<to>[a-e][1-8])(?:=(?P<piece_after_promotion>[KQRNB]))?$"
         )
         .unwrap();
-        static ref NOT_PAWN_MOVE: Regex =
-            Regex::new("^(?<moved_piece>[KQRNB])x?(?P<to>[a-e][1-8])$").unwrap();
+        static ref NOT_PAWN_MOVE: Regex = Regex::new(
+            "^(?P<piece_to_move>[KQRNB])(?P<unambiguity>[a-e]?[1-8]?)?x?(?P<to>[a-e][1-8])$"
+        )
+        .unwrap();
     }
+
+    let king_location = board.state.king_positions[board.state.side as usize];
+    // en passant, castling in future
     if PAWN_MOVE.is_match(move_string) {
-        let moved_piece = colorize_piece(PAWN, board.state.side);
+        let piece_to_move = colorize_piece(PAWN, board.state.side);
         let captures = PAWN_MOVE.captures(move_string).unwrap();
         let to = string_to_location(captures.name("to").unwrap().as_str());
-        let promoted_piece = captures
-            .name("promoted_piece")
-            .map(|promoted_piece_capture| {
-                get_piece_from_string(promoted_piece_capture.as_str(), board)
+        let piece_after_promotion = captures
+            .name("piece_after_promotion")
+            .map(|piece_after_promotion_capture| {
+                get_piece_from_string(piece_after_promotion_capture.as_str(), board)
             })
-            .unwrap_or(moved_piece);
+            .unwrap_or(piece_to_move);
         let from = match captures.name("file") {
             Some(file_capture) => {
                 let file = char_to_file(first_char(file_capture.as_str()));
@@ -165,15 +228,32 @@ pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Optio
 
         if board.is_square_on_board(from)
             && (distance >= 7 && distance <= 9)
-            && board.state.pieces[from as usize] == moved_piece
+            && board.state.pieces[from as usize] == piece_to_move
             && (distance == 8) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
-            && !board.is_piece_pinned(
-                from,
-                to,
-                board.state.king_positions[board.state.side as usize],
-            )
+            && !board.is_piece_pinned(from, to, king_location)
         {
-            return Some(new_promotion(from as usize, to, promoted_piece, board));
+            return Some(new_promotion(
+                from as usize,
+                to,
+                piece_after_promotion,
+                board,
+            ));
+        }
+    } else if NOT_PAWN_MOVE.is_match(move_string) {
+        let captures = NOT_PAWN_MOVE.captures(move_string).unwrap();
+        let piece_to_move =
+            get_piece_from_string(captures.name("piece_to_move").unwrap().as_str(), board);
+        let to = string_to_location(captures.name("to").unwrap().as_str());
+        let candidate_froms =
+            board.get_pieces_of_type_defending_square_locations(to, piece_to_move);
+        let unambiguity = captures
+            .name("unambiguity")
+            .map(|unambiguity| unambiguity.as_str());
+        match get_unambiguous_from(&candidate_froms, unambiguity, piece_to_move, board) {
+            Some(from) => {
+                return Some(new_move(from as usize, to, board));
+            }
+            None => {}
         }
     }
 

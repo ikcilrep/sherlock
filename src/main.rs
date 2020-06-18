@@ -33,8 +33,14 @@ fn main() {
     board.state.pieces[17] = BLACK_KNIGHT;
 
     generate_all_pseudo_legal_moves(&board, &mut moves);
-    from_algebraic_notation(&String::from("dxe3=Q"), &mut board);
+    println!(
+        "{}",
+        to_algebraic_notation(
+            from_algebraic_notation(&String::from("Ra6"), &mut board).unwrap(),
+            &mut board
+        )
+    );
     for m in moves {
-        println!("{}", to_algebraic_notation(m, &board));
+        println!("{}", to_algebraic_notation(m, &mut board));
     }
 }
