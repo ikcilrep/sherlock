@@ -1,12 +1,17 @@
 // This module doesn't have to be fast.
+extern crate regex;
 
 use crate::board::Board;
+use crate::moves::constructors::new_promotion;
 use crate::moves::{
     get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move,
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
 };
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece};
+use crate::pieces::pawn::PAWN_STEPS;
 use crate::pieces::{ColorizedPiece, Piece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
+
+use regex::Regex;
 
 fn file_to_char(file: u8) -> char {
     (file + 97) as char
@@ -14,6 +19,20 @@ fn file_to_char(file: u8) -> char {
 
 fn rank_to_char(rank: u8) -> char {
     (rank + 1).to_string().as_bytes()[0] as char
+}
+
+fn char_to_rank(rank: char) -> i8 {
+    rank as i8 - 1
+}
+
+fn char_to_file(file: char) -> i8 {
+    file as i8 - 97
+}
+
+fn string_to_location(location_string: &str) -> i8 {
+    let file = char_to_file(location_string.chars().nth(0).unwrap());
+    let rank = char_to_rank(location_string.chars().nth(1).unwrap());
+    (rank << 3) + file
 }
 
 fn location_to_string(location: u8) -> String {
@@ -104,25 +123,59 @@ pub fn to_algebraic_notation(half_move: Move, board: &Board) -> String {
     }
 }
 
-fn get_piece_from_move_string(move_string: &String, board: &Board) -> Option<ColorizedPiece> {
-    move_string
-        .chars()
-        .next()
-        .and_then(|first_char| {
-            if first_char.is_uppercase() {
-                char_to_piece(first_char)
-            } else {
-                Some(PAWN)
-            }
-        })
-        .map(|piece| colorize_piece(piece, board.state.side))
+fn first_char(string: &str) -> char {
+    string.chars().next().unwrap()
 }
 
-pub fn from_algebraic_notaton(move_string: &String, board: &Board) -> Option<Move> {
-    match get_piece_from_move_string(move_string, board) {
-        Some(_) => {}
-        None => return None,
-    };
+fn get_piece_from_string(piece_string: &str, board: &Board) -> ColorizedPiece {
+    colorize_piece(
+        char_to_piece(first_char(piece_string)).unwrap(),
+        board.state.side,
+    )
+}
+
+pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Option<Move> {
+    lazy_static! {
+        static ref PAWN_MOVE: Regex = Regex::new(
+            "^(?:(?P<file>[a-e])x)?(?P<to>[a-e][1-8])(?:=(?P<promoted_piece>[KQRNB]))?$"
+        )
+        .unwrap();
+        static ref NOT_PAWN_MOVE: Regex =
+            Regex::new("^(?<moved_piece>[KQRNB])x?(?P<to>[a-e][1-8])$").unwrap();
+    }
+    if PAWN_MOVE.is_match(move_string) {
+        let moved_piece = colorize_piece(PAWN, board.state.side);
+        let captures = PAWN_MOVE.captures(move_string).unwrap();
+        let to = string_to_location(captures.name("to").unwrap().as_str());
+        let promoted_piece = captures
+            .name("promoted_piece")
+            .map(|promoted_piece_capture| {
+                get_piece_from_string(promoted_piece_capture.as_str(), board)
+            })
+            .unwrap_or(moved_piece);
+        let from = match captures.name("file") {
+            Some(file_capture) => {
+                let file = char_to_file(first_char(file_capture.as_str()));
+                to - (to & 7) - PAWN_STEPS[board.state.side as usize][0] + file
+            }
+            None => to - PAWN_STEPS[board.state.side as usize][0],
+        };
+
+        let distance = (to - from).abs();
+
+        if board.is_square_on_board(from)
+            && (distance >= 7 && distance <= 9)
+            && board.state.pieces[from as usize] == moved_piece
+            && (distance == 8) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
+            && !board.is_piece_pinned(
+                from,
+                to,
+                board.state.king_positions[board.state.side as usize],
+            )
+        {
+            return Some(new_promotion(from as usize, to, promoted_piece, board));
+        }
+    }
 
     None
 }

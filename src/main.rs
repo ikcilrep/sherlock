@@ -1,9 +1,13 @@
+#![allow(dead_code)]
+#[macro_use]
+extern crate lazy_static;
+extern crate rand;
+
 mod board;
 mod moves;
 mod pieces;
-extern crate rand;
 use crate::board::Board;
-use crate::moves::algebraic_notation::to_algebraic_notation;
+use crate::moves::algebraic_notation::{from_algebraic_notation, to_algebraic_notation};
 use crate::pieces::generate_all_pseudo_legal_moves;
 use crate::pieces::{BLACK_KNIGHT, EMPTY_SQUARE};
 
@@ -27,7 +31,9 @@ fn main() {
     board.state.pieces[11] = EMPTY_SQUARE;
     board.state.pieces[12] = EMPTY_SQUARE;
     board.state.pieces[17] = BLACK_KNIGHT;
+
     generate_all_pseudo_legal_moves(&board, &mut moves);
+    from_algebraic_notation(&String::from("dxe3=Q"), &mut board);
     for m in moves {
         println!("{}", to_algebraic_notation(m, &board));
     }

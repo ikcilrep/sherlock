@@ -1,4 +1,4 @@
-use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
+use crate::pieces::ColorizedPiece;
 
 // Excluding 0 padding.
 // First is most significant.
