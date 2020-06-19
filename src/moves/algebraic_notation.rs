@@ -227,10 +227,11 @@ pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Optio
         let distance = (to - from).abs();
 
         if board.is_square_on_board(from)
-            && (distance >= 7 && distance <= 9)
             && board.state.pieces[from as usize] == piece_to_move
+            && (distance >= 7 && distance <= 9)
             && (distance == 8) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
             && !board.is_piece_pinned(from, to, king_location)
+            && (piece_to_move == piece_after_promotion) == (to >= 8 && to < 56)
         {
             return Some(new_promotion(
                 from as usize,
