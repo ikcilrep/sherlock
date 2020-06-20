@@ -192,6 +192,57 @@ fn get_unambiguous_from(
     }
 }
 
+fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<Move> {
+    let king_location = board.state.king_positions[board.state.side as usize];
+    let piece_to_move = colorize_piece(PAWN, board.state.side);
+    let to = string_to_location(captures.name("to").unwrap().as_str());
+    let piece_after_promotion = captures
+        .name("piece_after_promotion")
+        .map(|piece_after_promotion_capture| {
+            get_piece_from_string(piece_after_promotion_capture.as_str(), board)
+        })
+        .unwrap_or(piece_to_move);
+    let from = match captures.name("file") {
+        Some(file_capture) => {
+            let file = char_to_file(first_char(file_capture.as_str()));
+            to - (to & 7) - PAWN_STEPS[board.state.side as usize][0] + file
+        }
+        None => to - PAWN_STEPS[board.state.side as usize][0],
+    };
+
+    let distance = (to - from).abs();
+
+    if board.is_square_on_board(from)
+        && board.state.pieces[from as usize] == piece_to_move
+        && (distance >= 7 && distance <= 9)
+        && (distance == 8) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
+        && !board.is_piece_pinned(from, to, king_location)
+        && (piece_to_move == piece_after_promotion) == (to >= 8 && to < 56)
+    {
+        return Some(new_promotion(
+            from as usize,
+            to,
+            piece_after_promotion,
+            board,
+        ));
+    }
+    None
+}
+
+fn parse_not_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<Move> {
+    let piece_to_move =
+        get_piece_from_string(captures.name("piece_to_move").unwrap().as_str(), board);
+    let to = string_to_location(captures.name("to").unwrap().as_str());
+    let candidate_froms = board.get_pieces_of_type_defending_square_locations(to, piece_to_move);
+    let unambiguity = captures
+        .name("unambiguity")
+        .map(|unambiguity| unambiguity.as_str());
+    return match get_unambiguous_from(&candidate_froms, unambiguity, piece_to_move, board) {
+        Some(from) => Some(new_move(from as usize, to, board)),
+        None => None,
+    };
+}
+
 pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Option<Move> {
     lazy_static! {
         static ref PAWN_MOVE: Regex = Regex::new(
@@ -204,59 +255,12 @@ pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Optio
         .unwrap();
     }
 
-    let king_location = board.state.king_positions[board.state.side as usize];
     // en passant, castling in future
-    if PAWN_MOVE.is_match(move_string) {
-        let piece_to_move = colorize_piece(PAWN, board.state.side);
-        let captures = PAWN_MOVE.captures(move_string).unwrap();
-        let to = string_to_location(captures.name("to").unwrap().as_str());
-        let piece_after_promotion = captures
-            .name("piece_after_promotion")
-            .map(|piece_after_promotion_capture| {
-                get_piece_from_string(piece_after_promotion_capture.as_str(), board)
-            })
-            .unwrap_or(piece_to_move);
-        let from = match captures.name("file") {
-            Some(file_capture) => {
-                let file = char_to_file(first_char(file_capture.as_str()));
-                to - (to & 7) - PAWN_STEPS[board.state.side as usize][0] + file
-            }
-            None => to - PAWN_STEPS[board.state.side as usize][0],
-        };
-
-        let distance = (to - from).abs();
-
-        if board.is_square_on_board(from)
-            && board.state.pieces[from as usize] == piece_to_move
-            && (distance >= 7 && distance <= 9)
-            && (distance == 8) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
-            && !board.is_piece_pinned(from, to, king_location)
-            && (piece_to_move == piece_after_promotion) == (to >= 8 && to < 56)
-        {
-            return Some(new_promotion(
-                from as usize,
-                to,
-                piece_after_promotion,
-                board,
-            ));
-        }
+    return if PAWN_MOVE.is_match(move_string) {
+        parse_pawn_move(PAWN_MOVE.captures(move_string).unwrap(), board)
     } else if NOT_PAWN_MOVE.is_match(move_string) {
-        let captures = NOT_PAWN_MOVE.captures(move_string).unwrap();
-        let piece_to_move =
-            get_piece_from_string(captures.name("piece_to_move").unwrap().as_str(), board);
-        let to = string_to_location(captures.name("to").unwrap().as_str());
-        let candidate_froms =
-            board.get_pieces_of_type_defending_square_locations(to, piece_to_move);
-        let unambiguity = captures
-            .name("unambiguity")
-            .map(|unambiguity| unambiguity.as_str());
-        match get_unambiguous_from(&candidate_froms, unambiguity, piece_to_move, board) {
-            Some(from) => {
-                return Some(new_move(from as usize, to, board));
-            }
-            None => {}
-        }
-    }
-
-    None
+        parse_not_pawn_move(NOT_PAWN_MOVE.captures(move_string).unwrap(), board)
+    } else {
+        None
+    };
 }
