@@ -14,11 +14,11 @@ use crate::pieces::{ColorizedPiece, Piece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, P
 
 use regex::Regex;
 
-fn file_to_char(file: u8) -> char {
-    (file + 97) as char
+fn file_to_char(file: i8) -> char {
+    (file + 97) as u8 as char
 }
 
-fn rank_to_char(rank: u8) -> char {
+fn rank_to_char(rank: i8) -> char {
     (rank + 1).to_string().as_bytes()[0] as char
 }
 
@@ -36,7 +36,7 @@ fn string_to_location(location_string: &str) -> i8 {
     (rank << 3) + file
 }
 
-fn location_to_string(location: u8) -> String {
+fn location_to_string(location: i8) -> String {
     let file = location & 7;
     let rank = location >> 3;
     let mut result = String::with_capacity(2);
@@ -86,16 +86,16 @@ fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &mu
         .count()
         == 0
     {
-        move_string_part.push(file_to_char(from_file as u8));
+        move_string_part.push(file_to_char(from_file));
     } else if attackers_locations
         .iter()
         .filter(|&&location| location >> 3 == from_rank)
         .count()
         == 0
     {
-        move_string_part.push(rank_to_char(from_rank as u8));
+        move_string_part.push(rank_to_char(from_rank));
     } else {
-        move_string_part.push_str(location_to_string(from as u8).as_str());
+        move_string_part.push_str(location_to_string(from).as_str());
     }
 }
 
@@ -113,7 +113,7 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
                 result.push(piece_to_char(uncolorized_moved_piece));
                 remove_ambiguities(half_move, &mut result, board);
             } else if is_capture {
-                let from_file = (get_from(half_move) & 7) as u8;
+                let from_file = (get_from(half_move) & 7) as i8;
                 result.push(file_to_char(from_file));
             }
             // Rank or file will be here.
@@ -121,7 +121,7 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
                 result.push('x');
             }
 
-            let to = get_to(half_move) as u8;
+            let to = get_to(half_move) as i8;
             result.push_str(location_to_string(to).as_str());
 
             result
