@@ -107,8 +107,7 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
             let mut result = String::new();
             let moved_piece = get_moved_piece(half_move);
             let uncolorized_moved_piece = uncolorize_piece(moved_piece);
-            let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE
-                || get_move_type(half_move) == EN_PASSANT;
+            let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE;
             if uncolorized_moved_piece != PAWN {
                 result.push(piece_to_char(uncolorized_moved_piece));
                 remove_ambiguities(half_move, &mut result, board);
@@ -228,7 +227,7 @@ fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<M
     };
 
     if pawn::is_legal_en_passant(from, to, piece_to_move, piece_after_promotion, board) {
-        return Some(new_en_passant(from as usize, to, board));
+        return Some(new_en_passant(from as usize, to, board.state.side, board));
     }
 
     match pawn::is_move_legal(from, to, piece_to_move, piece_after_promotion, board) {

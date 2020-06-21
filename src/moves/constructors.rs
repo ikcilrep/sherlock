@@ -1,6 +1,6 @@
 use crate::board::Board;
 use crate::moves::{Move, MoveType, EN_PASSANT, NORMAL_MOVE};
-use crate::pieces::color::{get_piece_color, Color};
+use crate::pieces::color::Color;
 use crate::pieces::{ColorizedPiece, EMPTY_SQUARE};
 
 pub const KING_TO_POSITIONS: [[i32; 2]; 2] = [[6, 62], [2, 56]];
@@ -35,19 +35,24 @@ pub fn new_promotion(from: usize, to: i8, promoted_piece: ColorizedPiece, board:
 }
 
 #[inline]
-pub fn new_en_passant(from: usize, to: i8, board: &Board) -> Move {
+pub fn new_en_passant(from: usize, to: i8, pawn_color: Color,  board: &Board) -> Move {
+    let captured_piece_location = (to + INVERSED_PAWN_STEPS[pawn_color as usize]) as usize;
     append!(
         append!(
             append!(
                 append!(
-                    append!(append!(from, to, 6), board.state.pieces[to as usize], 4),
+                    append!(
+                        append!(from, to, 6),
+                        board.state.pieces[captured_piece_location],
+                        4
+                    ),
                     board.state.pieces[from],
                     4
                 ),
                 board.state.pieces[from],
                 4
             ),
-            to as i8 + INVERSED_PAWN_STEPS[get_piece_color(board.state.pieces[from]) as usize],
+            captured_piece_location,
             6
         ),
         EN_PASSANT,
