@@ -9,7 +9,6 @@ mod moves;
 mod pieces;
 use crate::board::Board;
 use crate::moves::algebraic_notation::{from_algebraic_notation, to_algebraic_notation};
-use crate::pieces::generate_all_pseudo_legal_moves;
 use crate::pieces::{BLACK_KNIGHT, BLACK_PAWN, EMPTY_SQUARE};
 
 fn main() {
@@ -34,7 +33,7 @@ fn main() {
     board.state.pieces[17] = BLACK_KNIGHT;
     board.state.pieces[25] = BLACK_PAWN;
 
-    generate_all_pseudo_legal_moves(&board, &mut moves);
+    board.generate_all_pseudo_legal_moves(&mut moves);
     let m = from_algebraic_notation(&String::from("c4"), &mut board).unwrap();
     board.make_move(m);
     println!("{}", board.state.en_passant_square);

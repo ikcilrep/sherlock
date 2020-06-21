@@ -62,43 +62,44 @@ pub const RANDOM_LEGAL_MOVE_GENERATORS: [fn(usize, &mut Board, &mut ThreadRng) -
     |_, _, _| None,
 ];
 
-pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
-    board
-        .state
-        .pieces
-        .iter()
-        .filter(|piece| get_piece_color(**piece) == board.state.side)
-        .enumerate()
-        .for_each(|(from, piece)| {
-            PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, board, result)
-        });
-}
+impl Board {
+    pub fn generate_all_pseudo_legal_moves(&self, result: &mut Vec<Move>) {
+        self.state
+            .pieces
+            .iter()
+            .filter(|piece| get_piece_color(**piece) == self.state.side)
+            .enumerate()
+            .for_each(|(from, piece)| {
+                PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, self, result)
+            });
+    }
 
-// Temporary, naive version.
-pub fn generate_all_legal_moves(board: &mut Board) -> LinkedList<Move> {
-    let mut result = Vec::new();
-    generate_all_pseudo_legal_moves(board, &mut result);
-    result
-        .iter()
-        .cloned()
-        .filter(|half_move| board.is_move_legal(*half_move))
-        .collect::<LinkedList<Move>>()
-}
+    // Temporary, naive version.
+    pub fn generate_all_legal_moves(&mut self) -> LinkedList<Move> {
+        let mut result = Vec::new();
+        self.generate_all_pseudo_legal_moves(&mut result);
+        result
+            .iter()
+            .cloned()
+            .filter(|half_move| self.is_move_legal(*half_move))
+            .collect::<LinkedList<Move>>()
+    }
 
-pub fn generate_random_legal_move(board: &mut Board, rng: &mut ThreadRng) -> Move {
-    let start = rng.gen_range(0, 64);
-    let mut i = start;
-    while {
-        let piece = board.state.pieces[i];
-        if get_piece_color(piece) == board.state.side {
-            match RANDOM_LEGAL_MOVE_GENERATORS[piece as usize](i, board, rng) {
-                Some(half_move) => return half_move,
-                None => {}
+    pub fn generate_random_legal_move(&mut self, rng: &mut ThreadRng) -> Move {
+        let start = rng.gen_range(0, 64);
+        let mut i = start;
+        while {
+            let piece = self.state.pieces[i];
+            if get_piece_color(piece) == self.state.side {
+                match RANDOM_LEGAL_MOVE_GENERATORS[piece as usize](i, self, rng) {
+                    Some(half_move) => return half_move,
+                    None => {}
+                }
             }
-        }
-        i += 1;
-        i &= 63;
-        i != start
-    } {}
-    0
+            i += 1;
+            i &= 63;
+            i != start
+        } {}
+        0
+    }
 }
