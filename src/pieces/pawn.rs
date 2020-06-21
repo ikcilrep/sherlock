@@ -202,7 +202,8 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
 pub fn can_be_moved_on_empty_square_without_capture(empty_square: i8, board: &mut Board) -> bool {
     let color = board.state.side as usize;
     let from = empty_square - PAWN_STEPS[color][1];
-    uncolorize_piece(board.state.pieces[from as usize]) == PAWN
+    board.is_square_on_board(from)
+        && uncolorize_piece(board.state.pieces[from as usize]) == PAWN
         && !board.is_piece_pinned(from, empty_square, board.state.king_positions[color])
 }
 

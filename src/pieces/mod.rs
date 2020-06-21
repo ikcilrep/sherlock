@@ -91,7 +91,8 @@ impl Board {
         while {
             let piece = self.state.pieces[i];
             if get_piece_color(piece) == self.state.side {
-                match RANDOM_LEGAL_MOVE_GENERATORS[piece as usize](i, self, rng) {
+                let uncolorized_piece = uncolorize_piece(piece) as usize;
+                match RANDOM_LEGAL_MOVE_GENERATORS[uncolorized_piece](i, self, rng) {
                     Some(half_move) => return half_move,
                     None => {}
                 }

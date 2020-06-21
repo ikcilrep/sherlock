@@ -101,7 +101,7 @@ impl Board {
         let mut from = 0;
         for piece in pieces.iter() {
             if get_piece_color(*piece) == self.state.side
-                && MOVE_AVAILABILITY_VALIDATORS[*piece as usize](from, self)
+                && MOVE_AVAILABILITY_VALIDATORS[uncolorize_piece(*piece) as usize](from, self)
             {
                 return true;
             }

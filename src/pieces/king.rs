@@ -91,12 +91,16 @@ pub fn generate_random_legal_move(
     }
 
     let legal_moves_to = get_legal_moves_to(from, board);
-    Some(generate_random_getting_out_of_check_move(
-        from,
-        &legal_moves_to,
-        board,
-        rng,
-    ))
+    return if legal_moves_to.is_empty() {
+        None
+    } else {
+        Some(generate_random_getting_out_of_check_move(
+            from,
+            &legal_moves_to,
+            board,
+            rng,
+        ))
+    };
 }
 
 pub fn get_legal_moves_to(from: usize, board: &mut Board) -> Vec<i8> {
