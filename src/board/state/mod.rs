@@ -47,11 +47,7 @@ impl Eq for BoardState {}
 
 impl BoardState {
     #[inline]
-    fn update_fifty_moves(
-        &mut self,
-        moved_piece: ColorizedPiece,
-        captured_piece: ColorizedPiece,
-    ) {
+    fn update_fifty_moves(&mut self, moved_piece: ColorizedPiece, captured_piece: ColorizedPiece) {
         if uncolorize_piece(moved_piece) != PAWN && captured_piece == EMPTY_SQUARE {
             self.fifty_moves += 1;
         } else {
@@ -75,7 +71,7 @@ impl BoardState {
         moved_piece: ColorizedPiece,
         color: usize,
     ) {
-        self.en_passant_square = if to as i8 - from as i8 == (INVERSED_PAWN_STEPS[!color] << 1)
+        self.en_passant_square = if to as i8 - from as i8 == (-INVERSED_PAWN_STEPS[color] << 1)
             && uncolorize_piece(moved_piece) == PAWN
         {
             to as i8 + INVERSED_PAWN_STEPS[color]
@@ -86,12 +82,7 @@ impl BoardState {
 
     // Probably, to be optimized.
     #[inline]
-    fn update_king_position(
-        &mut self,
-        moved_piece: ColorizedPiece,
-        to: usize,
-        color: usize,
-    ) {
+    fn update_king_position(&mut self, moved_piece: ColorizedPiece, to: usize, color: usize) {
         if uncolorize_piece(moved_piece) == KING {
             self.king_positions[color as usize] = to as i8;
         }
@@ -99,7 +90,7 @@ impl BoardState {
 
     #[inline]
     fn update_side(&mut self) {
-        self.side = !self.side;
+        self.side = (self.side != 0) as Color;
     }
 
     #[inline]
