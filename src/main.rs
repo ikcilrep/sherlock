@@ -36,7 +36,7 @@ fn main() {
     println!(
         "{}",
         to_algebraic_notation(
-            from_algebraic_notation(&String::from("Ra6"), &mut board).unwrap(),
+            from_algebraic_notation(&String::from("c4"), &mut board).unwrap(),
             &mut board
         )
     );

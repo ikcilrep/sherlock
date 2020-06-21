@@ -4,12 +4,13 @@ use crate::board::Board;
 use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::Move;
 use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
+use crate::pieces::ColorizedPiece;
 use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
 pub const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
-const PAWN_START_ROWS: [usize; 2] = [1, 6];
+const PAWN_START_RANKS: [usize; 2] = [1, 6];
 
 const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 3] = [
     |from_file, to, board, pawn_color| {
@@ -85,7 +86,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         result.push(new_move(from, to, board));
 
         to += PAWN_STEPS[pawn_color as usize][1];
-        if from_row == PAWN_START_ROWS[pawn_color as usize]
+        if from_row == PAWN_START_RANKS[pawn_color as usize]
             && board.state.pieces[to as usize] == EMPTY_SQUARE
         {
             result.push(new_move(from, to, board));
@@ -130,7 +131,7 @@ fn get_move_north(from: usize, to: i8, board: &Board, pawn_color: Color) -> Move
     let from_row = from >> 3;
     let new_to = to + PAWN_STEPS[pawn_color as usize][1];
 
-    return if from_row == PAWN_START_ROWS[pawn_color as usize]
+    return if from_row == PAWN_START_RANKS[pawn_color as usize]
         && board.state.pieces[new_to as usize] == EMPTY_SQUARE
     {
         new_move(from, new_to, board)
@@ -220,4 +221,26 @@ pub fn can_capture_on_enemy_occupied_square(enemy_occupied_square: i8, board: &m
 
     (from1 & 7 > enemy_occupied_square_file && can_capture(from1))
         || (from2 & 7 < enemy_occupied_square_file && can_capture(from2))
+}
+
+pub fn is_move_legal(
+    from: i8,
+    to: i8,
+    piece_to_move: ColorizedPiece,
+    piece_after_promotion: ColorizedPiece,
+    board: &mut Board,
+) -> bool {
+    let color = board.state.side as usize;
+    let pawn_step = PAWN_STEPS[color][1];
+    let distance = (to - from).abs();
+    let king_location = board.state.king_positions[color];
+    board.is_square_on_board(from)
+        && board.state.pieces[from as usize] == piece_to_move
+        && ((distance >= 7 && distance <= 9)
+            || (distance == 16
+                && board.state.pieces[(to - pawn_step) as usize] == EMPTY_SQUARE
+                && (from >> 3) == PAWN_START_RANKS[color] as i8))
+        && (distance & 1 == 0) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
+        && !board.is_piece_pinned(from, to, king_location)
+        && (piece_to_move == piece_after_promotion) == (to >= 8 && to < 56)
 }

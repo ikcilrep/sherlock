@@ -8,6 +8,7 @@ use crate::moves::{
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
 };
 use crate::pieces::color::{colorize_piece, uncolorize_piece};
+use crate::pieces::pawn;
 use crate::pieces::pawn::PAWN_STEPS;
 use crate::pieces::{ColorizedPiece, Piece, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
 
@@ -194,7 +195,7 @@ fn get_unambiguous_from(
 
 // en passant in future
 fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<Move> {
-    let king_location = board.state.king_positions[board.state.side as usize];
+    let color = board.state.side as usize;
     let piece_to_move = colorize_piece(PAWN, board.state.side);
     let to = string_to_location(captures.name("to").unwrap().as_str());
     let piece_after_promotion = captures
@@ -203,31 +204,32 @@ fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<M
             get_piece_from_string(piece_after_promotion_capture.as_str(), board)
         })
         .unwrap_or(piece_to_move);
+
+    let pawn_step = PAWN_STEPS[color][1];
     let from = match captures.name("file") {
         Some(file_capture) => {
             let file = char_to_file(first_char(file_capture.as_str()));
-            to - (to & 7) - PAWN_STEPS[board.state.side as usize][0] + file
+            to - (to & 7) - pawn_step + file
         }
-        None => to - PAWN_STEPS[board.state.side as usize][0],
+        None => {
+            let from = to - pawn_step;
+            if board.state.pieces[from as usize] == piece_to_move {
+                from
+            } else {
+                from - pawn_step
+            }
+        }
     };
 
-    let distance = (to - from).abs();
-
-    if board.is_square_on_board(from)
-        && board.state.pieces[from as usize] == piece_to_move
-        && (distance >= 7 && distance <= 9)
-        && (distance == 8) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
-        && !board.is_piece_pinned(from, to, king_location)
-        && (piece_to_move == piece_after_promotion) == (to >= 8 && to < 56)
-    {
-        return Some(new_promotion(
+    match pawn::is_move_legal(from, to, piece_to_move, piece_after_promotion, board) {
+        true => Some(new_promotion(
             from as usize,
             to,
             piece_after_promotion,
             board,
-        ));
+        )),
+        false => None,
     }
-    None
 }
 
 fn parse_not_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<Move> {
@@ -238,10 +240,8 @@ fn parse_not_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Opti
     let unambiguity = captures
         .name("unambiguity")
         .map(|unambiguity| unambiguity.as_str());
-    return match get_unambiguous_from(&candidate_froms, unambiguity, piece_to_move, board) {
-        Some(from) => Some(new_move(from as usize, to, board)),
-        None => None,
-    };
+    get_unambiguous_from(&candidate_froms, unambiguity, piece_to_move, board)
+        .map(|from| new_move(from as usize, to, board))
 }
 
 fn parse_castling(castling_type: MoveType, board: &Board) -> Option<Move> {
