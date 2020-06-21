@@ -71,7 +71,7 @@ impl BoardState {
         moved_piece: ColorizedPiece,
         color: usize,
     ) {
-        self.en_passant_square = if to as i8 - from as i8 == (INVERSED_PAWN_STEPS[!color] << 1)
+        self.en_passant_square = if to as i8 - from as i8 == (-INVERSED_PAWN_STEPS[color] << 1)
             && uncolorize_piece(moved_piece) == PAWN
         {
             to as i8 + INVERSED_PAWN_STEPS[color]
