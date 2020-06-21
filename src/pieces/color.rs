@@ -1,18 +1,17 @@
 use crate::pieces::{ColorizedPiece, Piece};
 
-pub type Color = u8;
-pub const WHITE: Color = 0;
-pub const BLACK: Color = 1;
-pub const UNDEFINED_COLOR: Color = 2;
+pub type Color = bool;
+pub const WHITE: Color = false;
+pub const BLACK: Color = true;
 
 #[inline]
 pub fn get_piece_color(piece: ColorizedPiece) -> Color {
-    piece & 1
+    (piece & 1) != 0
 }
 
 #[inline]
 pub fn colorize_piece(piece: Piece, color: Color) -> ColorizedPiece {
-    piece << 1 ^ color
+    piece << 1 ^ (color as u8)
 }
 
 #[inline]

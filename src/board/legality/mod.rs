@@ -1,7 +1,7 @@
 use crate::board::Board;
 use crate::moves::Move;
 use crate::moves::{get_from, get_to};
-use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, UNDEFINED_COLOR};
+use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, BLACK};
 use crate::pieces::{bishop, king, knight, pawn, queen, rook, BISHOP, EMPTY_SQUARE, KING, KNIGHT};
 
 enum GameState {
@@ -128,20 +128,22 @@ impl Board {
             }),
 
             4 => {
-                let mut last_bishop_color = UNDEFINED_COLOR;
-                let mut last_square_color = UNDEFINED_COLOR;
+                let mut last_bishop_color = BLACK;
+                let mut last_square_color = BLACK;
+                let mut has_found_bishop = false;
                 for (location, piece) in self.state.pieces.iter().enumerate() {
                     let uncolorized_piece = uncolorize_piece(*piece);
                     if uncolorized_piece == BISHOP {
                         let square_color = get_square_color(location);
                         let bishop_color = get_piece_color(*piece);
-                        if last_bishop_color != UNDEFINED_COLOR {
+                        if has_found_bishop {
                             return last_bishop_color == bishop_color
                                 || last_square_color != square_color;
                         }
 
                         last_bishop_color = bishop_color;
                         last_square_color = square_color;
+                        has_found_bishop = true;
                     } else if uncolorized_piece != KING {
                         return true;
                     }
