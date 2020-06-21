@@ -12,18 +12,27 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     rook::generate_pseudo_legal_moves(from, board, result);
 }
 
-pub fn generate_random_pseudo_legal_move(
+pub fn generate_random_legal_move(
     from: usize,
-    board: &Board,
+    board: &mut Board,
     rng: &mut ThreadRng,
 ) -> Option<Move> {
-    if rng.gen_bool(0.5) {
-        let bishop_move = bishop::generate_random_pseudo_legal_move(from, board, rng);
+    let on_diagonal = rng.gen_bool(0.5);
+    if on_diagonal {
+        let bishop_move = bishop::generate_random_legal_move(from, board, rng);
         if bishop_move.is_some() {
             return bishop_move;
         };
     }
-    rook::generate_random_pseudo_legal_move(from, board, rng)
+
+    let rook_move = rook::generate_random_legal_move(from, board, rng);
+    return if rook_move.is_some() {
+        rook_move
+    } else if !on_diagonal {
+        bishop::generate_random_legal_move(from, board, rng)
+    } else {
+        None
+    };
 }
 
 #[inline]

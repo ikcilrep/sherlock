@@ -86,20 +86,22 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         .for_each(|(_, to)| result.push(new_move(from, *to, board)));
 }
 
-pub fn generate_random_pseudo_legal_move(
+pub fn generate_random_legal_move(
     from: usize,
-    board: &Board,
+    board: &mut Board,
     rng: &mut ThreadRng,
 ) -> Option<Move> {
     let signed_from = from as i8;
     let from_file = signed_from & 7;
     let knight_color = get_piece_color(board.state.pieces[from]);
     let moves_to = get_moves_to(from);
-
+    let king_location = board.state.king_positions[knight_color as usize];
     let start = rng.gen_range(0, 8);
     let mut i = start;
     while {
-        if MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, moves_to[i], board, knight_color) {
+        if MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, moves_to[i], board, knight_color)
+            && !board.is_piece_pinned(signed_from, moves_to[i], king_location)
+        {
             return Some(new_move(from, moves_to[i], board));
         }
         i += 1;

@@ -100,7 +100,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     {
         if to < 56 && to > 7 {
-            result.push(new_en_passant(from, to, pawn_color,  board));
+            result.push(new_en_passant(from, to, pawn_color, board));
         } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
@@ -145,12 +145,13 @@ fn get_capture(from: usize, to: i8, board: &Board, _: Color) -> Move {
     new_move(from, to, board)
 }
 
-pub fn generate_random_pseudo_legal_move(
+pub fn generate_random_legal_move(
     from: usize,
-    board: &Board,
+    board: &mut Board,
     rng: &mut ThreadRng,
 ) -> Option<Move> {
     let pawn_color = get_piece_color(board.state.pieces[from]);
+    let king_location = board.state.king_positions[pawn_color as usize];
     let signed_from = from as i8;
     let from_file = signed_from & 7;
 
@@ -171,7 +172,9 @@ pub fn generate_random_pseudo_legal_move(
     let start = rng.gen_range(0, 3);
     let mut i = start;
     while {
-        if move_pseudo_legality_validators[i](from_file, moves_to[i], board, pawn_color) {
+        if move_pseudo_legality_validators[i](from_file, moves_to[i], board, pawn_color)
+            && !board.is_piece_pinned(signed_from, moves_to[i], king_location)
+        {
             return Some(if moves_to[i] > 7 && moves_to[i] < 56 {
                 move_getters[i](from, moves_to[i], board, pawn_color)
             } else {

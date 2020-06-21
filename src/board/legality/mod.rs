@@ -4,7 +4,7 @@ use crate::moves::{get_from, get_to};
 use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, BLACK};
 use crate::pieces::{bishop, king, knight, pawn, queen, rook, BISHOP, EMPTY_SQUARE, KING, KNIGHT};
 
-enum GameState {
+pub enum GameState {
     Draw,
     Win(Color),
     StillInProgress,
@@ -164,12 +164,9 @@ impl Board {
     }
 
     #[inline]
-    fn is_game_lost(&mut self) -> bool {
+    fn is_game_lost(&mut self, king_attackers_locations: &Vec<i8>) -> bool {
         self.is_king_checked(self.state.side)
-            && !self.can_get_out_of_check(
-                &self.get_attackers_of_king_square_locations(self.state.side),
-                self.state.side,
-            )
+            && !self.can_get_out_of_check(king_attackers_locations, self.state.side)
     }
 
     #[inline]
@@ -180,11 +177,11 @@ impl Board {
             || !self.can_any_piece_be_moved()
     }
 
-    fn get_game_result(&mut self) -> GameState {
+    pub fn get_game_state(&mut self, king_attackers_locations: &Vec<i8>) -> GameState {
         // Threefold repetition draw will be implemented in future.
         return if self.is_game_drawn() {
             GameState::Draw
-        } else if self.is_game_lost() {
+        } else if self.is_game_lost(king_attackers_locations) {
             GameState::Win(!self.state.side)
         } else {
             GameState::StillInProgress

@@ -1,7 +1,13 @@
+extern crate rand;
+
 use crate::board::Board;
 use crate::moves::Move;
 use crate::pieces::color::{get_piece_color, uncolorize_piece};
+
 use std::collections::LinkedList;
+
+use rand::rngs::ThreadRng;
+use rand::Rng;
 
 pub mod bishop;
 pub mod color;
@@ -46,6 +52,16 @@ pub const PSEUDO_LEGAL_MOVE_GENERATORS: [Generator; 7] = [
     |_, _, _| {},
 ];
 
+pub const RANDOM_LEGAL_MOVE_GENERATORS: [fn(usize, &mut Board, &mut ThreadRng) -> Option<Move>; 7] = [
+    pawn::generate_random_legal_move,
+    rook::generate_random_legal_move,
+    knight::generate_random_legal_move,
+    bishop::generate_random_legal_move,
+    queen::generate_random_legal_move,
+    king::generate_random_legal_move,
+    |_, _, _| None,
+];
+
 pub fn generate_all_pseudo_legal_moves(board: &Board, result: &mut Vec<Move>) {
     board
         .state
@@ -67,4 +83,22 @@ pub fn generate_all_legal_moves(board: &mut Board) -> LinkedList<Move> {
         .cloned()
         .filter(|half_move| board.is_move_legal(*half_move))
         .collect::<LinkedList<Move>>()
+}
+
+pub fn generate_random_legal_move(board: &mut Board, rng: &mut ThreadRng) -> Move {
+    let start = rng.gen_range(0, 64);
+    let mut i = start;
+    while {
+        let piece = board.state.pieces[i];
+        if get_piece_color(piece) == board.state.side {
+            match RANDOM_LEGAL_MOVE_GENERATORS[piece as usize](i, board, rng) {
+                Some(half_move) => return half_move,
+                None => {}
+            }
+        }
+        i += 1;
+        i &= 63;
+        i != start
+    } {}
+    0
 }

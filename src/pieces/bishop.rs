@@ -1,7 +1,7 @@
 extern crate rand;
 
 use crate::board::Board;
-use crate::moves::Move;
+use crate::moves::{get_to, Move};
 use crate::pieces::color::{get_piece_color, Color};
 use crate::pieces::sliders::add_sliding_move;
 use rand::rngs::ThreadRng;
@@ -95,9 +95,9 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     generate_pseudo_legal_moves_on_southeast(from, from_file, board, bishop_color, result);
 }
 
-pub fn generate_random_pseudo_legal_move(
+pub fn generate_random_legal_move(
     from: usize,
-    board: &Board,
+    board: &mut Board,
     rng: &mut ThreadRng,
 ) -> Option<Move> {
     let move_generators = [
@@ -108,18 +108,29 @@ pub fn generate_random_pseudo_legal_move(
     ];
 
     let start = rng.gen_range(0, 4);
-    let rook_color = get_piece_color(board.state.pieces[from]);
-    let from_file = from as i8 & 7;
+    let bishop_color = get_piece_color(board.state.pieces[from]);
+    let king_location = board.state.king_positions[bishop_color as usize];
+    let signed_from = from as i8;
+    let from_file = signed_from & 7;
     let mut i = start;
+    let mut moves = Vec::new();
+
     while {
-        let mut moves = Vec::new();
-        move_generators[i](from, from_file, board, rook_color, &mut moves);
+        move_generators[i](from, from_file, board, bishop_color, &mut moves);
         if moves.is_empty() {
             i += 1;
             i &= 3;
         } else {
-            let move_index = rng.gen_range(0, moves.len());
-            return Some(moves[move_index]);
+            let move_start = rng.gen_range(0, moves.len());
+            let mut j = move_start;
+            while {
+                if !board.is_piece_pinned(signed_from, get_to(moves[j]) as i8, king_location) {
+                    return Some(moves[j]);
+                }
+                j += 1;
+                j %= moves.len();
+                j != move_start
+            } {}
         }
         i != start
     } {}

@@ -110,7 +110,7 @@ impl Board {
         None
     }
 
-    fn generate_random_out_of_check_move(
+    pub fn generate_random_out_of_check_move(
         &mut self,
         king_attackers_locations: Vec<i8>,
         rng: &mut ThreadRng,
@@ -119,7 +119,7 @@ impl Board {
         let king_location = self.state.king_positions[color as usize];
         let legal_moves_to = king::get_legal_moves_to(king_location as usize, self);
         if legal_moves_to.len() > 0 {
-            return Some(king::generate_random_getting_of_check_move(
+            return Some(king::generate_random_getting_out_of_check_move(
                 king_location as usize,
                 &legal_moves_to,
                 self,

@@ -4,6 +4,7 @@ extern crate lazy_static;
 extern crate rand;
 
 mod board;
+mod game;
 mod moves;
 mod pieces;
 use crate::board::Board;
