@@ -241,6 +241,22 @@ pub fn is_move_legal(
                 && board.state.pieces[(to - pawn_step) as usize] == EMPTY_SQUARE
                 && (from >> 3) == PAWN_START_RANKS[color] as i8))
         && (distance & 1 == 0) == (board.state.pieces[to as usize] == EMPTY_SQUARE)
-        && !board.is_piece_pinned(from, to, king_location)
         && (piece_to_move == piece_after_promotion) == (to >= 8 && to < 56)
+        && !board.is_piece_pinned(from, to, king_location)
+}
+
+pub fn is_legal_en_passant(
+    from: i8,
+    to: i8,
+    piece_to_move: ColorizedPiece,
+    piece_after_promotion: ColorizedPiece,
+    board: &mut Board,
+) -> bool {
+    let distance = (to - from).abs();
+    let color = board.state.side as usize;
+    let king_location = board.state.king_positions[color];
+    board.state.en_passant_square == to
+        && piece_to_move == piece_after_promotion
+        && (distance == 7 || distance == 9)
+        && !board.is_piece_pinned(from, to, king_location)
 }

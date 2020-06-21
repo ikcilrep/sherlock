@@ -2,7 +2,7 @@
 extern crate regex;
 
 use crate::board::Board;
-use crate::moves::constructors::{new_castling, new_move, new_promotion};
+use crate::moves::constructors::{new_castling, new_en_passant, new_move, new_promotion};
 use crate::moves::{
     get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move, MoveType,
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
@@ -101,7 +101,8 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
             let mut result = String::new();
             let moved_piece = get_moved_piece(half_move);
             let uncolorized_moved_piece = uncolorize_piece(moved_piece);
-            let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE;
+            let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE
+                || get_move_type(half_move) == EN_PASSANT;
             if uncolorized_moved_piece != PAWN {
                 result.push(piece_to_char(uncolorized_moved_piece));
                 remove_ambiguities(half_move, &mut result, board);
@@ -193,7 +194,6 @@ fn get_unambiguous_from(
     }
 }
 
-// en passant in future
 fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<Move> {
     let color = board.state.side as usize;
     let piece_to_move = colorize_piece(PAWN, board.state.side);
@@ -220,6 +220,10 @@ fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<M
             }
         }
     };
+
+    if pawn::is_legal_en_passant(from, to, piece_to_move, piece_after_promotion, board) {
+        return Some(new_en_passant(from as usize, to, board));
+    }
 
     match pawn::is_move_legal(from, to, piece_to_move, piece_after_promotion, board) {
         true => Some(new_promotion(
