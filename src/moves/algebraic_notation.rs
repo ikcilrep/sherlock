@@ -78,8 +78,13 @@ fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &mu
         .map(|&location| location)
         .collect();
 
+    if attackers_locations.is_empty() {
+        return;
+    }
+
     let from_file = from & 7;
     let from_rank = from >> 3;
+
     if attackers_locations
         .iter()
         .filter(|&&location| location & 7 == from_file)
