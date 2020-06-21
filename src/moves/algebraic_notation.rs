@@ -2,9 +2,9 @@
 extern crate regex;
 
 use crate::board::Board;
-use crate::moves::constructors::{new_move, new_promotion};
+use crate::moves::constructors::{new_castling, new_move, new_promotion};
 use crate::moves::{
-    get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move,
+    get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move, MoveType,
     CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
 };
 use crate::pieces::color::{colorize_piece, uncolorize_piece};
@@ -192,6 +192,7 @@ fn get_unambiguous_from(
     }
 }
 
+// en passant in future
 fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<Move> {
     let king_location = board.state.king_positions[board.state.side as usize];
     let piece_to_move = colorize_piece(PAWN, board.state.side);
@@ -243,6 +244,17 @@ fn parse_not_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Opti
     };
 }
 
+fn parse_castling(castling_type: MoveType, board: &Board) -> Option<Move> {
+    let king_location = board.state.king_positions[board.state.side as usize] as usize;
+    let king = board.state.pieces[king_location];
+    Some(new_castling(
+        castling_type,
+        king_location,
+        king,
+        board.state.side,
+    ))
+}
+
 pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Option<Move> {
     lazy_static! {
         static ref PAWN_MOVE: Regex = Regex::new(
@@ -255,11 +267,14 @@ pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Optio
         .unwrap();
     }
 
-    // en passant, castling in future
     return if PAWN_MOVE.is_match(move_string) {
         parse_pawn_move(PAWN_MOVE.captures(move_string).unwrap(), board)
     } else if NOT_PAWN_MOVE.is_match(move_string) {
         parse_not_pawn_move(NOT_PAWN_MOVE.captures(move_string).unwrap(), board)
+    } else if move_string == "O-O" && board.is_castling_kings_side_legal() {
+        parse_castling(CASTLING_KINGS_SIDE, board)
+    } else if move_string == "O-O-O" && board.is_castling_queens_side_legal() {
+        parse_castling(CASTLING_QUEENS_SIDE, board)
     } else {
         None
     };

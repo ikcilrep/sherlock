@@ -9,6 +9,29 @@ const BISHOP_QUEENS_SIDE_POSITIONS: [usize; 2] = [2, 58];
 const QUEENS_POSITIONS: [usize; 2] = [3, 59];
 
 impl Board {
+    pub fn is_castling_queens_side_legal(&self) -> bool {
+        let color = self.state.side as usize;
+        self.is_castling_queens_side_pseudo_legal(self.state.side)
+            && !(self.is_king_checked(self.state.side)
+                || self
+                    .is_square_attacked(BISHOP_QUEENS_SIDE_POSITIONS[color] as i8, self.state.side)
+                || self.is_square_attacked(
+                    KNIGHTS_QUEENS_SIDE_POSITIONS[color] as i8,
+                    self.state.side,
+                )
+                || self.is_square_attacked(QUEENS_POSITIONS[color] as i8, self.state.side))
+    }
+
+    pub fn is_castling_kings_side_legal(&self) -> bool {
+        let color = self.state.side as usize;
+        self.is_castling_kings_side_pseudo_legal(self.state.side)
+            && !(self.is_king_checked(self.state.side)
+                || self
+                    .is_square_attacked(BISHOP_KINGS_SIDE_POSITIONS[color] as i8, self.state.side)
+                || self
+                    .is_square_attacked(KNIGHTS_KINGS_SIDE_POSITIONS[color] as i8, self.state.side))
+    }
+
     #[inline]
     pub fn is_castling_queens_side_pseudo_legal(&self, color: Color) -> bool {
         self.state.has_king_stayed_in_place[color as usize]

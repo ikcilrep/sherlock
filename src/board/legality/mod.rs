@@ -94,7 +94,7 @@ impl Board {
         return !self.is_piece_pinned(from, to, king_location);
     }
 
-    fn is_king_checked(&self, color: Color) -> bool {
+    pub fn is_king_checked(&self, color: Color) -> bool {
         self.is_square_attacked(self.state.king_positions[color as usize], color)
     }
 
