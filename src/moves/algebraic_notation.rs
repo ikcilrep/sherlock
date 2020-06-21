@@ -71,25 +71,31 @@ fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &mu
     let from = get_from(half_move) as i8;
     let moved_piece = get_moved_piece(half_move);
     let to = get_to(half_move);
-    let attackers_locations =
-        board.get_pieces_of_type_defending_square_locations(to as i8, moved_piece);
-    // more ambiguous attackers in future
-    for attacker_location in attackers_locations {
-        if attacker_location != from {
-            let attacker_location_rank = attacker_location >> 3;
-            let from_rank = from >> 3;
-            let attacker_location_file = attacker_location & 7;
-            let from_file = from & 7;
+    let attackers_locations: Vec<i8> = board
+        .get_pieces_of_type_defending_square_locations(to as i8, moved_piece)
+        .iter()
+        .filter(|&&location| location != from)
+        .map(|&location| location)
+        .collect();
 
-            if attacker_location_rank == from_rank {
-                move_string_part.push(file_to_char(from_file as u8));
-            } else if attacker_location_file == from_file {
-                move_string_part.push(rank_to_char(from_rank as u8));
-            } else {
-                move_string_part.push(file_to_char(from_file as u8));
-            }
-            break;
-        }
+    let from_file = from & 7;
+    let from_rank = from >> 3;
+    if attackers_locations
+        .iter()
+        .filter(|&&location| location & 7 == from_file)
+        .count()
+        == 0
+    {
+        move_string_part.push(file_to_char(from_file as u8));
+    } else if attackers_locations
+        .iter()
+        .filter(|&&location| location >> 3 == from_rank)
+        .count()
+        == 0
+    {
+        move_string_part.push(rank_to_char(from_rank as u8));
+    } else {
+        move_string_part.push_str(location_to_string(from as u8).as_str());
     }
 }
 
