@@ -1,6 +1,6 @@
 use crate::board::Board;
 use crate::pieces::color::{colorize_piece, Color};
-use crate::pieces::{ColorizedPiece, QUEEN};
+use crate::pieces::{ColorizedPiece, EMPTY_SQUARE, QUEEN};
 
 type AttackingSliderFinder =
     fn(&Board, i8, ColorizedPiece, Color, i8, fn(i8, i8) -> bool) -> Option<i8>;
@@ -19,8 +19,11 @@ impl Board {
         while predicate(attacker_square, square_file)
             && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
         {
-            if self.state.pieces[attacker_square as usize] == possible_attacker {
+            let attacker = self.state.pieces[attacker_square as usize];
+            if attacker == possible_attacker {
                 return Some(attacker_square);
+            } else if attacker != EMPTY_SQUARE {
+                break;
             }
             attacker_square += increment;
         }
@@ -44,6 +47,8 @@ impl Board {
             let attacker = self.state.pieces[attacker_square as usize];
             if attacker == possible_attacker || attacker == colorized_queen {
                 return Some(attacker_square);
+            } else if attacker != EMPTY_SQUARE {
+                break;
             }
             attacker_square += increment;
         }
