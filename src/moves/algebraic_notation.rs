@@ -4,8 +4,8 @@ extern crate regex;
 use crate::board::Board;
 use crate::moves::constructors::{new_castling, new_en_passant, new_move, new_promotion};
 use crate::moves::{
-    get_captured_piece, get_from, get_move_type, get_moved_piece, get_to, Move, MoveType,
-    CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
+    get_captured_piece, get_from, get_move_type, get_moved_piece, get_promoted_piece, get_to, Move,
+    MoveType, CASTLING_KINGS_SIDE, CASTLING_QUEENS_SIDE, EN_PASSANT, NORMAL_MOVE,
 };
 use crate::pieces::color::{colorize_piece, uncolorize_piece};
 use crate::pieces::pawn;
@@ -111,6 +111,7 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
         EN_PASSANT | NORMAL_MOVE => {
             let mut result = String::new();
             let moved_piece = get_moved_piece(half_move);
+            let promoted_piece = get_promoted_piece(half_move);
             let uncolorized_moved_piece = uncolorize_piece(moved_piece);
             let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE;
             if uncolorized_moved_piece != PAWN {
@@ -128,6 +129,10 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
             let to = get_to(half_move) as i8;
             result.push_str(location_to_string(to).as_str());
 
+            if uncolorized_moved_piece == PAWN && moved_piece != promoted_piece {
+                result.push('=');
+                result.push(piece_to_char(promoted_piece));
+            }
             result
         }
         _ => panic!("Invalid move type."),
