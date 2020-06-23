@@ -23,12 +23,12 @@ pub fn get_moves_to(from: usize) -> [i8; 8] {
     [
         signed_from + 17,
         signed_from + 15,
-        signed_from - 17,
         signed_from - 15,
+        signed_from - 17,
         signed_from + 10,
         signed_from + 6,
-        signed_from - 10,
         signed_from - 6,
+        signed_from - 10,
     ]
 }
 
