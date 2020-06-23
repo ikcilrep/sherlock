@@ -46,14 +46,13 @@ impl Board {
                 && self.state.pieces[attacker_square2 as usize] == colorized_pawn)
     }
 
-    fn is_square_attacked_by_knight(&self, square: i8, attacked_color: Color) -> bool {
+    pub fn is_square_attacked_by_knight(&self, square: i8, attacked_color: Color) -> bool {
         let colorized_knight = colorize_piece(KNIGHT, !attacked_color);
         self.is_square_attacked_by_piece(
             square,
             colorized_knight,
             knight::get_moves_to(square as usize),
-            knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-            attacked_color,
+            knight::ATTACK_PSEUDO_LEGALITY_VALIDATORS,
         )
     }
 
@@ -63,8 +62,7 @@ impl Board {
             square,
             colorized_king,
             king::get_moves_to(square as usize),
-            king::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-            attacked_color,
+            king::ATTACK_PSEUDO_LEGALITY_VALIDATORS,
         )
     }
 
@@ -73,17 +71,16 @@ impl Board {
         square: i8,
         piece: ColorizedPiece,
         moves_to: [i8; 8],
-        move_pseudo_legality_validators: [fn(i8, i8, &Board, Color) -> bool; 8],
-        attacked_color: Color,
+        attack_pseudo_legality_validators: [fn(i8, i8) -> bool; 8],
     ) -> bool {
         let square_file = square & 7;
 
-        move_pseudo_legality_validators
+        attack_pseudo_legality_validators
             .iter()
             .zip(moves_to.iter())
-            .any(|(is_move_pseudo_legal, attacker_square)| {
-                is_move_pseudo_legal(square_file, *attacker_square, self, !attacked_color)
-                    && self.state.pieces[*attacker_square as usize] == piece
+            .any(|(is_attack_pseudo_legal, &attacker_square)| {
+                is_attack_pseudo_legal(square_file, attacker_square)
+                    && self.state.pieces[attacker_square as usize] == piece
             })
     }
 

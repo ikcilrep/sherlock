@@ -26,7 +26,16 @@ pub const MOVE_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 8
     },
     |from_file, to, board, king_color| to & 7 < from_file && board.can_be_moved(to, king_color),
 ];
-
+pub const ATTACK_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8) -> bool; 8] = [
+    |from_file, to| to < 64 && to & 7 < from_file,
+    |_, to| to < 64,
+    |from_file, to| to < 64 && to & 7 > from_file,
+    |from_file, to| to & 7 > from_file,
+    |from_file, to| to >= 0 && to & 7 > from_file,
+    |_, to| to >= 0,
+    |from_file, to| to >= 0 && to & 7 < from_file,
+    |from_file, to| to & 7 < from_file,
+];
 pub fn get_moves_to(from: usize) -> [i8; 8] {
     let signed_from = from as i8;
     [

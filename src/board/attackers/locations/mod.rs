@@ -19,8 +19,7 @@ impl Board {
             colorize_piece(KNIGHT, !attacked_color),
             square,
             knight::get_moves_to(square as usize),
-            knight::MOVE_PSEUDO_LEGALITY_VALIDATORS,
-            attacked_color,
+            knight::ATTACK_PSEUDO_LEGALITY_VALIDATORS,
             &mut result,
         );
         self.get_pieces_attacking_square_on_straight_lines_locations(
@@ -73,17 +72,16 @@ impl Board {
         piece: ColorizedPiece,
         square: i8,
         moves_to: [i8; 8],
-        move_pseudo_legality_validators: [fn(i8, i8, &Board, Color) -> bool; 8],
-        attacked_color: Color,
+        attack_pseudo_legality_validators: [fn(i8, i8) -> bool; 8],
         result: &mut Vec<i8>,
     ) {
         let square_file = square & 7;
 
-        move_pseudo_legality_validators
+        attack_pseudo_legality_validators
             .iter()
             .zip(moves_to.iter())
-            .filter(|(is_move_pseudo_legal, attacker_square)| {
-                is_move_pseudo_legal(square_file, **attacker_square, self, !attacked_color)
+            .filter(|(is_attack_pseudo_legal, attacker_square)| {
+                is_attack_pseudo_legal(square_file, **attacker_square)
                     && self.state.pieces[**attacker_square as usize] == piece
             })
             .for_each(|(_, attacker_square)| result.push(*attacker_square))

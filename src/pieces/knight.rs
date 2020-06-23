@@ -17,7 +17,16 @@ pub const MOVE_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 8
     is_move_southeast_pseudo_legal,
     is_move_southwest_pseudo_legal,
 ];
-
+pub const ATTACK_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8) -> bool; 8] = [
+    |to_file, from| from < 64 && from & 7 > to_file,
+    |to_file, from| from < 64 && from & 7 < to_file,
+    |to_file, from| from >= 0 && from & 7 > to_file,
+    |to_file, from| from >= 0 && from & 7 < to_file,
+    |to_file, from| from < 64 && from & 7 > to_file,
+    |to_file, from| from < 64 && from & 7 < to_file,
+    |to_file, from| from >= 0 && from & 7 > to_file,
+    |to_file, from| from >= 0 && from & 7 < to_file,
+];
 pub fn get_moves_to(from: usize) -> [i8; 8] {
     let signed_from = from as i8;
     [
