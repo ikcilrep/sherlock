@@ -115,9 +115,6 @@ pub fn to_algebraic_notation(half_move: Move, board: &mut Board) -> String {
             let uncolorized_moved_piece = uncolorize_piece(moved_piece);
             let is_capture = get_captured_piece(half_move) != EMPTY_SQUARE;
             if uncolorized_moved_piece != PAWN {
-                if uncolorized_moved_piece == 6 {
-                    panic!("Moved empty square");
-                }
                 result.push(piece_to_char(uncolorized_moved_piece));
                 remove_ambiguities(half_move, &mut result, board);
             } else if is_capture {
