@@ -173,6 +173,7 @@ impl Board {
                 if king::can_be_moved(king_location as usize, self) {
                     return true;
                 }
+
                 let attacker_location = king_attackers_locations[0];
                 let attacker_location_rank = attacker_location >> 3;
                 let king_location_rank = king_location >> 3;
@@ -198,7 +199,22 @@ impl Board {
                         color,
                     )
                 } else {
-                    false
+                    pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
+                        || self.is_square_defended_by_knight(
+                            attacker_location,
+                            king_location,
+                            color,
+                        )
+                        || self.is_square_defended_from_diagonal_by_slider(
+                            attacker_location,
+                            king_location,
+                            color,
+                        )
+                        || self.is_square_defended_from_straight_line_by_slider(
+                            attacker_location,
+                            king_location,
+                            color,
+                        )
                 };
                 // diagonals and knight in future
             }
