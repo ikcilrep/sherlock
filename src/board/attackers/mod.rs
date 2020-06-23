@@ -36,8 +36,8 @@ impl Board {
     pub fn is_square_attacked_by_pawn(&self, square: i8, attacked_color: Color) -> bool {
         let colorized_pawn = colorize_piece(PAWN, !attacked_color);
         let square_file = square & 7;
-        let attacker_square1 = square + INVERSED_PAWN_CAPTURES[attacked_color as usize][0];
-        let attacker_square2 = square + INVERSED_PAWN_CAPTURES[attacked_color as usize][1];
+        let attacker_square1 = square + INVERSED_PAWN_CAPTURES[!attacked_color as usize][0];
+        let attacker_square2 = square + INVERSED_PAWN_CAPTURES[!attacked_color as usize][1];
         (self.is_square_on_board(attacker_square1)
             && attacker_square1 & 7 > square_file
             && self.state.pieces[attacker_square1 as usize] == colorized_pawn)
