@@ -122,9 +122,11 @@ pub fn generate_random_legal_move(
 
 #[inline]
 pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
-    let from_file = from as i8 & 7;
-    get_moves_to(from)
-        .iter()
-        .enumerate()
-        .any(|(i, to)| MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side))
+    let signed_from = from as i8;
+    let from_file = signed_from & 7;
+    let king_location = board.state.king_positions[board.state.side as usize];
+    get_moves_to(from).iter().enumerate().any(|(i, &to)| {
+        MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, to, board, board.state.side)
+            && !board.is_piece_pinned(signed_from, to, king_location)
+    })
 }

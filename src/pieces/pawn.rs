@@ -46,7 +46,7 @@ fn add_promotions(from: usize, to: i8, pawn_color: Color, board: &Board, result:
     result.push(new_promotion(from, to, colorized_rook, board));
 }
 
-fn random_promotion(
+pub fn random_promotion(
     from: usize,
     to: i8,
     pawn_color: Color,
@@ -190,12 +190,16 @@ pub fn generate_random_legal_move(
 
 #[inline]
 pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
-    let from_file = from as i8 & 7;
+    let signed_from = from as i8;
+    let from_file = signed_from & 7;
+    let king_location = board.state.king_positions[board.state.side as usize];
+
     get_nearest_moves_to(from, board.state.side)
         .iter()
         .enumerate()
-        .any(|(i, to)| {
-            NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side)
+        .any(|(i, &to)| {
+            NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](from_file, to, board, board.state.side)
+                && !board.is_piece_pinned(signed_from, to, king_location)
         })
 }
 

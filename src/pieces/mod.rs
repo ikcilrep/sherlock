@@ -101,6 +101,6 @@ impl Board {
             i &= 63;
             i != start
         } {}
-        0
+        panic!("Can't find any legal move.");
     }
 }

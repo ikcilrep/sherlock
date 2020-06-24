@@ -126,8 +126,13 @@ pub fn generate_random_legal_move(
 
 #[inline]
 pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
+    let signed_from = from as i8;
+    let king_location = board.state.king_positions[board.state.side as usize];
     get_nearest_moves_to(from)
         .iter()
         .enumerate()
-        .any(|(i, to)| NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](*to, board, board.state.side))
+        .any(|(i, &to)| {
+            NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS[i](to, board, board.state.side)
+                && !board.is_piece_pinned(signed_from, to, king_location)
+        })
 }
