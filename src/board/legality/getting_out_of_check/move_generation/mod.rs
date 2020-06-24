@@ -36,10 +36,10 @@ pub fn get_four_random_indexes(rng: &mut ThreadRng) -> [usize; 4] {
         [2, 3, 1, 0],
         [3, 2, 0, 1],
         [3, 1, 2, 0],
-        [3, 0, 1, 3],
-        [3, 1, 0, 3],
-        [3, 0, 3, 1],
-        [3, 3, 1, 0],
+        [3, 0, 1, 2],
+        [3, 1, 0, 2],
+        [3, 0, 2, 1],
+        [3, 2, 1, 0],
     ][index]
 }
 
@@ -84,7 +84,6 @@ impl Board {
         let mut defender_locations = Vec::new();
 
         let indexes = get_four_random_indexes(rng);
-
         while {
             let square = min + i;
             for &index in indexes.iter() {
@@ -196,7 +195,6 @@ impl Board {
             } else {
                 self.generate_random_capturing_attacker_move(king_location, attacker_location, rng)
             };
-
             if half_move.is_some() {
                 return half_move;
             } else if !legal_moves_to.is_empty() {
