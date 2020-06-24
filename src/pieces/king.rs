@@ -92,10 +92,13 @@ pub fn generate_random_legal_move(
     let king_color = get_piece_color(king);
 
     if rng.gen_bool(0.5) {
-        if rng.gen_bool(0.5) && board.is_castling_queens_side_pseudo_legal(king_color) {
+        let castling_queens_side_is_legal = board.is_castling_queens_side_legal();
+        if rng.gen_bool(0.5) && castling_queens_side_is_legal {
             return Some(new_castling(CASTLING_QUEENS_SIDE, from, king, king_color));
-        } else if board.is_castling_kings_side_pseudo_legal(king_color) {
+        } else if board.is_castling_kings_side_legal() {
             return Some(new_castling(CASTLING_KINGS_SIDE, from, king, king_color));
+        } else if castling_queens_side_is_legal {
+            return Some(new_castling(CASTLING_QUEENS_SIDE, from, king, king_color));
         }
     }
 
@@ -137,6 +140,7 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
         MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side)
             && !board.is_square_attacked(*to, board.state.side)
     });
+
     board.state.pieces[from] = king;
     result
 }
