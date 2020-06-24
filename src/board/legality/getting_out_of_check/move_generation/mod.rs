@@ -78,7 +78,7 @@ impl Board {
         let (start, min, max) =
             get_start_min_max(king_location, king_attacker_location, increment, rng);
 
-        let i_upper_limit = max - min + 1;
+        let i_upper_limit = max - min + increment;
         let mut i = start;
 
         let mut defender_locations = Vec::new();
