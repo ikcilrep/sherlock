@@ -3,8 +3,8 @@ extern crate rand;
 use crate::board::Board;
 use crate::moves::constructors::new_move;
 use crate::moves::Move;
-use crate::pieces::color::Color;
-use crate::pieces::king;
+use crate::pieces::color::{get_piece_color, uncolorize_piece, Color};
+use crate::pieces::{king, pawn, ColorizedPiece, PAWN};
 
 use rand::rngs::ThreadRng;
 use rand::Rng;
@@ -97,7 +97,8 @@ impl Board {
                 if defender_locations.len() > 0 {
                     let location_index = rng.gen_range(0, defender_locations.len());
                     let location = defender_locations[location_index];
-                    return Some(new_move(location as usize, square, self));
+                    let piece = self.state.pieces[location as usize];
+                    return Some(self.get_move(location as usize, square, piece, rng));
                 }
             }
 
@@ -107,6 +108,13 @@ impl Board {
         } {}
 
         None
+    }
+
+    fn get_move(&self, from: usize, to: i8, piece: ColorizedPiece, rng: &mut ThreadRng) -> Move {
+        if uncolorize_piece(piece) == PAWN && (to <= 7 || to >= 56) {
+            return pawn::random_promotion(from, to, get_piece_color(piece), self, rng);
+        }
+        return new_move(from, to, self);
     }
 
     fn generate_random_capturing_attacker_move(
@@ -136,7 +144,8 @@ impl Board {
             if defender_locations.len() > 0 {
                 let location_index = rng.gen_range(0, defender_locations.len());
                 let location = defender_locations[location_index];
-                return Some(new_move(location as usize, king_attacker_location, self));
+                let piece = self.state.pieces[location as usize];
+                return Some(self.get_move(location as usize, king_attacker_location, piece, rng));
             }
         }
         None
