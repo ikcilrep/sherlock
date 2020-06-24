@@ -104,10 +104,7 @@ pub fn generate_random_legal_move(
     while {
         let mut moves = Vec::new();
         move_generators[i](from, board, rook_color, &mut moves);
-        if moves.is_empty() {
-            i += 1;
-            i &= 3;
-        } else {
+        if !moves.is_empty() {
             let move_start = rng.gen_range(0, moves.len());
             let mut j = move_start;
             while {
@@ -119,6 +116,9 @@ pub fn generate_random_legal_move(
                 j != move_start
             } {}
         }
+
+        i += 1;
+        i &= 3;
         i != start
     } {}
     None

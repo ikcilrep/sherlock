@@ -117,10 +117,7 @@ pub fn generate_random_legal_move(
 
     while {
         move_generators[i](from, from_file, board, bishop_color, &mut moves);
-        if moves.is_empty() {
-            i += 1;
-            i &= 3;
-        } else {
+        if !moves.is_empty() {
             let move_start = rng.gen_range(0, moves.len());
             let mut j = move_start;
             while {
@@ -132,6 +129,9 @@ pub fn generate_random_legal_move(
                 j != move_start
             } {}
         }
+
+        i += 1;
+        i &= 3;
         i != start
     } {}
     None
