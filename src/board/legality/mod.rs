@@ -84,7 +84,6 @@ impl Board {
         if from == king_location {
             let king = self.state.pieces[king_location as usize];
             self.state.pieces[king_location as usize] = EMPTY_SQUARE;
-
             let result = self.is_square_attacked(to, self.state.side);
             self.state.pieces[king_location as usize] = king;
             return result;
@@ -165,7 +164,7 @@ impl Board {
 
     #[inline]
     fn is_game_lost(&mut self, king_attackers_locations: &Vec<i8>) -> bool {
-        self.is_king_checked(self.state.side)
+        !king_attackers_locations.is_empty()
             && !self.can_get_out_of_check(king_attackers_locations, self.state.side)
     }
 
@@ -179,10 +178,10 @@ impl Board {
 
     pub fn get_game_state(&mut self, king_attackers_locations: &Vec<i8>) -> GameState {
         // Threefold repetition draw will be implemented in future.
-        return if self.is_game_drawn() {
-            GameState::Draw
-        } else if self.is_game_lost(king_attackers_locations) {
+        return if self.is_game_lost(king_attackers_locations) {
             GameState::Win(!self.state.side)
+        } else if self.is_game_drawn() {
+            GameState::Draw
         } else {
             GameState::StillInProgress
         };
