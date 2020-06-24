@@ -52,13 +52,13 @@ pub fn get_start_min_max(
 ) -> (i8, i8, i8) {
     return if king_attacker_location > king_location {
         (
-            rng.gen_range(0, king_attacker_location - king_location),
+            rng.gen_range(0, (king_attacker_location - king_location) / increment) * increment,
             king_location + increment,
             king_attacker_location,
         )
     } else {
         (
-            rng.gen_range(0, king_location - king_attacker_location),
+            rng.gen_range(0, (king_location - king_attacker_location) / increment) * increment,
             king_attacker_location,
             king_location - increment,
         )
@@ -110,15 +110,48 @@ impl Board {
         None
     }
 
+    fn generate_random_capturing_attacker_move(
+        &mut self,
+        king_location: i8,
+        king_attacker_location: i8,
+        rng: &mut ThreadRng,
+    ) -> Option<Move> {
+        let defender_locations_getters = [
+            Board::get_sliders_or_queens_defending_square_on_straight_lines_locations,
+            Board::get_pieces_defending_square_on_diagonals_locations,
+            Board::get_knights_defending_square_locations,
+            Board::get_pawns_defending_square_locations,
+        ];
+
+        let mut defender_locations = Vec::new();
+        let indexes = get_four_random_indexes(rng);
+
+        for &index in indexes.iter() {
+            defender_locations_getters[index](
+                self,
+                king_attacker_location,
+                king_location,
+                self.state.side,
+                &mut defender_locations,
+            );
+            if defender_locations.len() > 0 {
+                let location_index = rng.gen_range(0, defender_locations.len());
+                let location = defender_locations[location_index];
+                return Some(new_move(location as usize, king_attacker_location, self));
+            }
+        }
+        None
+    }
+
     pub fn generate_random_out_of_check_move(
         &mut self,
-        king_attackers_locations: Vec<i8>,
+        king_attackers_locations: &Vec<i8>,
         rng: &mut ThreadRng,
     ) -> Option<Move> {
         let color = self.state.side;
         let king_location = self.state.king_positions[color as usize];
         let legal_moves_to = king::get_legal_moves_to(king_location as usize, self);
-        if legal_moves_to.len() > 0 {
+        if legal_moves_to.len() > 0 && rng.gen_bool(0.5) {
             return Some(king::generate_random_getting_out_of_check_move(
                 king_location as usize,
                 &legal_moves_to,
@@ -136,7 +169,7 @@ impl Board {
 
             let difference = attacker_location - king_location;
 
-            return if attacker_location_rank == king_location_rank {
+            let half_move = if attacker_location_rank == king_location_rank {
                 self.generate_random_out_of_check_on_rank_move(
                     king_location,
                     attacker_location,
@@ -161,8 +194,19 @@ impl Board {
                     rng,
                 )
             } else {
-                None
+                self.generate_random_capturing_attacker_move(king_location, attacker_location, rng)
             };
+
+            if half_move.is_some() {
+                return half_move;
+            } else if !legal_moves_to.is_empty() {
+                return Some(king::generate_random_getting_out_of_check_move(
+                    king_location as usize,
+                    &legal_moves_to,
+                    self,
+                    rng,
+                ));
+            }
         }
         None
     }
