@@ -169,18 +169,18 @@ impl Board {
     }
 
     #[inline]
-    fn is_game_drawn(&mut self) -> bool {
+    fn is_game_drawn(&mut self, king_attackers_locations: &Vec<i8>) -> bool {
         self.state.fifty_moves == 100
             || !self.is_material_sufficient_to_checkmate()
             || self.did_threefold_repetition_occured()
-            || !self.can_any_piece_be_moved()
+            || (king_attackers_locations.is_empty() && !self.can_any_piece_be_moved())
     }
 
     pub fn get_game_state(&mut self, king_attackers_locations: &Vec<i8>) -> GameState {
         // Threefold repetition draw will be implemented in future.
         return if self.is_game_lost(king_attackers_locations) {
             GameState::Win(!self.state.side)
-        } else if self.is_game_drawn() {
+        } else if self.is_game_drawn(king_attackers_locations) {
             GameState::Draw
         } else {
             GameState::StillInProgress
