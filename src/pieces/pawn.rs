@@ -3,7 +3,7 @@ extern crate rand;
 use crate::board::Board;
 use crate::moves::constructors::{new_en_passant, new_move, new_promotion};
 use crate::moves::Move;
-use crate::pieces::color::{colorize_piece, get_piece_color, uncolorize_piece, Color};
+use crate::pieces::color::{colorize_piece, get_piece_color, Color};
 use crate::pieces::ColorizedPiece;
 use crate::pieces::{BISHOP, EMPTY_SQUARE, KNIGHT, PAWN, QUEEN, ROOK};
 use rand::rngs::ThreadRng;
@@ -213,15 +213,15 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
 
 pub fn can_be_moved_on_empty_square_without_capture(empty_square: i8, board: &mut Board) -> bool {
     let color = board.state.side as usize;
+    let colorized_pawn = colorize_piece(PAWN, board.state.side);
+
     let from1 = empty_square - PAWN_STEPS[color][1];
     let from2 = from1 - PAWN_STEPS[color][1];
-    (board.is_square_on_board(from1)
-        && uncolorize_piece(board.state.pieces[from1 as usize]) == PAWN
-        && !board.is_piece_pinned(from1, empty_square, board.state.king_positions[color]))
+    !board.is_piece_pinned(from1, empty_square, board.state.king_positions[color])
+        && (board.is_square_on_board(from1) && board.state.pieces[from1 as usize] == colorized_pawn)
         || (PAWN_START_RANKS[color] == (from2 >> 3) as usize
             && board.state.pieces[from1 as usize] == EMPTY_SQUARE
-            && uncolorize_piece(board.state.pieces[from2 as usize]) == PAWN
-            && !board.is_piece_pinned(from2, empty_square, board.state.king_positions[color]))
+            && board.state.pieces[from2 as usize] == colorized_pawn)
 }
 
 pub fn can_capture_on_enemy_occupied_square(enemy_occupied_square: i8, board: &mut Board) -> bool {
