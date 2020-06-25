@@ -10,7 +10,7 @@ use rand::rngs::ThreadRng;
 use rand::Rng;
 
 pub const PAWN_STEPS: [[i8; 3]; 2] = [[7, 8, 9], [-9, -8, -7]];
-const PAWN_START_RANKS: [usize; 2] = [1, 6];
+pub const PAWN_START_RANKS: [usize; 2] = [1, 6];
 
 const NEAREST_MOVES_PSEUDO_LEGALITY_VALIDATORS: [fn(i8, i8, &Board, Color) -> bool; 3] = [
     |from_file, to, board, pawn_color| {

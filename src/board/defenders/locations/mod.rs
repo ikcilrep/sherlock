@@ -2,7 +2,7 @@ use crate::board::Board;
 use crate::pieces::color::{colorize_piece, uncolorize_piece, Color};
 use crate::pieces::pawn::PAWN_STEPS;
 use crate::pieces::ColorizedPiece;
-use crate::pieces::{king, knight, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
+use crate::pieces::{king, knight, pawn, BISHOP, EMPTY_SQUARE, KING, KNIGHT, PAWN, QUEEN, ROOK};
 
 pub mod diagonals;
 pub mod straight_lines;
@@ -17,12 +17,23 @@ impl Board {
     ) {
         let colorized_pawn = colorize_piece(PAWN, defended_color);
         if self.state.pieces[square as usize] == EMPTY_SQUARE {
-            let from = square - PAWN_STEPS[defended_color as usize][1];
-            if self.is_square_on_board(from)
-                && self.state.pieces[from as usize] == colorized_pawn
-                && !self.is_piece_pinned(from, square, defended_piece_location)
+            let from1 = square - PAWN_STEPS[defended_color as usize][1];
+            let from2 = from1 - PAWN_STEPS[defended_color as usize][1];
+            let mut is_pawn_pinned = false;
+            if self.is_square_on_board(from1)
+                && self.state.pieces[from1 as usize] == colorized_pawn
+                && {
+                    is_pawn_pinned = self.is_piece_pinned(from1, square, defended_piece_location);
+                    !is_pawn_pinned
+                }
             {
-                result.push(from);
+                result.push(from1);
+            } else if !is_pawn_pinned
+                && pawn::PAWN_START_RANKS[defended_color as usize] == (from2 >> 3) as usize
+                && self.state.pieces[from1 as usize] == EMPTY_SQUARE
+                && self.state.pieces[from2 as usize] == colorized_pawn
+            {
+                result.push(from2);
             }
         } else {
             let square_file = square & 7;
@@ -117,7 +128,9 @@ impl Board {
                     && self.state.pieces[defender_square as usize] == colorized_knight
                     && !self.is_piece_pinned(defender_square, square, defended_piece_location)
             })
-            .for_each(|(_, &defender_square)| result.push(defender_square));
+            .for_each(|(_, &defender_square)| {
+                result.push(defender_square);
+            });
     }
 
     pub fn get_pieces_of_type_defending_square_locations(
