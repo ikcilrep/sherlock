@@ -39,7 +39,7 @@ impl Board {
             || (attacker_location > king_location
                 && ((king_location + 1)..attacker_location)
                     .any(|square| is_defended(square, king_location, color, self)))
-            || (attacker_location..king_location)
+            || ((attacker_location + 1)..king_location)
                 .any(|square| is_defended(square, king_location, color, self))
     }
 
@@ -74,7 +74,7 @@ impl Board {
                 && ((king_location + 8)..attacker_location)
                     .step_by(8)
                     .any(|square| is_defended(square, king_location, color, self))
-                || (attacker_location..king_location)
+                || ((attacker_location + 8)..king_location)
                     .step_by(8)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
@@ -108,7 +108,6 @@ impl Board {
             pawn::can_be_moved_on_empty_square_without_capture(square, board)
                 || is_square_defended_by_not_pawn(square, king_location, color, board)
         }
-
         // Maybe some more case specific function in future.
         pawn::can_capture_on_enemy_occupied_square(attacker_location, self)
             || is_square_defended_by_not_pawn(attacker_location, king_location, color, self)
@@ -116,7 +115,7 @@ impl Board {
                 && ((king_location + 7)..attacker_location)
                     .step_by(7)
                     .any(|square| is_defended(square, king_location, color, self))
-                || (attacker_location..king_location)
+                || ((attacker_location + 7)..king_location)
                     .step_by(7)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
@@ -157,7 +156,7 @@ impl Board {
                 && ((king_location + 9)..attacker_location)
                     .step_by(9)
                     .any(|square| is_defended(square, king_location, color, self))
-                || (attacker_location..king_location)
+                || ((attacker_location + 9)..king_location)
                     .step_by(9)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
