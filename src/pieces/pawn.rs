@@ -127,11 +127,19 @@ fn is_move_northeast_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_col
 }
 
 #[inline]
-fn get_move_north(from: usize, to: i8, board: &Board, pawn_color: Color) -> Move {
+fn get_random_move_north(
+    from: usize,
+    to: i8,
+    board: &Board,
+    pawn_color: Color,
+    rng: &mut ThreadRng,
+) -> Move {
     let from_row = from >> 3;
     let new_to = to + PAWN_STEPS[pawn_color as usize][1];
 
-    return if from_row == PAWN_START_RANKS[pawn_color as usize]
+    return if rng.gen_bool(0.5) {
+        new_move(from, to, board)
+    } else if from_row == PAWN_START_RANKS[pawn_color as usize]
         && board.state.pieces[new_to as usize] == EMPTY_SQUARE
     {
         new_move(from, new_to, board)
@@ -141,10 +149,11 @@ fn get_move_north(from: usize, to: i8, board: &Board, pawn_color: Color) -> Move
 }
 
 #[inline]
-fn get_capture(from: usize, to: i8, board: &Board, _: Color) -> Move {
+fn get_capture(from: usize, to: i8, board: &Board, _: Color, _: &mut ThreadRng) -> Move {
     new_move(from, to, board)
 }
 
+// Note: Add move by two.
 pub fn generate_random_legal_move(
     from: usize,
     board: &mut Board,
@@ -167,7 +176,7 @@ pub fn generate_random_legal_move(
         signed_from + PAWN_STEPS[pawn_color as usize][2],
     ];
 
-    let move_getters = [get_capture, get_move_north, get_capture];
+    let move_getters = [get_capture, get_random_move_north, get_capture];
 
     let start = rng.gen_range(0, 3);
     let mut i = start;
@@ -176,7 +185,7 @@ pub fn generate_random_legal_move(
             && !board.is_piece_pinned(signed_from, moves_to[i], king_location)
         {
             return Some(if moves_to[i] > 7 && moves_to[i] < 56 {
-                move_getters[i](from, moves_to[i], board, pawn_color)
+                move_getters[i](from, moves_to[i], board, pawn_color, rng)
             } else {
                 random_promotion(from, moves_to[i], pawn_color, board, rng)
             });
