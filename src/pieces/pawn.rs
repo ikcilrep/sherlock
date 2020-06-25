@@ -153,7 +153,6 @@ fn get_capture(from: usize, to: i8, board: &Board, _: Color, _: &mut ThreadRng) 
     new_move(from, to, board)
 }
 
-// Note: Add move by two.
 pub fn generate_random_legal_move(
     from: usize,
     board: &mut Board,
