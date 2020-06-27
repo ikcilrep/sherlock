@@ -80,10 +80,10 @@ impl Board {
         attack_pseudo_legality_validators
             .iter()
             .zip(moves_to.iter())
-            .filter(|(is_attack_pseudo_legal, attacker_square)| {
-                is_attack_pseudo_legal(square_file, **attacker_square)
-                    && self.state.pieces[**attacker_square as usize] == piece
+            .filter(|&(&is_attack_pseudo_legal, &attacker_square)| {
+                is_attack_pseudo_legal(square_file, attacker_square)
+                    && self.state.pieces[attacker_square as usize] == piece
             })
-            .for_each(|(_, attacker_square)| result.push(*attacker_square))
+            .for_each(|(_, &attacker_square)| result.push(attacker_square))
     }
 }

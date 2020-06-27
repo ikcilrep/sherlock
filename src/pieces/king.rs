@@ -58,10 +58,10 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     get_moves_to(from)
         .iter()
         .enumerate()
-        .filter(|(index, to)| {
-            MOVE_PSEUDO_LEGALITY_VALIDATORS[*index](from_file, **to, board, king_color)
+        .filter(|&(index, &to)| {
+            MOVE_PSEUDO_LEGALITY_VALIDATORS[index](from_file, to, board, king_color)
         })
-        .for_each(|(_, to)| result.push(new_move(from, *to, board)));
+        .for_each(|(_, &to)| result.push(new_move(from, to, board)));
 
     if board.is_castling_queens_side_pseudo_legal(king_color) {
         result.push(new_castling(CASTLING_QUEENS_SIDE, from, king, king_color))
@@ -136,9 +136,9 @@ pub fn can_be_moved(from: usize, board: &mut Board) -> bool {
     let king = board.state.pieces[from];
     board.state.pieces[from] = EMPTY_SQUARE;
     let from_file = from as i8 & 7;
-    let result = get_moves_to(from).iter().enumerate().any(|(i, to)| {
-        MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, *to, board, board.state.side)
-            && !board.is_square_attacked(*to, board.state.side)
+    let result = get_moves_to(from).iter().enumerate().any(|(i, &to)| {
+        MOVE_PSEUDO_LEGALITY_VALIDATORS[i](from_file, to, board, board.state.side)
+            && !board.is_square_attacked(to, board.state.side)
     });
 
     board.state.pieces[from] = king;

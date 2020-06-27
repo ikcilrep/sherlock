@@ -102,9 +102,9 @@ impl Board {
     fn can_any_piece_be_moved(&mut self) -> bool {
         let pieces = self.state.pieces;
         let mut from = 0;
-        for piece in pieces.iter() {
-            if get_piece_color(*piece) == self.state.side
-                && MOVE_AVAILABILITY_VALIDATORS[uncolorize_piece(*piece) as usize](from, self)
+        for &piece in pieces.iter() {
+            if get_piece_color(piece) == self.state.side
+                && MOVE_AVAILABILITY_VALIDATORS[uncolorize_piece(piece) as usize](from, self)
             {
                 return true;
             }
@@ -121,8 +121,8 @@ impl Board {
 
         match self.state.pieces_count {
             2 => false,
-            3 => self.state.pieces.iter().any(|piece| {
-                let uncolorized_piece = uncolorize_piece(*piece);
+            3 => self.state.pieces.iter().any(|&piece| {
+                let uncolorized_piece = uncolorize_piece(piece);
                 uncolorized_piece != KING
                     && uncolorized_piece != BISHOP
                     && uncolorized_piece != KNIGHT
@@ -132,11 +132,11 @@ impl Board {
                 let mut last_bishop_color = BLACK;
                 let mut last_square_color = BLACK;
                 let mut has_found_bishop = false;
-                for (location, piece) in self.state.pieces.iter().enumerate() {
-                    let uncolorized_piece = uncolorize_piece(*piece);
+                for (location, &piece) in self.state.pieces.iter().enumerate() {
+                    let uncolorized_piece = uncolorize_piece(piece);
                     if uncolorized_piece == BISHOP {
                         let square_color = get_square_color(location);
-                        let bishop_color = get_piece_color(*piece);
+                        let bishop_color = get_piece_color(piece);
                         if has_found_bishop {
                             return last_bishop_color == bishop_color
                                 || last_square_color != square_color;
@@ -161,7 +161,7 @@ impl Board {
             && self
                 .states
                 .iter()
-                .filter(|state| **state == self.state)
+                .filter(|&&state| state == self.state)
                 .count()
                 >= 3
     }

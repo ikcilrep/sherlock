@@ -67,10 +67,10 @@ impl Board {
         self.state
             .pieces
             .iter()
-            .filter(|piece| get_piece_color(**piece) == self.state.side)
+            .filter(|&&piece| get_piece_color(piece) == self.state.side)
             .enumerate()
-            .for_each(|(from, piece)| {
-                PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(*piece) as usize](from, self, result)
+            .for_each(|(from, &piece)| {
+                PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(piece) as usize](from, self, result)
             });
     }
 
@@ -81,7 +81,7 @@ impl Board {
         result
             .iter()
             .cloned()
-            .filter(|half_move| self.is_move_legal(*half_move))
+            .filter(|&half_move| self.is_move_legal(half_move))
             .collect::<LinkedList<Move>>()
     }
 

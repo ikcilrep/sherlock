@@ -42,10 +42,10 @@ impl Board {
         knight::ATTACK_PSEUDO_LEGALITY_VALIDATORS
             .iter()
             .zip(moves_to.iter())
-            .any(|(is_attack_pseudo_legal, defender_square)| {
-                is_attack_pseudo_legal(square_file, *defender_square)
-                    && self.state.pieces[*defender_square as usize] == colorized_knight
-                    && !self.is_piece_pinned(*defender_square, square, defended_piece_location)
+            .any(|(is_attack_pseudo_legal, &defender_square)| {
+                is_attack_pseudo_legal(square_file, defender_square)
+                    && self.state.pieces[defender_square as usize] == colorized_knight
+                    && !self.is_piece_pinned(defender_square, square, defended_piece_location)
             })
     }
 }

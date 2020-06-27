@@ -89,10 +89,10 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
     get_moves_to(from)
         .iter()
         .enumerate()
-        .filter(|(index, to)| {
-            MOVE_PSEUDO_LEGALITY_VALIDATORS[*index](from_file, **to, board, knight_color)
+        .filter(|&(index, &to)| {
+            MOVE_PSEUDO_LEGALITY_VALIDATORS[index](from_file, to, board, knight_color)
         })
-        .for_each(|(_, to)| result.push(new_move(from, *to, board)));
+        .for_each(|(_, &to)| result.push(new_move(from, to, board)));
 }
 
 pub fn generate_random_legal_move(

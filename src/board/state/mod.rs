@@ -39,7 +39,7 @@ impl PartialEq for BoardState {
                 .pieces
                 .iter()
                 .enumerate()
-                .all(|(index, piece)| other.pieces[index] == *piece)
+                .all(|(index, &piece)| other.pieces[index] == piece)
     }
 }
 
