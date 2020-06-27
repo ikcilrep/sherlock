@@ -62,17 +62,30 @@ impl Board {
         let plain_color = get_piece_color(moved_piece);
         let promoted_piece = get_promoted_piece(half_move);
         let color = plain_color as usize;
-
         let has_castling_queens_side_rights = self.has_castling_queens_side_rights(plain_color);
         let has_castling_kings_side_rights = self.has_castling_kings_side_rights(plain_color);
-
         self.state.pieces[get_captured_piece_position(half_move)] = EMPTY_SQUARE;
+
         self.state.pieces[to] = promoted_piece;
+
         self.state.pieces[from] = EMPTY_SQUARE;
 
         let captured_piece = get_captured_piece(half_move);
-        self.state.pieces_count += (captured_piece != EMPTY_SQUARE) as u8;
 
+        self.state.pieces_count += (captured_piece != EMPTY_SQUARE) as u8;
+        match get_move_type(half_move) {
+            CASTLING_KINGS_SIDE => {
+                self.state.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
+                    self.state.pieces[KINGS_ROOKS_POSITIONS[color]];
+                self.state.pieces[KINGS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
+            }
+            CASTLING_QUEENS_SIDE => {
+                self.state.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
+                    self.state.pieces[QUEENS_ROOKS_POSITIONS[color]];
+                self.state.pieces[QUEENS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
+            }
+            _ => {}
+        }
         self.state
             .update(moved_piece, captured_piece, from, to, color);
 
@@ -86,20 +99,6 @@ impl Board {
                 );
         } else {
             self.state.could_be_repeated = false;
-        }
-
-        match get_move_type(half_move) {
-            CASTLING_KINGS_SIDE => {
-                self.state.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
-                    self.state.pieces[KINGS_ROOKS_POSITIONS[color]];
-                self.state.pieces[KINGS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
-            }
-            CASTLING_QUEENS_SIDE => {
-                self.state.pieces[QUEENS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
-                    self.state.pieces[QUEENS_ROOKS_POSITIONS[color]];
-                self.state.pieces[QUEENS_ROOKS_POSITIONS[color]] = EMPTY_SQUARE;
-            }
-            _ => {}
         }
     }
 }
