@@ -28,52 +28,56 @@ impl Board {
         let from_rank = from >> 3;
         let to_file = to & 7;
         let to_rank = to >> 3;
-        let difference = protected_piece_location - from;
+
         // I know how hard to read it is, but it's fast.
-        (difference >= 0
+        ((from - protected_piece_location) >= 0
             && ((from_file == protected_piece_file
                 && to_file != from_file
                 && self
-                    .is_square_attacked_from_south_straight_line_by_slider(from, self.state.side))
+                    .is_square_attacked_from_north_straight_line_by_slider(from, self.state.side))
                 || (from_rank == protected_piece_rank
                     && to_rank != from_rank
-                    && self.is_square_attacked_from_west_straight_line_by_slider(
+                    && self.is_square_attacked_from_east_straight_line_by_slider(
                         from,
                         self.state.side,
                     ))
-                || (difference % 9 == 0
+                || ((from - protected_piece_location) % 9 == 0
+                    && (to - from) % 9 != 0
                     && self.is_square_attacked_from_northeast_diagonal_by_slider(
                         from,
                         self.state.side,
                     ))
-                || (difference % 7 == 0
+                || ((from - protected_piece_location) % 7 == 0
+                    && (to - from) % 7 != 0
                     && self.is_square_attacked_from_northwest_diagonal_by_slider(
                         from,
                         self.state.side,
                     ))))
-            || (difference <= 0
+            || ((from - protected_piece_location) <= 0
                 && ((from_file == protected_piece_file
                     && to_file != from_file
-                    && self.is_square_attacked_from_north_straight_line_by_slider(
+                    && self.is_square_attacked_from_south_straight_line_by_slider(
                         from,
                         self.state.side,
                     ))
                     || (from_rank == protected_piece_rank
                         && to_rank != from_rank
-                        && self.is_square_attacked_from_east_straight_line_by_slider(
+                        && self.is_square_attacked_from_west_straight_line_by_slider(
                             from,
                             self.state.side,
-                        )))
-                || (difference % 9 == 0
-                    && self.is_square_attacked_from_southwest_diagonal_by_slider(
-                        from,
-                        self.state.side,
-                    ))
-                || (difference % 7 == 0
-                    && self.is_square_attacked_from_southeast_diagonal_by_slider(
-                        from,
-                        self.state.side,
-                    )))
+                        ))
+                    || ((from - protected_piece_location) % 9 == 0
+                        && (to - from) % 9 != 0
+                        && self.is_square_attacked_from_southwest_diagonal_by_slider(
+                            from,
+                            self.state.side,
+                        ))
+                    || ((from - protected_piece_location) % 7 == 0
+                        && (to - from) % 7 != 0
+                        && self.is_square_attacked_from_southeast_diagonal_by_slider(
+                            from,
+                            self.state.side,
+                        ))))
     }
 
     pub fn is_move_legal(&mut self, half_move: Move) -> bool {
