@@ -95,14 +95,12 @@ impl Board {
         square: i8,
         slider: ColorizedPiece,
         defended_piece_location: i8,
-        defended_color: Color,
         result: &mut Vec<i8>,
     ) {
         match self.get_slider_defending_square_location(
             square,
             slider,
             defended_piece_location,
-            defended_color,
             1,
             |defended_square, _| defended_square & 7 != 0,
         ) {
@@ -114,7 +112,6 @@ impl Board {
             square,
             slider,
             defended_piece_location,
-            defended_color,
             -1,
             |defended_square, _| defended_square & 7 != 7,
         ) {
@@ -125,7 +122,6 @@ impl Board {
             square,
             slider,
             defended_piece_location,
-            defended_color,
             8,
             |defended_square, _| defended_square < 64,
         ) {
@@ -137,7 +133,6 @@ impl Board {
             square,
             slider,
             defended_piece_location,
-            defended_color,
             -8,
             |defended_square, _| defended_square >= 0,
         ) {

@@ -10,15 +10,12 @@ impl Board {
         &self,
         square: i8,
         possible_attacker: ColorizedPiece,
-        attacked_color: Color,
         increment: i8,
         predicate: fn(i8, i8) -> bool,
     ) -> Option<i8> {
         let mut attacker_square = square + increment;
         let square_file = square & 7;
-        while predicate(attacker_square, square_file)
-            && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
-        {
+        while predicate(attacker_square, square_file) {
             let attacker = self.state.pieces[attacker_square as usize];
             if attacker == possible_attacker {
                 return Some(attacker_square);
@@ -41,9 +38,7 @@ impl Board {
         let colorized_queen = colorize_piece(QUEEN, !attacked_color);
         let mut attacker_square = square + increment;
         let square_file = square & 7;
-        while predicate(attacker_square, square_file)
-            && self.is_square_not_occupied_by_color(attacker_square as usize, attacked_color)
-        {
+        while predicate(attacker_square, square_file) {
             let attacker = self.state.pieces[attacker_square as usize];
             if attacker == possible_attacker || attacker == colorized_queen {
                 return Some(attacker_square);

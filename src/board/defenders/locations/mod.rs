@@ -87,14 +87,12 @@ impl Board {
         square: i8,
         possible_attacker: ColorizedPiece,
         defended_piece_location: i8,
-        defended_color: Color,
         increment: i8,
         predicate: fn(i8, i8) -> bool,
     ) -> Option<i8> {
         let defender_location = self.get_slider_attacking_square_location(
             square,
             possible_attacker,
-            !defended_color,
             increment,
             predicate,
         );
@@ -152,14 +150,12 @@ impl Board {
                 square,
                 piece,
                 king_location,
-                self.state.side,
                 &mut result,
             ),
             BISHOP => self.get_sliders_defending_square_on_diagonals_locations(
                 square,
                 piece,
                 king_location,
-                self.state.side,
                 &mut result,
             ),
             KNIGHT => self.get_knights_defending_square_locations(
@@ -173,7 +169,6 @@ impl Board {
                     square,
                     piece,
                     king_location,
-                    self.state.side,
                     &mut result,
                 );
 
@@ -181,7 +176,6 @@ impl Board {
                     square,
                     piece,
                     king_location,
-                    self.state.side,
                     &mut result,
                 );
             }
