@@ -8,7 +8,7 @@ mod game;
 mod moves;
 mod pieces;
 use crate::board::Board;
-use crate::game::probability::play_random_game;
+use crate::game::play_random_game;
 
 fn main() {
     let mut board = Board::new();
