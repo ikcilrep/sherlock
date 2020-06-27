@@ -1,17 +1,18 @@
 pub mod probability;
+pub mod result;
 
 use rand::rngs::ThreadRng;
 
-use crate::board::legality::GameState;
 use crate::board::Board;
+use crate::game::result::GameResult;
 
-pub fn play_random_game(board: &mut Board, rng: &mut ThreadRng) -> GameState {
+pub fn play_random_game(board: &mut Board, rng: &mut ThreadRng) -> GameResult {
     loop {
         let king_attackers_locations =
             board.get_attackers_of_king_square_locations(board.state.side);
         let state = board.get_game_state(&king_attackers_locations);
         match state {
-            GameState::StillInProgress => {}
+            GameResult::StillInProgress => {}
             _ => return state,
         }
 

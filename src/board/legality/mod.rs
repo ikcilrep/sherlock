@@ -1,14 +1,10 @@
 use crate::board::Board;
+use crate::game::result::GameResult;
 use crate::moves::Move;
 use crate::moves::{get_from, get_to};
 use crate::pieces::color::{get_piece_color, uncolorize_piece, Color, BLACK};
 use crate::pieces::{bishop, king, knight, pawn, queen, rook, BISHOP, EMPTY_SQUARE, KING, KNIGHT};
 
-pub enum GameState {
-    Draw,
-    Win(Color),
-    StillInProgress,
-}
 pub mod getting_out_of_check;
 pub const MOVE_AVAILABILITY_VALIDATORS: [fn(usize, &mut Board) -> bool; 7] = [
     pawn::can_be_moved,
@@ -180,14 +176,14 @@ impl Board {
             || (king_attackers_locations.is_empty() && !self.can_any_piece_be_moved())
     }
 
-    pub fn get_game_state(&mut self, king_attackers_locations: &Vec<i8>) -> GameState {
+    pub fn get_game_state(&mut self, king_attackers_locations: &Vec<i8>) -> GameResult {
         // Threefold repetition draw will be implemented in future.
         return if self.is_game_lost(king_attackers_locations) {
-            GameState::Win(!self.state.side)
+            GameResult::Win(!self.state.side)
         } else if self.is_game_drawn(king_attackers_locations) {
-            GameState::Draw
+            GameResult::Draw
         } else {
-            GameState::StillInProgress
+            GameResult::StillInProgress
         };
     }
 }
