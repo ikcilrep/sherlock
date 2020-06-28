@@ -126,6 +126,14 @@ fn is_move_northeast_pseudo_legal(from_file: i8, to: i8, board: &Board, pawn_col
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
 }
 
+fn get_random_near_move_north(from: usize, to: i8, board: &Board, rng: &mut ThreadRng) -> Move {
+    if to > 7 && to < 56 {
+        new_move(from, to, board)
+    } else {
+        random_promotion(from, to, board.state.side, board, rng)
+    }
+}
+
 #[inline]
 fn get_random_move_north(
     from: usize,
@@ -138,13 +146,13 @@ fn get_random_move_north(
     let new_to = to + PAWN_STEPS[pawn_color as usize][1];
 
     return if rng.gen_bool(0.5) {
-        new_move(from, to, board)
+        get_random_near_move_north(from, to, board, rng)
     } else if from_row == PAWN_START_RANKS[pawn_color as usize]
         && board.state.pieces[new_to as usize] == EMPTY_SQUARE
     {
         new_move(from, new_to, board)
     } else {
-        new_move(from, to, board)
+        get_random_near_move_north(from, to, board, rng)
     };
 }
 
