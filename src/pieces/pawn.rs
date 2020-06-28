@@ -53,11 +53,11 @@ pub fn random_promotion(
     board: &Board,
     rng: &mut ThreadRng,
 ) -> Move {
-    if rng.gen_bool(0.5) {
+    if rng.gen_bool(0.25) {
         new_promotion(from, to, colorize_piece(QUEEN, pawn_color), board)
     } else if rng.gen_bool(0.25) {
         new_promotion(from, to, colorize_piece(ROOK, pawn_color), board)
-    } else if rng.gen_bool(0.125) {
+    } else if rng.gen_bool(0.25) {
         new_promotion(from, to, colorize_piece(BISHOP, pawn_color), board)
     } else {
         new_promotion(from, to, colorize_piece(KNIGHT, pawn_color), board)
