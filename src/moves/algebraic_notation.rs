@@ -277,11 +277,11 @@ fn parse_castling(castling_type: MoveType, board: &Board) -> Option<Move> {
 pub fn from_algebraic_notation(move_string: &String, board: &mut Board) -> Option<Move> {
     lazy_static! {
         static ref PAWN_MOVE: Regex = Regex::new(
-            "^(?:(?P<file>[a-e])x)?(?P<to>[a-e][1-8])(?:=(?P<piece_after_promotion>[KQRNB]))?$"
+            "^(?:(?P<file>[a-h])x)?(?P<to>[a-h][1-8])(?:=(?P<piece_after_promotion>[KQRNB]))?$"
         )
         .unwrap();
         static ref NOT_PAWN_MOVE: Regex = Regex::new(
-            "^(?P<piece_to_move>[KQRNB])(?P<unambiguity>[a-e]?[1-8]?)?x?(?P<to>[a-e][1-8])$"
+            "^(?P<piece_to_move>[KQRNB])(?P<unambiguity>[a-h]?[1-8]?)?x?(?P<to>[a-h][1-8])$"
         )
         .unwrap();
     }
