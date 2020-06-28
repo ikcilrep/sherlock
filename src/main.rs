@@ -8,11 +8,31 @@ mod game;
 mod moves;
 mod pieces;
 
-use crate::pieces::color::WHITE;
 use crate::board::Board;
 use crate::game::result::GameResult;
 use crate::moves::algebraic_notation::from_algebraic_notation;
 use crate::moves::algebraic_notation::to_algebraic_notation;
+use crate::pieces::color::WHITE;
+
+fn handle_game_result(board: &mut Board) -> bool {
+    let king_attackers_locations = board.get_attackers_of_king_square_locations(board.state.side);
+
+    match board.get_game_state(&king_attackers_locations) {
+        GameResult::StillInProgress => false,
+        GameResult::Win(color) => {
+            if color == WHITE {
+                println!("White won!");
+            } else {
+                println!("Black won!");
+            }
+            true
+        }
+        GameResult::Draw => {
+            println!("Draw!");
+            true
+        }
+    }
+}
 
 fn main() {
     let mut rng = rand::thread_rng();
@@ -26,24 +46,8 @@ fn main() {
             counter,
             to_algebraic_notation(half_move, &mut board)
         );
-
-        let king_attackers_locations =
-            board.get_attackers_of_king_square_locations(board.state.side);
-
-        match board.get_game_state(&king_attackers_locations) {
-            GameResult::StillInProgress => {}
-            GameResult::Win(color) => {
-                if color == WHITE {
-                    println!("White won!");
-                } else {
-                    println!("Black won!");
-                }
-                break;
-            }
-            GameResult::Draw => {
-                println!("Draw!");
-                break;
-            }
+        if handle_game_result(&mut board) {
+            break;
         }
         let mut opponent_move_str = String::new();
         loop {
@@ -53,6 +57,9 @@ fn main() {
                     match from_algebraic_notation(&opponent_move_str, &mut board) {
                         Some(opponent_move) => {
                             board.make_move(opponent_move);
+                            if handle_game_result(&mut board) {
+                                break;
+                            }
                             break;
                         }
                         None => println!("Incorrect move, try again."),
