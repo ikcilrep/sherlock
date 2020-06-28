@@ -16,6 +16,7 @@ pub mod defenders;
 pub mod legality;
 pub mod state;
 
+#[derive(Clone)]
 pub struct Board {
     pub state: BoardState,
     pub states: Vec<BoardState>,
