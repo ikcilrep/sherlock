@@ -27,3 +27,19 @@ pub fn play_random_game(board: &mut Board, rng: &mut ThreadRng) -> GameResult {
         board.make_move(half_move);
     }
 }
+
+pub fn play_best_game(board: &mut Board, repetitions: i32, rng: &mut ThreadRng) -> GameResult {
+    loop {
+        let king_attackers_locations =
+            board.get_attackers_of_king_square_locations(board.state.side);
+        let state = board.get_game_state(&king_attackers_locations);
+        match state {
+            GameResult::StillInProgress => {}
+            _ => return state,
+        }
+
+        let half_move = board.get_best_move(repetitions, rng);
+
+        board.make_move(half_move);
+    }
+}
