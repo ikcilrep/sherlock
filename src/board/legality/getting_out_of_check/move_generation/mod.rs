@@ -3,7 +3,7 @@ extern crate rand;
 use crate::board::Board;
 use crate::moves::constructors::new_move;
 use crate::moves::Move;
-use crate::pieces::color::{get_piece_color, uncolorize_piece, Color};
+use crate::pieces::color::{uncolorize_piece, Color};
 use crate::pieces::{king, pawn, ColorizedPiece, PAWN};
 
 use rand::rngs::ThreadRng;
@@ -112,7 +112,7 @@ impl Board {
 
     fn get_move(&self, from: usize, to: i8, piece: ColorizedPiece, rng: &mut ThreadRng) -> Move {
         if uncolorize_piece(piece) == PAWN && (to <= 7 || to >= 56) {
-            return pawn::random_promotion(from, to, get_piece_color(piece), self, rng);
+            return pawn::random_promotion(from, to, self.state.side, self, rng);
         }
         return new_move(from, to, self);
     }
