@@ -74,8 +74,8 @@ fn remove_ambiguities(half_move: Move, move_string_part: &mut String, board: &mu
     let attackers_locations: Vec<i8> = board
         .get_pieces_of_type_defending_square_locations(to as i8, moved_piece)
         .iter()
-        .filter(|&&location| location != from)
-        .map(|&location| location)
+        .cloned()
+        .filter(|&location| location != from)
         .collect();
 
     if attackers_locations.is_empty() {
@@ -159,8 +159,8 @@ fn get_unambiguous_from(
     let find_unambiguous_from = || {
         let unambiguous_froms: Vec<i8> = candidate_froms
             .iter()
-            .filter(|&&from| board.state.pieces[from as usize] == piece_to_move)
-            .map(|&from| from)
+            .cloned()
+            .filter(|&from| board.state.pieces[from as usize] == piece_to_move)
             .collect();
         if unambiguous_froms.len() == 1 {
             Some(unambiguous_froms[0])
@@ -176,15 +176,15 @@ fn get_unambiguous_from(
                     let rank = char_to_rank(first_char);
                     candidate_froms
                         .iter()
-                        .filter(|&&from| from >> 3 == rank)
-                        .map(|&from| from)
+                        .cloned()
+                        .filter(|&from| from >> 3 == rank)
                         .collect()
                 } else {
                     let file = char_to_file(first_char);
                     candidate_froms
                         .iter()
-                        .filter(|&&from| from & 7 == file)
-                        .map(|&from| from)
+                        .cloned()
+                        .filter(|&from| from & 7 == file)
                         .collect()
                 };
 
