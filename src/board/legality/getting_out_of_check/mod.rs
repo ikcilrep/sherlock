@@ -39,8 +39,9 @@ impl Board {
             || (attacker_location > king_location
                 && ((king_location + 1)..attacker_location)
                     .any(|square| is_defended(square, king_location, color, self)))
-            || ((attacker_location + 1)..king_location)
-                .any(|square| is_defended(square, king_location, color, self))
+            || (attacker_location < king_location
+                && ((attacker_location + 1)..king_location)
+                    .any(|square| is_defended(square, king_location, color, self)))
     }
 
     fn can_get_out_of_check_on_file(
@@ -73,8 +74,9 @@ impl Board {
             || (attacker_location > king_location
                 && ((king_location + 8)..attacker_location)
                     .step_by(8)
-                    .any(|square| is_defended(square, king_location, color, self))
-                || ((attacker_location + 8)..king_location)
+                    .any(|square| is_defended(square, king_location, color, self)))
+            || (attacker_location < king_location
+                && ((attacker_location + 8)..king_location)
                     .step_by(8)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
@@ -114,8 +116,9 @@ impl Board {
             || (attacker_location > king_location
                 && ((king_location + 7)..attacker_location)
                     .step_by(7)
-                    .any(|square| is_defended(square, king_location, color, self))
-                || ((attacker_location + 7)..king_location)
+                    .any(|square| is_defended(square, king_location, color, self)))
+            || (attacker_location < king_location
+                && ((attacker_location + 7)..king_location)
                     .step_by(7)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
@@ -155,8 +158,9 @@ impl Board {
             || (attacker_location > king_location
                 && ((king_location + 9)..attacker_location)
                     .step_by(9)
-                    .any(|square| is_defended(square, king_location, color, self))
-                || ((attacker_location + 9)..king_location)
+                    .any(|square| is_defended(square, king_location, color, self)))
+            || (attacker_location < king_location
+                && ((attacker_location + 9)..king_location)
                     .step_by(9)
                     .any(|square| is_defended(square, king_location, color, self)))
     }
