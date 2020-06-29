@@ -19,19 +19,15 @@ impl Board {
         if self.state.pieces[square as usize] == EMPTY_SQUARE {
             let from1 = square - PAWN_STEPS[defended_color as usize][1];
             let from2 = from1 - PAWN_STEPS[defended_color as usize][1];
-            let mut is_pawn_pinned = false;
             if self.is_square_on_board(from1)
                 && self.state.pieces[from1 as usize] == colorized_pawn
-                && {
-                    is_pawn_pinned = self.is_piece_pinned(from1, square, defended_piece_location);
-                    !is_pawn_pinned
-                }
+                && !self.is_piece_pinned(from1, square, defended_piece_location)
             {
                 result.push(from1);
-            } else if !is_pawn_pinned
-                && pawn::PAWN_START_RANKS[defended_color as usize] == (from2 >> 3) as usize
+            } else if pawn::PAWN_START_RANKS[defended_color as usize] == (from2 >> 3) as usize
                 && self.state.pieces[from1 as usize] == EMPTY_SQUARE
                 && self.state.pieces[from2 as usize] == colorized_pawn
+                && !self.is_piece_pinned(from2, square, defended_piece_location)
             {
                 result.push(from2);
             }
