@@ -226,10 +226,11 @@ pub fn can_be_moved_on_empty_square_without_capture(empty_square: i8, board: &mu
     let from1 = empty_square - PAWN_STEPS[color][1];
     let from2 = from1 - PAWN_STEPS[color][1];
     !board.is_piece_pinned(from1, empty_square, board.state.king_positions[color])
-        && (board.is_square_on_board(from1) && board.state.pieces[from1 as usize] == colorized_pawn)
-        || (PAWN_START_RANKS[color] == (from2 >> 3) as usize
-            && board.state.pieces[from1 as usize] == EMPTY_SQUARE
-            && board.state.pieces[from2 as usize] == colorized_pawn)
+        && ((board.is_square_on_board(from1)
+            && board.state.pieces[from1 as usize] == colorized_pawn)
+            || (PAWN_START_RANKS[color] == (from2 >> 3) as usize
+                && board.state.pieces[from1 as usize] == EMPTY_SQUARE
+                && board.state.pieces[from2 as usize] == colorized_pawn))
 }
 
 pub fn can_capture_on_enemy_occupied_square(enemy_occupied_square: i8, board: &mut Board) -> bool {
