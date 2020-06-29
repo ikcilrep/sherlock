@@ -67,8 +67,8 @@ impl Board {
         self.state
             .pieces
             .iter()
-            .filter(|&&piece| get_piece_color(piece) == self.state.side)
             .enumerate()
+            .filter(|&(_, &piece)| get_piece_color(piece) == self.state.side)
             .for_each(|(from, &piece)| {
                 PSEUDO_LEGAL_MOVE_GENERATORS[uncolorize_piece(piece) as usize](from, self, result)
             });
