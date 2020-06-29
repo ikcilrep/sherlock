@@ -73,7 +73,7 @@ impl Board {
 
         let captured_piece = get_captured_piece(half_move);
 
-        self.state.pieces_count += (captured_piece != EMPTY_SQUARE) as u8;
+        self.state.pieces_count -= (captured_piece != EMPTY_SQUARE) as u8;
         match get_move_type(half_move) {
             CASTLING_KINGS_SIDE => {
                 self.state.pieces[KINGS_ROOKS_AFTER_CASTLING_POSITIONS[color]] =
