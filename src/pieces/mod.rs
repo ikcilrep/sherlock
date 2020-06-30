@@ -75,14 +75,14 @@ impl Board {
     }
 
     // Temporary, naive version.
-    pub fn generate_all_legal_moves(&mut self) -> LinkedList<Move> {
+    pub fn generate_all_legal_moves(&mut self) -> Vec<Move> {
         let mut result = Vec::new();
         self.generate_all_pseudo_legal_moves(&mut result);
         result
             .iter()
             .cloned()
             .filter(|&half_move| self.is_move_legal(half_move))
-            .collect::<LinkedList<Move>>()
+            .collect()
     }
 
     pub fn generate_random_legal_move(&mut self, rng: &mut ThreadRng) -> Move {

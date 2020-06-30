@@ -35,7 +35,13 @@ fn get_nearest_moves_to(from: usize, pawn_color: Color) -> [i8; 3] {
     ]
 }
 
-fn add_promotions(from: usize, to: i8, pawn_color: Color, board: &Board, result: &mut Vec<Move>) {
+pub fn add_promotions(
+    from: usize,
+    to: i8,
+    pawn_color: Color,
+    board: &Board,
+    result: &mut Vec<Move>,
+) {
     let colorized_bishop = colorize_piece(BISHOP, pawn_color);
     let colorized_knight = colorize_piece(KNIGHT, pawn_color);
     let colorized_queen = colorize_piece(QUEEN, pawn_color);

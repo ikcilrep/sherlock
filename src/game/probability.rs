@@ -16,7 +16,13 @@ impl Board {
     }
 
     pub fn get_best_move(&mut self, repetitions: i32, rng: &mut ThreadRng) -> Move {
-        let moves = self.generate_all_legal_moves();
+        let king_attackers_locations = self.get_attackers_of_king_square_locations(self.state.side);
+
+        let moves = if king_attackers_locations.is_empty() {
+            self.generate_all_legal_moves()
+        } else {
+            self.generate_out_of_check_moves(&king_attackers_locations)
+        };
         let mut best_score = -1;
         let mut best_move = *moves.iter().next().unwrap();
         for half_move in moves {
