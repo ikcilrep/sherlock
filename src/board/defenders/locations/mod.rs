@@ -136,11 +136,12 @@ impl Board {
         let king_location = self.state.king_positions[self.state.side as usize];
         match uncolorize_piece(piece) {
             KING => {
-                let legal_moves_to = king::get_legal_moves_to(square as usize, self);
-                legal_moves_to
-                    .iter()
-                    .filter(|&&square| self.state.pieces[square as usize] == piece)
-                    .for_each(|&square| result.push(square));
+                if self.can_be_moved(square, self.state.side)
+                    && king::get_moves_to(square as usize).contains(&king_location)
+                    && !self.is_square_attacked(square, self.state.side)
+                {
+                    result.push(king_location);
+                }
             }
             ROOK => self.get_sliders_defending_square_on_straight_lines_locations(
                 square,
