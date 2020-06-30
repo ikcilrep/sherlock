@@ -4,8 +4,6 @@ use crate::board::Board;
 use crate::moves::Move;
 use crate::pieces::color::{get_piece_color, uncolorize_piece};
 
-use std::collections::LinkedList;
-
 use rand::rngs::ThreadRng;
 use rand::Rng;
 

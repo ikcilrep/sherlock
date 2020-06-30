@@ -103,7 +103,7 @@ impl Board {
 
             let difference = attacker_location - king_location;
 
-            let half_move = if attacker_location_rank == king_location_rank {
+            if attacker_location_rank == king_location_rank {
                 self.generate_out_of_check_on_rank_moves(
                     king_location,
                     attacker_location,
