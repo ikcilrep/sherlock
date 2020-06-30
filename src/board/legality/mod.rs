@@ -84,7 +84,7 @@ impl Board {
         if from == king_location {
             let king = self.state.pieces[king_location as usize];
             self.state.pieces[king_location as usize] = EMPTY_SQUARE;
-            let result = self.is_square_attacked(to, self.state.side);
+            let result = !self.is_square_attacked(to, self.state.side);
             self.state.pieces[king_location as usize] = king;
             return result;
         }
