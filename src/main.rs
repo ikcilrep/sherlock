@@ -39,7 +39,10 @@ fn main() {
     let mut board = Board::new();
     let mut counter = 1;
     loop {
-        let half_move = board.get_best_move(1000, &mut rng);
+        if handle_game_result(&mut board) {
+            break;
+        }
+        let half_move = board.get_best_move(100, &mut rng);
         board.make_move(half_move);
         println!(
             "{}.\t{}",
@@ -57,12 +60,12 @@ fn main() {
                     match from_algebraic_notation(&opponent_move_str, &mut board) {
                         Some(opponent_move) => {
                             board.make_move(opponent_move);
-                            if handle_game_result(&mut board) {
-                                break;
-                            }
                             break;
                         }
-                        None => println!("Incorrect move, try again."),
+                        None => {
+                            println!("Incorrect move, try again.");
+                            opponent_move_str.clear();
+                        }
                     }
                 }
                 Err(message) => println!("{}", message),
