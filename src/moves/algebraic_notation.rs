@@ -228,9 +228,15 @@ fn parse_pawn_move(captures: regex::Captures<'_>, board: &mut Board) -> Option<M
         }
         None => {
             let from = to - pawn_step;
+            if !board.is_square_on_board(from) {
+                return None;
+            }
             if board.state.pieces[from as usize] == piece_to_move {
                 from
             } else {
+                if !board.is_square_on_board(from - pawn_step) {
+                    return None;
+                }
                 from - pawn_step
             }
         }
