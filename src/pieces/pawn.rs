@@ -80,7 +80,11 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     {
         if to < 56 && to > 7 {
-            result.push(new_move(from, to, board));
+            if board.state.en_passant_square == to {
+                result.push(new_en_passant(from, to, pawn_color, board))
+            } else {
+                result.push(new_move(from, to, board))
+            }
         } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
@@ -106,7 +110,11 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     {
         if to < 56 && to > 7 {
-            result.push(new_en_passant(from, to, pawn_color, board));
+            if board.state.en_passant_square == to {
+                result.push(new_en_passant(from, to, pawn_color, board))
+            } else {
+                result.push(new_move(from, to, board))
+            }
         } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
