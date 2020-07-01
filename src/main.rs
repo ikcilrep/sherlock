@@ -10,6 +10,7 @@ mod pieces;
 
 use crate::board::Board;
 use crate::game::result::GameResult;
+use crate::game::tree::Tree;
 use crate::moves::algebraic_notation::from_algebraic_notation;
 use crate::moves::algebraic_notation::to_algebraic_notation;
 use crate::pieces::color::WHITE;
@@ -34,21 +35,30 @@ fn handle_game_result(board: &mut Board) -> bool {
     }
 }
 
+fn make_move(move_str: &str, board: &mut Board) {
+    let half_move = from_algebraic_notation(&String::from(move_str), board).unwrap();
+    board.make_move(half_move);
+}
+
 fn main() {
     let mut rng = rand::thread_rng();
     let mut board = Board::new();
     let mut counter = 1;
+
     loop {
         if handle_game_result(&mut board) {
             break;
         }
-        let half_move = board.get_best_move(100, &mut rng);
+
+        let mut tree = Tree::new(&mut board);
+        for _ in 0..10000 {
+            tree.make_round(&mut rng);
+        }
+
+        let half_move = tree.get_best_move().unwrap();
+        let move_str = to_algebraic_notation(half_move, &mut board);
         board.make_move(half_move);
-        println!(
-            "{}.\t{}",
-            counter,
-            to_algebraic_notation(half_move, &mut board)
-        );
+        println!("{}.\t{}", counter, move_str);
         if handle_game_result(&mut board) {
             break;
         }

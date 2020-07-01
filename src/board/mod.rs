@@ -23,6 +23,15 @@ pub struct Board {
 }
 
 impl Board {
+    pub fn generate_moves(&mut self) -> Vec<Move> {
+        let king_attackers_locations = self.get_attackers_of_king_square_locations(self.state.side);
+
+        if king_attackers_locations.is_empty() {
+            self.generate_all_legal_moves()
+        } else {
+            self.generate_out_of_check_moves(&king_attackers_locations)
+        }
+    }
     #[inline]
     pub fn can_be_moved(&self, to: i8, piece_to_move_color: Color) -> bool {
         self.state.pieces[to as usize] == EMPTY_SQUARE

@@ -14,4 +14,10 @@ impl GameResult {
             GameResult::StillInProgress => panic!("Can't get points of unfinished game."),
         }
     }
+    pub fn is_in_progress(self) -> bool {
+        match self {
+            GameResult::StillInProgress => true,
+            _ => false,
+        }
+    }
 }
