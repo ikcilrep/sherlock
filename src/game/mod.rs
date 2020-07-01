@@ -1,4 +1,3 @@
-pub mod probability;
 pub mod result;
 pub mod tree;
 
