@@ -45,12 +45,14 @@ fn main() {
     let mut board = Board::new();
     let mut counter = 1;
 
+    let mut tmp_tree = Box::new(Tree::new(&mut board));
+    let mut tree = &mut tmp_tree;
+
     loop {
         if handle_game_result(&mut board) {
             break;
         }
 
-        let mut tree = Tree::new(&mut board);
         for _ in 0..10000 {
             tree.make_round(&mut rng);
         }
@@ -58,6 +60,13 @@ fn main() {
         let half_move = tree.get_best_move().unwrap();
         let move_str = to_algebraic_notation(half_move, &mut board);
         board.make_move(half_move);
+        match tree.get_subtree(half_move) {
+            Some(subtree) => tree = subtree,
+            None => {
+                tmp_tree = Box::new(Tree::new(&mut board));
+                tree = &mut tmp_tree
+            }
+        };
         println!("{}.\t{}", counter, move_str);
         if handle_game_result(&mut board) {
             break;
@@ -70,6 +79,13 @@ fn main() {
                     match from_algebraic_notation(&opponent_move_str, &mut board) {
                         Some(opponent_move) => {
                             board.make_move(opponent_move);
+                            match tree.get_subtree(half_move) {
+                                Some(subtree) => tree = subtree,
+                                None => {
+                                    tmp_tree = Box::new(Tree::new(&mut board));
+                                    tree = &mut tmp_tree
+                                }
+                            };
                             break;
                         }
                         None => {

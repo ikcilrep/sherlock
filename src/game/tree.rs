@@ -126,6 +126,13 @@ impl Tree {
         }
     }
 
+    pub fn get_subtree(&mut self, half_move: Move) -> Option<&mut Box<Tree>> {
+        self.children
+            .iter_mut()
+            .filter(|child| child.node.half_move.unwrap() == half_move)
+            .next()
+    }
+
     pub fn make_round(&mut self, rng: &mut ThreadRng) {
         let child = if self.children.is_empty() {
             self.make_children();
@@ -142,7 +149,7 @@ impl Tree {
 
         let mut board = child.node.board.clone();
         let result = play_random_game(&mut board, rng);
-        child.node.score += result.get_points(child.node.board.state.side);
+        child.node.score += result.get_points(!child.node.board.state.side);
         child.node.games_played_count += 1;
 
         {
