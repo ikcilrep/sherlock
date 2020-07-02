@@ -1,7 +1,7 @@
 use crate::board::Board;
 use crate::game::play_random_game;
+use crate::game::result::GameResult;
 use crate::moves::Move;
-use crate::pieces::color::Color;
 use rand::rngs::ThreadRng;
 
 pub struct Node {
@@ -113,22 +113,14 @@ impl Tree {
         }
     }
 
-    pub fn update(&mut self, points: i32, side: Color) {
+    pub fn update(&mut self, result: GameResult) {
         self.node.games_played_count += 1;
-        self.node.score += if self.node.board.state.side == side {
-            points
-        } else {
-            2 - points
-        };
+        self.node.score += result.get_points(!self.node.board.state.side);
         if !self.children.is_empty() {
             let mut tree = self.get_selected_child();
             while !tree.children.is_empty() {
                 tree.node.games_played_count += 1;
-                tree.node.score += if tree.node.board.state.side == side {
-                    points
-                } else {
-                    2 - points
-                };
+                tree.node.score += result.get_points(!tree.node.board.state.side);
                 tree = tree.get_selected_child();
             }
         }
@@ -149,14 +141,12 @@ impl Tree {
         };
 
         let mut board = child.node.board.clone();
-        let points = play_random_game(&mut board, rng).get_points(!board.state.side);
-        child.node.score += points;
+        let result = play_random_game(&mut board, rng);
+        child.node.score += result.get_points(child.node.board.state.side);
         child.node.games_played_count += 1;
 
-        let side = board.state.side;
-
         {
-            self.update(points, side);
+            self.update(result);
         }
     }
 }
