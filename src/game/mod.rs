@@ -19,9 +19,12 @@ pub fn play_random_game(board: &mut Board, rng: &mut ThreadRng) -> GameResult {
         let half_move = if king_attackers_locations.is_empty() {
             board.generate_random_legal_move(rng)
         } else {
-            board
-                .generate_random_out_of_check_move(&king_attackers_locations, rng)
-                .unwrap()
+            let result = board.generate_random_out_of_check_move(&king_attackers_locations, rng);
+            if result.is_none() {
+                return GameResult::Draw;
+            }
+
+            result.unwrap()
         };
 
         board.make_move(half_move);
