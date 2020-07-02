@@ -1,10 +1,10 @@
 extern crate rand;
 
 use crate::board::Board;
-use crate::moves::constructors::new_move;
 use crate::moves::Move;
 use crate::pieces::color::Color;
 use crate::pieces::pawn;
+use crate::pieces::pawn::new_pawn_move;
 use rand::rngs::ThreadRng;
 use rand::Rng;
 
@@ -37,7 +37,12 @@ impl Board {
                 rng,
             ));
         }
-        return Some(new_move(pawn_location, king_attacker_location, self));
+        return Some(new_pawn_move(
+            pawn_location,
+            king_attacker_location,
+            self.state.side,
+            self,
+        ));
     }
 
     #[inline]

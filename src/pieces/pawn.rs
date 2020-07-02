@@ -80,11 +80,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     {
         if to < 56 && to > 7 {
-            if board.state.en_passant_square == to {
-                result.push(new_en_passant(from, to, pawn_color, board))
-            } else {
-                result.push(new_move(from, to, board))
-            }
+            result.push(new_pawn_move(from, to, pawn_color, board));
         } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
@@ -110,11 +106,7 @@ pub fn generate_pseudo_legal_moves(from: usize, board: &Board, result: &mut Vec<
         && (board.state.en_passant_square == to || board.can_capture(to, pawn_color))
     {
         if to < 56 && to > 7 {
-            if board.state.en_passant_square == to {
-                result.push(new_en_passant(from, to, pawn_color, board))
-            } else {
-                result.push(new_move(from, to, board))
-            }
+            result.push(new_pawn_move(from, to, pawn_color, board));
         } else if board.is_square_on_board(to) {
             add_promotions(from, to, pawn_color, board, result);
         }
@@ -171,8 +163,8 @@ fn get_random_move_north(
 }
 
 #[inline]
-fn get_capture(from: usize, to: i8, board: &Board, _: Color, _: &mut ThreadRng) -> Move {
-    new_move(from, to, board)
+fn get_capture(from: usize, to: i8, board: &Board, pawn_color: Color, _: &mut ThreadRng) -> Move {
+    new_pawn_move(from, to, pawn_color, board)
 }
 
 pub fn generate_random_legal_move(
@@ -302,4 +294,12 @@ pub fn is_legal_en_passant(
         && piece_to_move == piece_after_promotion
         && (distance == 7 || distance == 9)
         && !board.is_piece_pinned(from, to, king_location)
+}
+
+pub fn new_pawn_move(from: usize, to: i8, pawn_color: Color, board: &Board) -> Move {
+    if to == board.state.en_passant_square {
+        new_en_passant(from, to, pawn_color, board)
+    } else {
+        new_move(from, to, board)
+    }
 }

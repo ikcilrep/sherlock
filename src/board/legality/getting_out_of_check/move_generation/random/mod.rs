@@ -1,9 +1,9 @@
 extern crate rand;
 
 use crate::board::Board;
-use crate::moves::constructors::new_move;
 use crate::moves::Move;
 use crate::pieces::color::{uncolorize_piece, Color};
+use crate::pieces::pawn::new_pawn_move;
 use crate::pieces::{king, pawn, ColorizedPiece, PAWN};
 
 use rand::rngs::ThreadRng;
@@ -114,7 +114,7 @@ impl Board {
         if uncolorize_piece(piece) == PAWN && (to <= 7 || to >= 56) {
             return pawn::random_promotion(from, to, self.state.side, self, rng);
         }
-        return new_move(from, to, self);
+        return new_pawn_move(from, to, self.state.side, self);
     }
 
     fn generate_random_capturing_attacker_move(

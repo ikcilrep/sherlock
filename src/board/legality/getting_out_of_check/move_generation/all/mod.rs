@@ -3,6 +3,7 @@ use crate::moves::constructors::new_move;
 use crate::moves::Move;
 use crate::pieces::color::uncolorize_piece;
 use crate::pieces::color::Color;
+use crate::pieces::pawn::new_pawn_move;
 use crate::pieces::ColorizedPiece;
 use crate::pieces::{king, pawn, PAWN};
 
@@ -52,7 +53,7 @@ impl Board {
         if uncolorize_piece(piece) == PAWN && (to <= 7 || to >= 56) {
             pawn::add_promotions(from, to, self.state.side, self, result)
         } else {
-            result.push(new_move(from, to, self))
+            result.push(new_pawn_move(from, to, self.state.side, self))
         }
     }
 
